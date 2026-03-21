@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sifenboot - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 flex">
+<div class="w-64 h-screen bg-slate-800 text-white p-6 sticky top-0">
+    <h2 class="text-xl font-bold mb-8">SIFEN Admin</h2>
+    <nav class="space-y-4">
+        <a href="#" class="block p-2 bg-blue-600 rounded">Empresas</a>
+        <a href="#" class="block p-2 hover:bg-slate-700 rounded transition">Facturas</a>
+        <a href="#" class="block p-2 hover:bg-slate-700 rounded transition">Configuración ERP</a>
+        <hr class="border-slate-700">
+        <a href="index.html" class="block p-2 text-red-400 hover:text-red-300">Cerrar Sesión</a>
+    </nav>
+</div>
+
+<main class="flex-1 p-8">
+    <header class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold text-slate-800">Gestión de Empresas</h1>
+        <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
+            + Nueva Empresa
+        </button>
+    </header>
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-slate-100 border-b">
+            <tr>
+                <th class="p-4 font-semibold">RUC</th>
+                <th class="p-4 font-semibold">Razón Social</th>
+                <th class="p-4 font-semibold">Certificado</th>
+                <th class="p-4 font-semibold">Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="empresaTable">
+            <tr class="border-b">
+                <td class="p-4">80012345-0</td>
+                <td class="p-4 text-slate-600">JORGE GUSTAVO PETRIK IBARRA</td>
+                <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">ACTIVO</span></td>
+                <td class="p-4">
+                    <button class="text-blue-600 hover:underline">Editar</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-8 rounded-lg w-[500px]">
+        <h2 class="text-xl font-bold mb-4">Nueva Configuración</h2>
+        <form class="space-y-4">
+            <input type="text" placeholder="RUC (ej: 80000000-1)" class="w-full p-2 border rounded">
+            <input type="text" placeholder="Razón Social" class="w-full p-2 border rounded">
+            <div class="border-2 border-dashed border-slate-300 p-4 text-center rounded">
+                <label class="block cursor-pointer">
+                    <span class="text-slate-500">Subir Certificado .p12</span>
+                    <input type="file" class="hidden" accept=".p12">
+                </label>
+            </div>
+            <input type="password" placeholder="Contraseña P12" class="w-full p-2 border rounded">
+            <div class="flex justify-end space-x-2">
+                <button type="button" onclick="document.getElementById('modal').classList.add('hidden')" class="px-4 py-2 text-slate-500">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

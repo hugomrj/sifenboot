@@ -1,24 +1,25 @@
 sifen:
   ambiente: prod
-  # cert-path: classpath:cert/certificado.p12
   cert-path: /home/hugo/dev/p12/JORGE_GUSTAVO_PETRIK_IBARRA_VIT_S_A.p12
   cert-pass: 20multipartes25
   id-csc: 0001
   csc: 461584cce34c06Ee70AC657B482Fb0e2
   timeout: 30000
 
-
-
-
 server:
   port: ${PORT:8080}
-
-
-
 
 spring:
   application:
     name: sifen-api-java
+
+  # Configuración de Base de Datos (Postgres)
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sifenboot}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
+    driver-class-name: org.postgresql.Driver
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:noauth}
 
@@ -36,14 +37,21 @@ spring:
       max-request-size: 10MB
       enabled: true
 
+  # Única fuente de la UI: Carpeta externa 'web'
+  web:
+    resources:
+      static-locations:
+        - file:./web/
+  mvc:
+    static-path-pattern: /**
+
+  # Quitamos el exclude para que Spring active JDBC automáticamente
   autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    exclude: []
 
 jwt:
-  secret: ${JWT_SECRET:}
+  secret: ${JWT_SECRET:clave_secreta_para_desarrollo_de_al_menos_32_caracteres}
   expiration: ${JWT_EXPIRATION:86400000}
-
 
 logging:
   level:
@@ -53,12 +61,6 @@ logging:
     com.sifen: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-
-
-
-
-
 
 springdoc:
   api-docs:

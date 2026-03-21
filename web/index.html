@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sifenboot - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 flex items-center justify-center h-screen">
+<div class="bg-white p-8 rounded-xl shadow-2xl w-96">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-slate-800">Sifenboot</h1>
+        <p class="text-slate-500 text-sm">Gestión de Documentos Electrónicos</p>
+    </div>
+    <form id="loginForm" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-slate-700">Usuario</label>
+            <input type="text" id="username" class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700">Contraseña</label>
+            <input type="password" id="password" class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+            Entrar al Panel
+        </button>
+    </form>
+    <p id="errorMsg" class="text-red-500 text-xs mt-4 hidden text-center">Credenciales incorrectas</p>
+</div>
+
+<script>
+    document.getElementById('loginForm').onsubmit = (e) => {
+        e.preventDefault();
+        // Por ahora simulamos el login exitoso
+        // En el futuro aquí llamarás a tu endpoint de JWT
+        window.location.href = 'admin.html';
+    };
+</script>
+</body>
+</html>

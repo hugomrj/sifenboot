@@ -1,0 +1,21 @@
+# Java / Maven
+target/
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Logs y temporales
+logs/
+*.log
+tmp/
+
+# Sistema
+.DS_Store
