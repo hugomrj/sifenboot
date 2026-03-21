@@ -1,0 +1,5 @@
+logging:
+  level:
+    com.sifen: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.jdbc: DEBUG

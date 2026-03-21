@@ -1,0 +1,45 @@
+# Test Configuration
+spring:
+  application:
+    name: sifen-api-java-test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 
+      timeout: 2000ms
+
+server:
+  port: 0  # Random port for tests
+
+jwt:
+  secret: test-jwt-secret-key-for-testing-only
+  expiration: 86400000
+
+sifen:
+  base-url: https://test.sifen.gov.py
+  cert-path: /test/certificate.p12
+  cert-pass: test-password
+  timeout: 30000
+
+logging:
+  level:
+    com.sifen: DEBUG
+    org.springframework.security: WARN
+    org.springframework.jdbc: WARN
+    org.springframework.web: INFO
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

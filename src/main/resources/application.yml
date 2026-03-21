@@ -1,0 +1,70 @@
+sifen:
+  ambiente: prod
+  # cert-path: classpath:cert/certificado.p12
+  cert-path: /home/hugo/dev/p12/JORGE_GUSTAVO_PETRIK_IBARRA_VIT_S_A.p12
+  cert-pass: 20multipartes25
+  id-csc: 0001
+  csc: 461584cce34c06Ee70AC657B482Fb0e2
+  timeout: 30000
+
+
+
+
+server:
+  port: ${PORT:8080}
+
+
+
+
+spring:
+  application:
+    name: sifen-api-java
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:noauth}
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+  flyway:
+    enabled: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+jwt:
+  secret: ${JWT_SECRET:}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+
+logging:
+  level:
+    org.springdoc: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot: INFO
+    com.sifen: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+
+
+
+
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    url: /v3/api-docs
+    path: /swagger-ui.html
+    tryItOutEnabled: true
+  show-actuator: true
