@@ -304,7 +304,7 @@
         out.innerHTML = '<span class="idle-text">Conectando...</span>';
 
         try {
-            const response = await fetch(`/api/sifen/status/${env}`);
+            const response = await fetch(`api/sifen/status/${env}`);
             const data = await response.json();
 
             let statusClass = 'is-err';
