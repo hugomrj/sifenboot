@@ -15,7 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Service
-public class    RucClient {
+public class  RucClient {
 
     private final RucConsultaSoapRequest rucRequest;
     private final SSLConfig sslConfig;
@@ -66,6 +66,5 @@ public class    RucClient {
         String environment = sifenProperties.getAmbiente();
         String baseUrl = serverSifen.getServer(environment);
         return baseUrl + "/de/ws/consultas/consulta-ruc.wsdl";
-
     }
 }

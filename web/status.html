@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sifenboot Monitor</title>
+    <style>
+        /* Reset total - Sin bordes redondeados */
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background: #ffffff;
+            color: #111111;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 400px;
+            padding: 40px;
+            border: 1px solid #eeeeee;
+        }
+
+        .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            color: #111;
+            border: none;
+            border-bottom: 2px solid #111;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #111111;
+            color: #ffffff;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover:not(:disabled) { opacity: 0.8; }
+        button:disabled { background: #eeeeee; color: #bbbbbb; cursor: not-allowed; }
+
+        .results {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .key { color: #888888; }
+        .val { font-weight: 500; }
+
+        /* Estados con colores vivos planos */
+        .status { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 2px 6px; }
+        .st-ok { background: #00ff66; color: #000; }     /* Verde Neón */
+        .st-warn { background: #ffaa00; color: #000; }   /* Naranja Vivo */
+        .st-err { background: #ff0044; color: #fff; }    /* Rojo Eléctrico */
+
+        .idle { color: #cccccc; font-size: 0.8rem; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="label">Ambiente Sifen</span>
+    <select id="env-select">
+        <option value="prod">Producción (Live)</option>
+        <option value="test">Testing (Sandbox)</option>
+    </select>
+
+    <button id="exec-btn" onclick="run()">Verificar Conexión</button>
+
+    <div id="out" class="results">
+        <span class="idle">Esperando ejecución...</span>
+    </div>
+</div>
+
+<script>
+    async function run() {
+        const env = document.getElementById('env-select').value;
+        const btn = document.getElementById('exec-btn');
+        const out = document.getElementById('out');
+
+        btn.disabled = true;
+        btn.innerText = "Consultando...";
+        out.innerHTML = `<span class="idle">Estableciendo conexión segura...</span>`;
+
+        try {
+            const response = await fetch(`/consulta/ruc/debug/${env}`);
+            const data = await response.json();
+
+            let statusClass = 'st-err';
+            let statusText = 'Desconectado';
+
+            if (data.httpCode === 200 && data.sifenOk) {
+                statusClass = 'st-ok';
+                statusText = 'Operativo';
+            } else if (data.httpCode === 400 || (data.httpCode && !data.sifenOk)) {
+                statusClass = 'st-warn';
+                statusText = 'Conectado / Rechazado';
+            }
+
+            out.innerHTML = `
+                <div class="row">
+                    <span class="key">Latencia</span>
+                    <span class="val">${data.ms}ms</span>
+                </div>
+                <div class="row">
+                    <span class="key">Protocolo</span>
+                    <span class="val">HTTP ${data.httpCode}</span>
+                </div>
+                <div class="row" style="margin-top:20px">
+                    <span class="key">Estado</span>
+                    <span class="status ${statusClass}">${statusText}</span>
+                </div>
+            `;
+        } catch (e) {
+            out.innerHTML = `<div class="row"><span class="status st-err">Error de Red</span></div>`;
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Verificar Conexión";
+        }
+    }
+</script>
+
+</body>
+</html>
