@@ -40,8 +40,8 @@ Una vez inicializada la base de datos, puede levantar el servicio:
 </code></pre>
 
 2. Ejecutar la aplicacion:
-   <pre><code>./mvnw spring-boot:run
-    </code></pre>
+<pre><code>./mvnw spring-boot:run
+</code></pre>
 
 ## Arquitectura del Proyecto
 
