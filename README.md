@@ -36,9 +36,9 @@ src/main/resources/db/setup.sql
 Una vez inicializada la base de datos, puede levantar el servicio:
 
 1. Limpiar y compilar:
-<pre><code>
+<p><code>
 ./mvnw clean install
-</code></pre>
+</code></p>
 
 2. Ejecutar la aplicacion:
    ./mvnw spring-boot:run
