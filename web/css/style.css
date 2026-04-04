@@ -1,0 +1,432 @@
+/* web/css/style.css */
+
+:root {
+    --brand-primary: #1A1A1A;
+    --brand-secondary: #F5F5F7;
+
+    --brand-accent: #FF3B3B; /* rojo vivo, por ejemplo */
+
+
+    --bg-page: #FFFFFF;
+    --bg-dashboard: #FAFAFA;
+    --text-main: #1A1A1A;
+    --text-muted: #888888;
+    --ui-border: #E5E5E7;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-full: 9999px;
+    --sidebar-width: 260px;
+    --navbar-height: 64px;
+}
+
+/* --- RESET & BASE --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg-page);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- LOGIN UTILITIES --- */
+.center-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- DASHBOARD STRUCTURE --- */
+.top-navbar {
+    height: var(--navbar-height);
+    background: var(--bg-page);
+    border-bottom: 1px solid var(--ui-border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-page);
+    border-right: 1px solid var(--ui-border);
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 20px 16px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.main-content {
+    margin-top: var(--navbar-height);
+    margin-left: var(--sidebar-width);
+    padding: 40px;
+    background: var(--bg-dashboard);
+    min-height: calc(100vh - var(--navbar-height));
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- TOGGLE STATES (DESKTOP) --- */
+.sidebar.is-hidden { transform: translateX(-100%); }
+.main-content.expanded { margin-left: 0; }
+
+/* --- MOBILE MENU & OVERLAY --- */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 85;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.is-active { display: block; }
+
+/* --- SIDEBAR MENU (SIN ICONOS, 2 NIVELES) --- */
+.nav-group { margin-bottom: 4px; }
+
+.nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.nav-item:hover { background: var(--brand-secondary); }
+
+/* Submenús desplegables */
+.nav-sub-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding-left: 16px;
+}
+
+.nav-group.is-open .nav-sub-list {
+    max-height: 500px; /* Ajustar según contenido */
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.nav-sub-item {
+    display: block;
+    padding: 8px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-left: 1px solid var(--ui-border);
+    transition: all 0.15s ease;
+}
+
+.nav-sub-item:hover, .nav-sub-item.active {
+
+    color: var(--brand-primary);
+    /*
+    color: var(--brand-accent);
+    */
+    border-left-color: var(--brand-primary);
+    border-left-color: var(--brand-accent);
+
+}
+
+/* Flecha indicadora de submenú */
+.nav-arrow {
+    width: 12px; height: 12px;
+    transition: transform 0.3s ease;
+}
+.nav-group.is-open .nav-arrow { transform: rotate(180deg); }
+
+/* --- COMPONENTES FLAT --- */
+.card {
+    background: var(--bg-page);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+}
+
+.navbar-logo { font-weight: 700; font-size: 1rem; }
+
+.menu-toggle {
+    background: none; border: none; cursor: pointer;
+    padding: 8px; margin-right: 16px;
+    border-radius: var(--radius-sm); display: flex;
+}
+.menu-toggle:hover { background: var(--brand-secondary); }
+
+/* --- FORMS --- */
+
+
+.form-group {
+    margin-bottom: 20px; /* Separación entre los bloques de input */
+}
+
+.form-label {
+    display: block;
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--text-muted);
+
+    letter-spacing: 0.05em;
+    margin-bottom: 8px; /* Espacio entre el texto y el input */
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--brand-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+
+
+
+.form-input:focus {
+    background: #FFFFFF;
+    border-color: var(--ui-border);
+}
+
+
+
+
+
+
+
+
+/* --- BUTTONS --- */
+
+/* --- BOTONES SIFENBOOT --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-primary);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    line-height: 1;
+    border: 1px solid transparent;
+}
+
+/* BOTÓN POR DEFECTO (Para formularios y acciones de Dashboard) */
+/* Altura aprox: 42px. Es el equilibrio perfecto. */
+.btn{
+    padding: 12px 24px;
+    font-size: 0.875rem;
+}
+
+/* BOTÓN GRANDE (Exclusivo para Login) */
+/* Altura aprox: 54px. Imponente y fácil de presionar. */
+.btn-lg {
+    width: 100%;
+    padding: 18px 32px;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+/* BOTÓN CHICO (Para "Ver Detalles" en tablas o listas) */
+/* Altura aprox: 30px. No rompe el alto de las filas. */
+.btn-sm {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* INTERACCIÓN GLOBAL */
+.btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: scale(0.97);
+    background: #000000;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* --- CONTENEDORES DE BOTONES --- */
+
+/* Para separar el bloque de botones del resto del formulario */
+.form-actions {
+    margin-top: 32px; /* mt-8 equivalente */
+    display: flex;
+    gap: 12px; /* Espacio entre botones */
+    align-items: center;
+}
+
+/* Variante: Centrado (Útil para el Login) */
+.actions-center { justify-content: center; }
+
+/* Variante: Derecha (Útil para formularios del Dashboard) */
+.actions-right { justify-content: flex-end; }
+
+/* Variante: Columna (Para móviles o botones muy largos) */
+.actions-stack { flex-direction: column; width: 100%; }
+
+
+
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 800px) {
+    .sidebar { transform: translateX(-100%); z-index: 100; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 24px; }
+    .top-navbar { z-index: 110; }
+}
+
+
+
+/* --- ALERTS (FLAT STYLE) --- */
+.alert {
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Success */
+.alert-success {
+    background-color: #F0FDF4;
+    border-color: #BBF7D0;
+    color: #166534;
+}
+
+/* Error */
+.alert-error {
+    background-color: #FEF2F2;
+    border-color: #FECACA;
+    color: #991B1B;
+}
+
+/* Info */
+.alert-info {
+    background-color: #EFF6FF;
+    border-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+/* Botón para cerrar alerta */
+.alert-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: currentColor;
+    opacity: 0.5;
+    padding: 4px;
+    display: flex;
+    transition: opacity 0.2s;
+}
+
+.alert-close:hover { opacity: 1; }
+
+
+
+/* --- AJUSTES DE SIDEBAR FLEX (Para empujar el botón salir) --- */
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.nav-content {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+}
+
+.nav-bottom {
+    margin-top: auto;
+    border-top: 1px solid var(--ui-border);
+}
+
+/* --- TABLAS Y BADGES (ESTILO FLAT) --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-flat {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.table-flat th {
+    padding: 12px 16px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+.table-flat td {
+    padding: 16px;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+.table-flat tr:hover {
+    background: var(--bg-dashboard);
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge.is-ok { background: #166534; color: #fff; }
+.badge.is-err { background: #991B1B; color: #fff; }
+
+/* --- UTILIDADES EXTRA --- */
+.font-mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }

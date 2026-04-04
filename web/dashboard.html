@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sifenboot · Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<header class="top-navbar">
+    <button class="menu-toggle" id="menuToggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <div class="navbar-logo">Sifenboot</div>
+</header>
+
+<div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar">
+        <nav>
+            <div class="nav-content">
+                <div class="nav-group">
+                    <div class="nav-item toggle-submenu">
+                        Comprobantes
+                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                    <div class="nav-sub-list">
+                        <a href="#" class="nav-sub-item">Listado General</a>
+                        <a href="#" class="nav-sub-item">Emisión Manual</a>
+                        <a href="#" class="nav-sub-item">Lotes Enviados</a>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-item toggle-submenu">
+                        Clientes
+                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                    <div class="nav-sub-list">
+                        <a href="#" class="nav-sub-item">Directorio</a>
+                        <a href="#" class="nav-sub-item">RUC Online (SET)</a>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <a href="#" class="nav-item">Configuración</a>
+                </div>
+            </div>
+
+            <div class="nav-bottom">
+                <div class="nav-group">
+                    <a href="login.html" class="nav-item text-red-500 font-bold">
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+        <div class="mb-8 fade-in">
+            <h2 class="text-2xl font-bold tracking-tight">Resumen de Actividad</h2>
+            <p class="text-sm text-gray-400 mt-1">Estado de transmisión SIFEN - San Lorenzo, PY</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 fade-in">
+            <div class="card">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">DTE Aprobados</p>
+                <h3 class="text-2xl font-bold">1,402</h3>
+                <span class="text-[10px] text-green-500 font-bold">+12% vs ayer</span>
+            </div>
+            <div class="card">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rechazos</p>
+                <h3 class="text-2xl font-bold">3</h3>
+                <span class="text-[10px] text-red-400 font-bold">Requiere revisión</span>
+            </div>
+            <div class="card">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Pendientes</p>
+                <h3 class="text-2xl font-bold">45</h3>
+                <span class="text-[10px] text-gray-400 font-bold">En cola de envío</span>
+            </div>
+            <div class="card">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tiempo Respuesta</p>
+                <h3 class="text-2xl font-bold text-blue-500">1.2s</h3>
+                <span class="text-[10px] text-blue-400 font-bold">Latencia promedio</span>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h4 class="font-bold">Últimos Documentos Electrónicos</h4>
+                <button class="btn !w-auto !py-2 !px-4 !text-[10px]">Ver Todo</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table-flat">
+                    <thead>
+                    <tr>
+                        <th>CDC / ID</th>
+                        <th>Cliente</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="font-mono text-xs">5008...9281</td>
+                        <td>Supermercado Stock</td>
+                        <td>450.000 ₲</td>
+                        <td><span class="badge is-ok text-white">Aprobado</span></td>
+                        <td class="text-gray-400">Hace 5 min</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-xs">5008...4412</td>
+                        <td>Farmacia San Roque</td>
+                        <td>125.000 ₲</td>
+                        <td><span class="badge is-ok text-white">Aprobado</span></td>
+                        <td class="text-gray-400">Hace 12 min</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-xs">5008...1109</td>
+                        <td>Comercial El Sol</td>
+                        <td>2.100.000 ₲</td>
+                        <td><span class="badge is-err text-white">Rechazado</span></td>
+                        <td class="text-gray-400">Hace 20 min</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // ... (Mantener la lógica de JavaScript anterior para toggles y overlay)
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    menuToggle.addEventListener('click', () => {
+        if (window.innerWidth > 800) {
+            sidebar.classList.toggle('is-hidden');
+            mainContent.classList.toggle('expanded');
+        } else {
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('is-active');
+        }
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('is-active');
+    });
+
+    document.querySelectorAll('.toggle-submenu').forEach(item => {
+        item.addEventListener('click', () => {
+            const parent = item.parentElement;
+            parent.classList.toggle('is-open');
+        });
+    });
+</script>
+</body>
+</html>

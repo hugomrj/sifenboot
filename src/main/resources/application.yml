@@ -1,9 +1,9 @@
 sifen:
-  ambiente: prod
-  cert-path: /home/hugo/dev/p12/JORGE_GUSTAVO_PETRIK_IBARRA_VIT_S_A.p12
-  cert-pass: 20multipartes25
-  id-csc: 0001
-  csc: 461584cce34c06Ee70AC657B482Fb0e2
+  ambiente: ${SIFEN_AMBIENTE}
+  cert-path: ${SIFEN_CERT_PATH}
+  cert-pass: ${SIFEN_CERT_PASS}
+  id-csc: ${SIFEN_ID_CSC}
+  csc: ${SIFEN_CSC}
   timeout: 30000
 
 server:
@@ -15,10 +15,12 @@ spring:
 
   # Configuración de Base de Datos (Postgres)
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/sifenboot}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASS:password}
+    url: jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.name:sifenboot}
+    username: ${db.user:postgres}
+    password: ${db.pass:password}
     driver-class-name: org.postgresql.Driver
+
+
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:noauth}

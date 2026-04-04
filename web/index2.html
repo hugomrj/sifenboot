@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sifenboot · Login</title>
+
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tu CSS Personalizado -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="center-screen">
+    <div class="w-full max-w-sm fade-in">
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <!-- Usando clases de Tailwind para el título grande y el subtítulo -->
+            <p class="text-sm font-semibold uppercase tracking-widest text-gray-400">Sifenboot</p>
+            <h1 class="mt-2 text-2xl font-bold tracking-tight text-gray-900">Iniciar Sesión</h1>
+        </div>
+
+        <!-- Form Container -->
+        <div class="card">
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="username" class="form-label">Usuario</label>
+                    <input type="text" id="username" name="username" class="form-input" placeholder="Ingresa tu usuario" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" id="loginBtn" class="btn mt-4">
+                    Ingresar al Sistema
+                </button>
+
+                <div class="text-center mt-6">
+                    <a href="#" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <p class="text-center mt-8 text-xs text-gray-400">
+            © 2023 Sifenboot. Librería de Facturación Electrónica.
+        </p>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('loginForm');
+    const btn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Evita el envío por defecto para mostrar el spinner
+
+        // 1. Mostrar estado de carga
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Verificando...';
+
+        // 2. Simular envío (aquí iría tu fetch/axios real)
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        console.log('Enviando:', { username, password });
+
+        // Ejemplo de simulación de login:
+        setTimeout(() => {
+            // Si todo sale bien, redirigir al dashboard
+            // window.location.href = 'dashboard.html';
+
+            // Si hay error (descomenta para probar):
+            // btn.disabled = false;
+            // btn.innerText = 'Ingresar al Sistema';
+            // alert('Credenciales incorrectas');
+
+            // Para este ejemplo, redirigimos automáticamente después de 1s
+            window.location.href = 'dashboard.html';
+        }, 1500);
+    });
+</script>
+
+</body>
+</html>

@@ -19,3 +19,6 @@ tmp/
 
 # Sistema
 .DS_Store
+
+# Seguridad - NO BORRAR
+.env
