@@ -37,11 +37,11 @@ Una vez inicializada la base de datos, puede levantar el servicio:
 
 1. Limpiar y compilar:
 <pre><code>./mvnw clean install
-./mvnw clean install
 </code></pre>
 
 2. Ejecutar la aplicacion:
-   ./mvnw spring-boot:run
+   <pre><code>./mvnw spring-boot:run
+    </code></pre>
 
 ## Arquitectura del Proyecto
 
