@@ -15,13 +15,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(NoResourceFoundException ex, HttpServletRequest req) {
-        return build(HttpStatus.NOT_FOUND, "Endpoint not found", req, Map.of(
-                "method", req.getMethod(),
-                "url", req.getRequestURI()
-        ));
-    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
@@ -31,26 +25,34 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message, HttpServletRequest req, Map<String, Object> details) {
-        String traceId = MDC.get("traceId");
-        if (traceId == null || traceId.isBlank()) {
-            traceId = MDC.get("X-B3-TraceId");
-        }
-        if (traceId == null || traceId.isBlank()) {
-            traceId = MDC.get("correlationId");
-        }
 
         ApiError body = new ApiError(
-                Instant.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                message,
-                req.getRequestURI(),
-                traceId,
-                details
+                Instant.now(),           // timestamp: Cuándo pasó
+                status.value(),          // status: 401, 500, etc.
+                status.getReasonPhrase(),// error: "Unauthorized", "Internal Server Error"
+                message,                 // message: Tu mensaje personalizado
+                details                  // details: Mapa de errores extra
         );
 
         return ResponseEntity.status(status)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(body);
     }
+
+
+    // 1. Añadimos este manejador específico
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ApiError> handleResponseStatus(org.springframework.web.server.ResponseStatusException ex, HttpServletRequest req) {
+        // Obtenemos el código (401, 404, etc.) que definiste en el Service
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        // Usamos el método 'build' que ya existe en tu código heredado
+        return build(status, ex.getReason(), req, Map.of(
+                "exception", ex.getClass().getSimpleName()
+        ));
+    }
+
+
+
 }

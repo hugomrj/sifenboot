@@ -9,18 +9,25 @@ sifen:
 server:
   port: ${PORT:8080}
 
+
 spring:
   application:
     name: sifen-api-java
 
-  # Configuración de Base de Datos (Postgres)
   datasource:
     url: jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.name:sifenboot}
     username: ${db.user:postgres}
     password: ${db.pass:password}
     driver-class-name: org.postgresql.Driver
 
-
+  # --- AGREGAR ESTO PARA THYMELEAF ---
+  thymeleaf:
+    cache: false
+    prefix: file:./web/
+    suffix: .html
+    mode: HTML
+    check-template-location: true
+  # -----------------------------------
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:noauth}
@@ -39,13 +46,13 @@ spring:
       max-request-size: 10MB
       enabled: true
 
-  # Única fuente de la UI: Carpeta externa 'web'
   web:
     resources:
       static-locations:
         - file:./web/
   mvc:
     static-path-pattern: /**
+
 
   # Quitamos el exclude para que Spring active JDBC automáticamente
   autoconfigure:

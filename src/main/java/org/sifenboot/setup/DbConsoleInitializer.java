@@ -5,6 +5,10 @@ import java.util.Properties;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class DbConsoleInitializer {
 
@@ -80,6 +84,10 @@ public class DbConsoleInitializer {
         }
     }
 
+
+
+
+
     private static String loadSqlScript(String path) throws Exception {
         System.out.println(">> [3/4] Leyendo script SQL: " + path);
         try (InputStream is = DbConsoleInitializer.class.getClassLoader().getResourceAsStream(path)) {
@@ -88,10 +96,32 @@ public class DbConsoleInitializer {
             }
             Scanner s = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
             String content = s.hasNext() ? s.next() : "";
-            System.out.println("   - Script cargado (" + content.length() + " caracteres).");
+
+            // 1. Buscamos la etiqueta "-- @password: valor" usando Regex
+            Pattern pattern = Pattern.compile("-- @password:\\s*(\\S+)");
+            Matcher matcher = pattern.matcher(content);
+
+            if (matcher.find()) {
+                String passwordPlano = matcher.group(1); // Extrae "admin"
+                System.out.println("   - Detectada contraseña en SQL: " + passwordPlano);
+
+                // 2. Generamos el hash con BCrypt
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                String hashReal = encoder.encode(passwordPlano);
+
+                // 3. Reemplazamos el placeholder :pass_admin por el hash real
+                content = content.replace(":pass_admin", hashReal);
+                System.out.println("   - Hash inyectado correctamente.");
+            }
+
             return content;
         }
     }
+
+
+
+
+
 
     private static void executeSqlScript(String url, String script, String user, String pass) throws Exception {
         System.out.println(">> [4/4] Ejecutando setup.sql en la base de datos destino...");

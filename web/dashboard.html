@@ -1,26 +1,43 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sifenboot · Dashboard</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <script th:src="@{/js/ui-utils.js}" src="/js/ui-utils.js"></script>
+    <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+
 </head>
 <body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <header class="top-navbar">
-    <button class="menu-toggle" id="menuToggle">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-    </button>
-    <div class="navbar-logo">Sifenboot</div>
+    <div class="flex items-center gap-3">
+        <button class="menu-toggle" id="menuToggle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <div class="navbar-logo">Sifenboot</div>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <a href="#" id="logoutAction" class="logout-btn" title="Cerrar Sesión">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                <line x1="12" y1="2" x2="12" y2="12"></line>
+            </svg>
+        </a>
+    </div>
+
 </header>
 
 <div class="dashboard-layout">
@@ -56,11 +73,6 @@
             </div>
 
             <div class="nav-bottom">
-                <div class="nav-group">
-                    <a href="login.html" class="nav-item text-red-500 font-bold">
-                        Cerrar Sesión
-                    </a>
-                </div>
             </div>
         </nav>
     </aside>
@@ -168,6 +180,24 @@
             parent.classList.toggle('is-open');
         });
     });
+
+
+    // --- Lógica de Logout ---
+    const logoutBtn = document.getElementById('logoutAction');
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita que el navegador salte al '#'
+
+            // Llamamos al objeto global que definimos en auth.js
+            if (typeof Auth !== 'undefined') {
+                Auth.logout();
+            } else {
+                console.error("Error: El archivo auth.js no se cargó correctamente.");
+                window.location.href = '/login'; // Fallback directo
+            }
+        });
+    }
 </script>
 </body>
 </html>

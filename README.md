@@ -24,7 +24,9 @@ El proyecto incluye una utilidad para crear la base de datos, las tablas y el us
 
 Ejecute el siguiente comando desde la raiz del proyecto:
 
-<pre><code>mvn compile exec:java -Dexec.mainClass="org.sifenboot.setup.DbConsoleInitializer"</code></pre>
+<pre><code>
+mvn compile exec:java -Dexec.mainClass="org.sifenboot.setup.DbConsoleInitializer"
+</code></pre>
 
 Nota: Si prefiere la instalacion manual, el script SQL completo se encuentra en: `src/main/resources/db/setup.sql`.
 

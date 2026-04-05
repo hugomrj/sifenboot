@@ -4,13 +4,10 @@ import org.sifenboot.core.dto.evento.request.CancelarRequest;
 import org.sifenboot.core.service.evento.EventoCancelarService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/evento/cancelar")
+@RequestMapping("/api/{cod_emisor}")
 @Tag(name = "Evento Cancelar")
 public class EventoCancelarController {
 
@@ -20,12 +17,16 @@ public class EventoCancelarController {
         this.eventoCancelarService = eventoCancelarService;
     }
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
+    // Aquí defines la acción específica
+    @PostMapping(value = "/evento/cancelar", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> eventoCancelar(
+            @PathVariable("cod_emisor") String codEmisor,
             @RequestBody CancelarRequest request
     ) {
-        var result = eventoCancelarService.execute(request);
+        var result = eventoCancelarService.execute(codEmisor, request);
+
         return ResponseEntity.ok(result);
     }
-
 }
+
+

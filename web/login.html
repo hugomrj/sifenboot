@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sifenboot · Login</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <script th:src="@{/js/ui-utils.js}" src="/js/ui-utils.js"></script>
+    <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+
 </head>
 <body>
+
 
 <div class="center-screen">
     <div class="w-full max-w-[380px] fade-in">
@@ -48,20 +54,42 @@
     </div>
 </div>
 
-<script>
+<script type="module">
     const form = document.getElementById('loginForm');
-    const btn = document.getElementById('loginBtn');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        btn.disabled = true;
-        btn.innerHTML = '<div class="flex justify-center items-center"><span class="spinner"></span> Verificando...</div>';
 
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        const data = Object.fromEntries(new FormData(form));
+
+        try {
+            const response = await fetch('/app/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+                localStorage.setItem('token', user.accessToken);
+
+                // Éxito: Feedback visual antes de saltar al dashboard
+                showAlert('¡Bienvenido! Iniciando sesión...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+            } else {
+                const errorData = await response.json();
+                // Error de credenciales: Usamos tu alerta flat roja
+                showAlert(errorData.message || 'Usuario o contraseña incorrectos', 'error');
+            }
+        } catch (err) {
+            // Error de red/servidor: Usamos tu alerta flat roja
+            showAlert('Error de conexión con el servidor Sifenboot', 'error');
+            console.error("Error en la petición:", err);
+        }
     });
 </script>
-
 </body>
 </html>
