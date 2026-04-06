@@ -1,0 +1,27 @@
+<div class="fade-in">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Gestión de Emisores</h2>
+        <button class="btn-flat"
+                hx-get="/app/emisores/view/nuevo"
+                hx-target="#mainContent">
+            + Nuevo Registro
+        </button>
+    </div>
+
+    <div class="card">
+        <table class="table-flat">
+            <thead>
+            <tr>
+                <th>RUC</th>
+                <th>Razón Social</th>
+                <th class="text-right">Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-datos"
+                   hx-get="/api/emisores"
+                   hx-trigger="load">
+            <tr><td colspan="3" class="text-center opacity-50">Cargando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

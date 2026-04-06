@@ -1,9 +1,9 @@
-package org.sifenboot.panel.service;
+package org.sifenboot.shell.service;
 
-import org.sifenboot.panel.dto.LoginRequest;
-import org.sifenboot.panel.dto.UserDto;
-import org.sifenboot.panel.model.User;
-import org.sifenboot.panel.repository.UserRepository;
+import org.sifenboot.shell.dto.LoginRequest;
+import org.sifenboot.shell.dto.UserDto;
+import org.sifenboot.shell.model.User;
+import org.sifenboot.shell.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

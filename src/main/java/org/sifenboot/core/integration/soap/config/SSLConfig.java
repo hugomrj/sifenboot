@@ -1,13 +1,10 @@
 package org.sifenboot.core.integration.soap.config;
 
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -15,73 +12,46 @@ import java.security.SecureRandom;
 @Service
 public class SSLConfig {
 
-    private final SifenProperties sifenProperties;
+    /**
+     * Crea un SSLContext dinámico utilizando los datos del certificado almacenados en la DB.
+     *
+     * @param p12Contenido El byte[] (blob) del archivo .p12
+     * @param p12Password  La contraseña del certificado
+     * @return SSLContext configurado para Sifen
+     */
+    public SSLContext createSSLContext(byte[] p12Contenido, String p12Password) {
+        if (p12Contenido == null || p12Contenido.length == 0) {
+            throw new IllegalArgumentException("El contenido del certificado (.p12) es nulo o está vacío.");
+        }
+        if (p12Password == null) {
+            throw new IllegalArgumentException("La contraseña del certificado es requerida.");
+        }
 
-    public SSLConfig(SifenProperties sifenProperties) {
-        this.sifenProperties = sifenProperties;
-    }
-
-    public SSLContext createSSLContext() {
         try {
-            String keystorePath = sifenProperties.getCertPath();
-            String keystorePassword = sifenProperties.getCertPass();
-
-            if (keystorePath == null || keystorePath.isBlank()) {
-                throw new RuntimeException("cert-path no está configurado");
-            }
-            if (keystorePassword == null) {
-                throw new RuntimeException("cert-pass no está configurado");
-            }
-
-            Resource resource = resolveKeystoreResource(keystorePath);
-
-            // 💡 No dependas de resource.exists(): abrí el stream y si falla, ahí sabés la verdad.
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            try (InputStream is = resource.getInputStream()) {
-                keyStore.load(is, keystorePassword.toCharArray());
+            try (InputStream is = new ByteArrayInputStream(p12Contenido)) {
+                keyStore.load(is, p12Password.toCharArray());
             }
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(keyStore, keystorePassword.toCharArray());
+            kmf.init(keyStore, p12Password.toCharArray());
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2"); // Recomendado especificar versión para Sifen
             sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
+
             return sslContext;
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create SSL context: " + e.getMessage(), e);
+            throw new RuntimeException("Error al crear SSLContext desde la base de datos: " + e.getMessage(), e);
         }
     }
 
-    private Resource resolveKeystoreResource(String keystorePath) {
-        // classpath:
-        if (keystorePath.startsWith("classpath:")) {
-            String cp = keystorePath.substring("classpath:".length());
-            if (cp.startsWith("/")) cp = cp.substring(1);
-
-            ClassPathResource r = new ClassPathResource(cp);
-            // acá podés ver exactamente qué está buscando
-            if (!r.exists()) {
-                throw new RuntimeException(
-                        "Archivo PKCS12 no encontrado en classpath. Buscado como: " + r.getDescription()
-                                + " | path original: " + keystorePath
-                );
-            }
-            return r;
-        }
-
-        // file: explícito
-        if (keystorePath.startsWith("file:")) {
-            return new FileSystemResource(keystorePath.substring("file:".length()));
-        }
-
-
-        // Windows (C:\ o C:/)
-        if (keystorePath.matches("^[A-Za-z]:[\\\\/].*")) {
-            return new FileSystemResource(keystorePath);
-        }
-
-        // Linux / ruta relativa
-        return new FileSystemResource(keystorePath);
+    /**
+     * Método legacy neutralizado.
+     * Evita que la aplicación falle al arrancar si algún componente todavía lo invoca en un @PostConstruct.
+     */
+    public SSLContext createSSLContext() {
+        // Retornamos null en lugar de lanzar excepción para permitir que el contexto de Spring suba.
+        return null;
     }
 }

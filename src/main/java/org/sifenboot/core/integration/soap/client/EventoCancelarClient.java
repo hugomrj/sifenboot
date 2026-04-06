@@ -1,7 +1,7 @@
 package org.sifenboot.core.integration.soap.client;
 
 import org.sifenboot.core.integration.sifen.ServerSifen;
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.core.integration.soap.config.SSLConfig;
 import org.sifenboot.core.integration.soap.request.EventoCancelarSoapRequest;
 import jakarta.annotation.PostConstruct;
@@ -19,7 +19,7 @@ public class EventoCancelarClient {
     private final EventoCancelarSoapRequest eventoCancelarRequest;
     private final SSLConfig sslConfig;
     private final ServerSifen serverSifen;
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
 
     private HttpClient httpClient;
 
@@ -27,20 +27,20 @@ public class EventoCancelarClient {
     public EventoCancelarClient(EventoCancelarSoapRequest eventoCancelarRequest,
                                 SSLConfig sslConfig,
                                 ServerSifen serverSifen,
-                                SifenProperties sifenProperties) {
+                                SifenProperties_Deprecated sifenPropertiesDeprecated) {
         this.eventoCancelarRequest = eventoCancelarRequest;
         this.sslConfig = sslConfig;
         this.serverSifen = serverSifen;
-        this.sifenProperties = sifenProperties;
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
     }
-
+    /*
     @PostConstruct
     void initialize() {
         this.httpClient = HttpClient.newBuilder()
                 .sslContext(sslConfig.createSSLContext())
                 .build();
     }
-
+    */
 
     public HttpResponse<String> cancelarEvento(String id, String mOtEve) {
         try {
@@ -70,7 +70,7 @@ public class EventoCancelarClient {
 
 
     private String buildCancelarEventoUrl() {
-        String environment = sifenProperties.getAmbiente();
+        String environment = sifenPropertiesDeprecated.getAmbiente();
         String baseUrl = serverSifen.getServer(environment);
         return baseUrl + "/de/ws/eventos/evento.wsdl";
 

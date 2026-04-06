@@ -1,9 +1,9 @@
 sifen:
-  ambiente: ${SIFEN_AMBIENTE}
-  cert-path: ${SIFEN_CERT_PATH}
-  cert-pass: ${SIFEN_CERT_PASS}
-  id-csc: ${SIFEN_ID_CSC}
-  csc: ${SIFEN_CSC}
+  # ambiente: ${SIFEN_AMBIENTE}  <-- ELIMINAR (Ahora está en tabla certificados)
+  # cert-path: ${SIFEN_CERT_PATH} <-- ELIMINAR (Ahora está en tabla certificados)
+  # cert-pass: ${SIFEN_CERT_PASS} <-- ELIMINAR (Ahora está en tabla certificados)
+  # id-csc: ${SIFEN_ID_CSC}       <-- ELIMINAR (Ahora está en tabla certificados)
+  # csc: ${SIFEN_CSC}             <-- ELIMINAR (Ahora está en tabla certificados)
   timeout: 30000
 
 server:

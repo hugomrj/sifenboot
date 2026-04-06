@@ -1,4 +1,4 @@
-    package org.sifenboot.panel.controller.view;
+    package org.sifenboot.shell.controller.view;
 
     import org.springframework.stereotype.Controller;
     import org.springframework.web.bind.annotation.GetMapping;

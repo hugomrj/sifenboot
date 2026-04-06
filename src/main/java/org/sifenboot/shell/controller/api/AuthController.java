@@ -1,12 +1,12 @@
-package org.sifenboot.panel.controller.api;
+package org.sifenboot.shell.controller.api;
 
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.sifenboot.panel.dto.LoginRequest;
-import org.sifenboot.panel.dto.UserDto;
-import org.sifenboot.panel.service.AuthService;
+import org.sifenboot.shell.dto.LoginRequest;
+import org.sifenboot.shell.dto.UserDto;
+import org.sifenboot.shell.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

@@ -4,7 +4,7 @@ import org.sifenboot.core.integration.de.DeComplemento;
 import org.sifenboot.core.integration.de.Mapping;
 import org.sifenboot.core.integration.de.structure.DeXmlElement;
 import org.sifenboot.core.integration.de.structure.DeXmlStructure;
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import org.w3c.dom.*;
@@ -19,23 +19,23 @@ import java.util.regex.Pattern;
 @RequestScope
 public class DeXmlBuilder {
 
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
     private final DeComplemento complegen;
     private final Mapping mapping;
     private final DeXmlStructure xmlEstructura;
 
-    public DeXmlBuilder(SifenProperties sifenProperties,
+    public DeXmlBuilder(SifenProperties_Deprecated sifenPropertiesDeprecated,
                         DeComplemento complegen,
                         Mapping mapping,
                         DeXmlStructure xmlEstructura) {
-        this.sifenProperties = sifenProperties;
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
         this.complegen = complegen;
         this.mapping = mapping;
         this.xmlEstructura = xmlEstructura;
     }
 
-    public SifenProperties getSifenProperties() {
-        return sifenProperties;
+    public SifenProperties_Deprecated getSifenProperties() {
+        return sifenPropertiesDeprecated;
     }
 
     public DeComplemento getComplegen() {

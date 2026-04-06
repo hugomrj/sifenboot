@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +17,10 @@ import java.util.LinkedHashMap;
 @Component
 public class QrNodeBuilder {
 
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
 
-    public QrNodeBuilder(SifenProperties sifenProperties) {
-        this.sifenProperties = sifenProperties;
+    public QrNodeBuilder(SifenProperties_Deprecated sifenPropertiesDeprecated) {
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
     }
 
     public Node addQrNode(Node node) {
@@ -161,13 +161,13 @@ public class QrNodeBuilder {
                 )
         );
 
-        queryParams.put("IdCSC", sifenProperties.getIdCsc());
+        queryParams.put("IdCSC", sifenPropertiesDeprecated.getIdCsc());
 
         String urlParams = IOUtils.buildUrlParams(queryParams);
         String hashedParams =
-                HashUtils.sha256Hex(urlParams + sifenProperties.getCsc());
+                HashUtils.sha256Hex(urlParams + sifenPropertiesDeprecated.getCsc());
 
-        return sifenProperties.getUrlConsultaQr()
+        return sifenPropertiesDeprecated.getUrlConsultaQr()
                 + urlParams
                 + "&cHashQR="
                 + hashedParams;

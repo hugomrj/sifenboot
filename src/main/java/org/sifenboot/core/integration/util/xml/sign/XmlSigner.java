@@ -1,6 +1,6 @@
 package org.sifenboot.core.integration.util.xml.sign;
 
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,11 +27,11 @@ import java.util.logging.Logger;
 @Service
 public class XmlSigner {
 
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
 
     @Autowired
-    public XmlSigner(SifenProperties sifenProperties) {
-        this.sifenProperties = sifenProperties;
+    public XmlSigner(SifenProperties_Deprecated sifenPropertiesDeprecated) {
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
     }
 
     public Node sign(Node parentNode,
@@ -94,9 +94,9 @@ public class XmlSigner {
             KeyStore ks = KeyStore.getInstance("PKCS12");
 
             try (InputStream in =
-                         new FileInputStream(sifenProperties.getCertPath())) {
+                         new FileInputStream(sifenPropertiesDeprecated.getCertPath())) {
 
-                ks.load(in, sifenProperties.getCertPass().toCharArray());
+                ks.load(in, sifenPropertiesDeprecated.getCertPass().toCharArray());
             }
 
             String alias = ks.aliases().nextElement();
@@ -105,7 +105,7 @@ public class XmlSigner {
 
             PrivateKey pk = (PrivateKey) ks.getKey(
                     alias,
-                    sifenProperties.getCertPass().toCharArray()
+                    sifenPropertiesDeprecated.getCertPass().toCharArray()
             );
 
             return sign(parentNode, signedNodeId, cert, pk);

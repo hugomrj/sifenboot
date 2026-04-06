@@ -1,4 +1,4 @@
-package org.sifenboot.panel.dto;
+package org.sifenboot.shell.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

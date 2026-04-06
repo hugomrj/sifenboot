@@ -1,4 +1,4 @@
-package org.sifenboot.panel.model;
+package org.sifenboot.shell.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

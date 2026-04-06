@@ -1,6 +1,6 @@
 package org.sifenboot.core.integration.util.xml.sign;
 
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.core.integration.util.xml.FileXML;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
@@ -18,11 +18,11 @@ import java.util.logging.Logger;
 @Component
 public class EventoXmlSigner {
 
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
     private final XmlSigner xmlSigner;
 
-    public EventoXmlSigner(SifenProperties sifenProperties, XmlSigner xmlSigner) {
-        this.sifenProperties = sifenProperties;
+    public EventoXmlSigner(SifenProperties_Deprecated sifenPropertiesDeprecated, XmlSigner xmlSigner) {
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
         this.xmlSigner = xmlSigner;
     }
 
@@ -46,9 +46,9 @@ public class EventoXmlSigner {
 
 
                 try (InputStream in = new FileInputStream(
-                    sifenProperties.getCertPath()
+                    sifenPropertiesDeprecated.getCertPath()
             )) {
-                ks.load(in, sifenProperties.getCertPass().toCharArray());
+                ks.load(in, sifenPropertiesDeprecated.getCertPass().toCharArray());
             }
 
             String alias = ks.aliases().nextElement();
@@ -58,7 +58,7 @@ public class EventoXmlSigner {
 
             PrivateKey privateKey = (PrivateKey) ks.getKey(
                     alias,
-                    sifenProperties.getCertPass().toCharArray()
+                    sifenPropertiesDeprecated.getCertPass().toCharArray()
             );
 
             // 4️⃣ Firmar (misma canonicalización que legacy)

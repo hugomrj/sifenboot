@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS emisores (
 );
 
 -- 2. Tabla de Certificados y Secretos (Configuración Sifen)
-CREATE TABLE IF NOT EXISTS emisor_certificados (
+CREATE TABLE IF NOT EXISTS certificados (
     id SERIAL PRIMARY KEY,
     emisor_id INTEGER NOT NULL UNIQUE, -- Relación 1 a 1 con la tabla emisores
 
@@ -66,4 +66,4 @@ CREATE TABLE IF NOT EXISTS emisor_certificados (
 
 -- Índices para optimizar las uniones (JOINs)
 CREATE INDEX IF NOT EXISTS idx_emisores_cod ON emisores(cod_emisor);
-CREATE INDEX IF NOT EXISTS idx_cert_emisor_id ON emisor_certificados(emisor_id);
+CREATE INDEX IF NOT EXISTS idx_cert_emisor_id ON certificados(emisor_id);

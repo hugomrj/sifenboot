@@ -2,7 +2,7 @@ package org.sifenboot.core.integration.soap.client;
 
 
 import org.sifenboot.core.integration.sifen.ServerSifen;
-import org.sifenboot.core.integration.sifen.config.SifenProperties;
+import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.core.integration.soap.config.SSLConfig;
 import org.sifenboot.core.integration.soap.request.RucConsultaSoapRequest;
 import jakarta.annotation.PostConstruct;
@@ -20,7 +20,7 @@ public class  RucClient {
     private final RucConsultaSoapRequest rucRequest;
     private final SSLConfig sslConfig;
     private final ServerSifen serverSifen;
-    private final SifenProperties sifenProperties;
+    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
 
     private HttpClient httpClient;
 
@@ -28,21 +28,21 @@ public class  RucClient {
             RucConsultaSoapRequest rucRequest,
             SSLConfig sslConfig,
             ServerSifen serverSifen,
-            SifenProperties sifenProperties
+            SifenProperties_Deprecated sifenPropertiesDeprecated
     ) {
         this.rucRequest = rucRequest;
         this.sslConfig = sslConfig;
         this.serverSifen = serverSifen;
-        this.sifenProperties = sifenProperties;
+        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
     }
-
+    /*
     @PostConstruct
     void initialize() {
         this.httpClient = HttpClient.newBuilder()
                 .sslContext(sslConfig.createSSLContext())
                 .build();
     }
-
+*/
     public HttpResponse<String> consultaRUC(String ruc) {
         try {
             String endpointUrl = buildEndpointUrl();
@@ -63,7 +63,7 @@ public class  RucClient {
     }
 
     private String buildEndpointUrl() {
-        String environment = sifenProperties.getAmbiente();
+        String environment = sifenPropertiesDeprecated.getAmbiente();
         String baseUrl = serverSifen.getServer(environment);
         return baseUrl + "/de/ws/consultas/consulta-ruc.wsdl";
     }
