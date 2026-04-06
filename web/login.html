@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sifenboot · Login</title>
+    <title>Sifenboot · Dashboard</title>
 
+    <!-- Fuente -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Tailwind primero -->
+    <script th:src="@{/js/tailwind.js}" src="/js/tailwind.js"></script>
+
+    <!-- Tu CSS después (para sobrescribir si hace falta) -->
     <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+    <!-- Librerías -->
+    <script th:src="@{/js/htmx.min.js}" src="/js/htmx.min.js"></script>
+
+    <!-- Scripts propios -->
     <script th:src="@{/js/ui-utils.js}" src="/js/ui-utils.js"></script>
     <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
-
 </head>
 <body>
 
@@ -91,5 +99,9 @@
         }
     });
 </script>
+
+
+
+
 </body>
 </html>

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+// --- NUEVOS IMPORTS PARA LA SESIÓN ---
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AuthService {
@@ -21,7 +25,6 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Transactional(readOnly = true)
     public UserDto login(LoginRequest request) {
         // 1. Buscar usuario
@@ -30,17 +33,25 @@ public class AuthService {
 
         // 2. Validar contraseña
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            // Al lanzar esto, Spring Boot busca si hay un manejador.
-            // Si no querés tocar el GlobalExceptionHandler, podés usar:
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
 
-        // 3. Éxito
+        // 3. CAPTURAR E IMPRIMIR JSESSIONID
+        // Esto obtiene la sesión que Spring Security ya creó o crea una nueva si no existe
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession session = attr.getRequest().getSession(true);
+        String jSessionId = session.getId();
+
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("JSESSIONID: " + jSessionId);
+        System.out.println("=".repeat(60) + "\n");
+
+        // 4. Éxito
         UserDto dto = new UserDto();
         dto.setUsername(user.getUsername());
-        dto.setAccessToken("TOKEN_TEMPORAL_SIFENBOOT");
+        // Aprovechamos y le pasamos el ID real al DTO por si lo necesitás en el front
+        dto.setAccessToken(jSessionId);
+
         return dto;
     }
-
-
 }

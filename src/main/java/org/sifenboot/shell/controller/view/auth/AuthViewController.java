@@ -1,4 +1,4 @@
-    package org.sifenboot.shell.controller.view;
+    package org.sifenboot.shell.controller.view.auth;
 
     import org.springframework.stereotype.Controller;
     import org.springframework.web.bind.annotation.GetMapping;

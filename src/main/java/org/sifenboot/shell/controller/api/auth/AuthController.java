@@ -1,4 +1,4 @@
-package org.sifenboot.shell.controller.api;
+package org.sifenboot.shell.controller.api.auth;
 
 
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,53 +1,60 @@
-# Sifenboot API
+## Sifenboot API
 
-Integracion Open Source para SIFEN (Paraguay).
-Middleware de alto rendimiento basado en Spring Boot 3.4.0 y Undertow.
+Integración Open Source para SIFEN (Paraguay).
 
-## Requisitos
-- Java 21 (Virtual Threads)
-- PostgreSQL 15+
-- Maven Wrapper (incluido)
+Middleware de alto rendimiento basado en Spring Boot 3.4.0 (Virtual Threads) y Undertow.
 
-## Configuracion Previa
+###   Requisitos
+Java 21 (Obligatorio para Virtual Threads)
 
-Antes de ejecutar, asegurese de que el archivo `src/main/resources/database.properties` tenga las credenciales correctas de su instancia de PostgreSQL:
+PostgreSQL 15+
 
+Maven Wrapper (incluido)
+
+### Configuración Previa
+Antes de iniciar, asegúrese de que el archivo src/main/resources/database.properties contenga las credenciales correctas de su instancia de PostgreSQL:
+
+#### /src/resources/database.properties
 <pre><code>db.host=localhost
 db.port=5432
 db.name=sifenboot
 db.user=postgres
-db.pass=su_password</code></pre>
-
-## Inicializacion de Base de Datos
-
-El proyecto incluye una utilidad para crear la base de datos, las tablas y el usuario administrador inicial (admin/admin123) de forma automatica.
-
-Ejecute el siguiente comando desde la raiz del proyecto:
-
-<pre><code>
-mvn compile exec:java -Dexec.mainClass="org.sifenboot.setup.DbConsoleInitializer"
+db.pass=su_password
 </code></pre>
 
-Nota: Si prefiere la instalacion manual, el script SQL completo se encuentra en: `src/main/resources/db/setup.sql`.
+### Inicialización de Base de Datos
+El proyecto incluye un script lanzador independiente para automatizar la creación de la base de datos, las tablas y el usuario administrador inicial (admin / admin123).
 
-## Compilacion y Ejecucion
+### Ejecución rápida (Recomendado)
+Desde la raíz del proyecto, ejecute el siguiente comando:
 
-Una vez inicializada la base de datos, puede levantar el servicio:
+<pre><code>java SetupDatabase.java</code></pre>
 
-1. Limpiar y compilar:
+Nota: Este comando utiliza las capacidades de Java 21 para ejecutar código fuente directamente. No requiere compilación previa ni ensucia el proyecto con archivos .class.
+
+### Ejecución vía Maven (Alternativa)
+Si prefiere utilizar el ciclo de vida de Maven directamente:
+
+<pre><code>./mvnw compile exec:java -Dexec.mainClass="org.sifenboot.setup.DbConsoleInitializer"</code></pre>
+
+### Compilación y Ejecución
+Una vez inicializada la base de datos, puede levantar el servicio siguiendo estos pasos:
+
+Limpiar e instalar dependencias:
+
 <pre><code>./mvnw clean install</code></pre>
 
-2. Ejecutar la aplicacion:
+### Ejecutar la aplicación:
+
 <pre><code>./mvnw spring-boot:run</code></pre>
 
-## Arquitectura del Proyecto
+### Acceso al Panel:
+Una vez que el servicio esté corriendo, puede acceder a la interfaz de administración en:
 
-El sistema utiliza una separacion de dominios para mantener el codigo limpio y escalable:
+http://localhost:8080/login 
 
-- **core**: Motor transaccional. Maneja XML, Firma Digital, comunicacion SOAP y CDC.
-- **panel**: Administracion (Dashboard). Gestion de Usuarios, Empresas y Workers.
-- **common**: Configuraciones transversales, Seguridad (JWT) y Manejo de Errores.
-- **worker**: Procesos asincronos para el envio masivo de lotes a SIFEN.
+(Credenciales por defecto: admin / admin).
 
-## Licencia
+
+### Licencia
 Apache 2.0

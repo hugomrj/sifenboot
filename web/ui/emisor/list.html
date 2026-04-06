@@ -1,26 +1,59 @@
-<div class="fade-in">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-white">Gestión de Emisores</h2>
-        <button class="btn-flat"
-                hx-get="/app/emisores/view/nuevo"
-                hx-target="#mainContent">
-            + Nuevo Registro
-        </button>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Lista de Emisores</h3>
+        <p class="card-subtitle">Contribuyentes habilitados para emisión electrónica</p>
     </div>
 
-    <div class="card">
+    <div class="table-container">
         <table class="table-flat">
             <thead>
             <tr>
-                <th>RUC</th>
-                <th>Razón Social</th>
+                <th>Contribuyente</th>
+                <th>Datos del Timbrado</th>
+                <th>Contacto</th>
                 <th class="text-right">Acciones</th>
             </tr>
             </thead>
-            <tbody id="tabla-datos"
-                   hx-get="/api/emisores"
-                   hx-trigger="load">
-            <tr><td colspan="3" class="text-center opacity-50">Cargando...</td></tr>
+
+            <tbody id="tabla-datos">
+            <tr th:each="e : ${emisores}">
+                <td>
+                    <div class="text-stack">
+                        <div class="text-primary" th:text="${e.razonSocial}"></div>
+                        <div class="text-secondary">
+                            <span class="text-primary-sm" th:text="${e.ruc}"></span>
+                            <span class="text-muted text-italic"
+                                  th:if="${e.nombreFantasia != null && !e.nombreFantasia.empty}"
+                                  th:text="${'(' + e.nombreFantasia + ')'}">
+                                </span>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="text-stack">
+                        <div class="text-primary-sm" th:text="${e.numeroTimbrado}"></div>
+                        <div class="text-secondary">
+                            <span class="text-muted">Vence:</span>
+                            <span class="text-medium" th:text="${e.inicioVigenciaTimbrado}"></span>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="text-stack">
+                        <div class="text-medium text-main" th:text="${e.email}"></div>
+                        <div class="text-secondary text-muted" th:text="${e.telefono}"></div>
+                    </div>
+                </td>
+
+                <td class="text-right">
+                    <div class="flex justify-end gap-4">
+                        <button class="btn-flat-action">Editar</button>
+                        <button class="btn-flat-danger">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
