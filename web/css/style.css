@@ -219,9 +219,6 @@ body {
 
 
 
-
-/* --- FORMS --- */
-
 .navbar-logo { font-weight: 700; font-size: 1rem; }
 
 .menu-toggle {
@@ -629,7 +626,7 @@ body {
 
 
 
-/* Utilidades para formularios en 2 y 3 columnas */
+/* GRID  */
 .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -644,7 +641,15 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+
 /* Responsive: En móviles (menos de 600px) que todo vuelva a 1 columna */
 @media (max-width: 600px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }

@@ -1,9 +1,9 @@
     package org.sifenboot.shell.controller.view.emisor;
 
     import org.sifenboot.shell.model.Emisor;
-    import org.sifenboot.shell.service.EmisorService; // Importamos tu servicio
+    import org.sifenboot.shell.service.EmisorService;
     import org.springframework.stereotype.Controller;
-    import org.springframework.ui.Model; // Importante para pasar datos a Thymeleaf
+    import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
 
     import java.util.List;
@@ -21,16 +21,18 @@
         // Listado principal
         @GetMapping("/list")
         public String listPage(Model model) {
-            List<Emisor> lista = emisorService.findAll();
-            model.addAttribute("emisores", lista);
+            model.addAttribute("emisores", emisorService.findAll());
             return "ui/emisor/list";
         }
 
         // Formulario para NUEVO emisor
         @GetMapping("/new")
         public String formPage(Model model) {
-            // Pasamos un objeto vacío para que Thymeleaf haga el binding
-            model.addAttribute("emisor", new Emisor());
+            Emisor emisor = new Emisor();
+            // Seteamos el default de ambiente para el radio/select del form
+            emisor.setAmbiente("test");
+
+            model.addAttribute("emisor", emisor);
             model.addAttribute("titulo", "Nuevo Emisor");
             return "ui/emisor/form";
         }
@@ -44,36 +46,34 @@
             return "ui/emisor/form";
         }
 
-        // Acción de GUARDAR (POST)
+        // Acción de GUARDAR (POST) - Ajustada para HTMX
         @PostMapping("/save")
-        public String saveAction(@ModelAttribute("emisor") Emisor emisor) {
-            // El service normaliza y guarda (Insert o Update según el ID)
+        public String saveAction(@ModelAttribute("emisor") Emisor emisor, Model model) {
+            // El service ahora valida ambiente, idCsc y csc
             emisorService.save(emisor);
-            return "redirect:/app/emisores/view/list";
-        }
 
+            // En lugar de redirect, devolvemos la lista actualizada para el hx-target
+            model.addAttribute("emisores", emisorService.findAll());
+            model.addAttribute("mensaje", "Emisor guardado con éxito");
+            return "ui/emisor/list";
+        }
 
         @GetMapping("/details/{id}")
         public String detailsPage(@PathVariable Long id, Model model) {
             Emisor emisor = emisorService.findById(id);
             model.addAttribute("emisor", emisor);
             model.addAttribute("titulo", "Consulta de Emisor");
-            model.addAttribute("readOnly", true); // <--- Esta es la señal para el HTML
+            model.addAttribute("readOnly", true);
             return "ui/emisor/form";
         }
 
-
-        // Acción de ELIMINAR
-        @DeleteMapping("/delete/{id}") // Usamos DeleteMapping para ser más estándares
+        // Acción de ELIMINAR - Ajustada para estándares HTMX
+        @DeleteMapping("/delete/{id}")
         public String deleteAction(@PathVariable Long id, Model model) {
-            // 1. Borramos de la base de datos
             emisorService.deleteById(id);
 
-            // 2. Buscamos la lista actualizada
-            List<Emisor> lista = emisorService.findAll();
-            model.addAttribute("emisores", lista);
-
-            // 3. Retornamos SOLO el fragmento de la tabla (o la vista de lista)
+            // Retornamos la lista para que HTMX actualice el #main-content
+            model.addAttribute("emisores", emisorService.findAll());
             return "ui/emisor/list";
         }
     }

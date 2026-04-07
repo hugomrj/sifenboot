@@ -1,7 +1,7 @@
 <div id="emisor-form-container" class="card fade-in">
     <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
-        <h2 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Nuevo Emisor</h2>
-        <p class="text-sm text-gray-500 mt-1">Datos fiscales para la plataforma Sifenboot</p>
+        <h4 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Nuevo Emisor</h4>
+        <p class="text-sm text-gray-500 mt-1">Datos fiscales y credenciales para la plataforma Sifenboot</p>
     </div>
 
     <form hx-post="/app/emisores/view/save"
@@ -11,7 +11,7 @@
 
         <input type="hidden" th:field="*{id}">
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="grid-2">
             <div class="form-group">
                 <label class="form-label">RUC</label>
                 <input type="text" th:field="*{ruc}" class="form-input" placeholder="80000000-1"
@@ -36,7 +36,7 @@
                    th:readonly="${readOnly}">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+        <div class="grid-3">
             <div class="form-group">
                 <label class="form-label">Tipo Contribuyente</label>
                 <select th:field="*{tipoContribuyente}" class="form-input" th:disabled="${readOnly}">
@@ -50,8 +50,8 @@
                        th:readonly="${readOnly}" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Vencimiento</label>
-                <input type="date" th:field="*{inicioVigenciaTimbrado}" class="form-input"
+                <label class="form-label">Fecha inicio</label>
+                <input type="date" th:field="*{fechaInicioTimbrado}" class="form-input"
                        th:readonly="${readOnly}" required>
             </div>
         </div>
@@ -62,7 +62,7 @@
                    th:readonly="${readOnly}" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="grid-2">
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <input type="email" th:field="*{email}" class="form-input" placeholder="ejemplo@empresa.com"
@@ -75,16 +75,36 @@
             </div>
         </div>
 
+        <div class="mt-8 pt-6" style="border-top: 2px dashed var(--ui-border); padding-top: 24px;">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">Configuración de Conexión SIFEN</h4>
+
+            <div class="grid-3">
+                <div class="form-group">
+                    <label class="form-label">Ambiente</label>
+                    <select th:field="*{ambiente}" class="form-input" style="border-color: #dbeafe;" th:disabled="${readOnly}">
+                        <option value="test">Test (Pruebas)</option>
+                        <option value="prod">Producción</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ID CSC (SET)</label>
+                    <input type="text" th:field="*{idCsc}" class="form-input" placeholder="0001"
+                           th:readonly="${readOnly}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CSC</label>
+                    <input type="text" th:field="*{csc}" class="form-input font-mono"
+                           th:readonly="${readOnly}" required>
+                </div>
+            </div>
+        </div>
+
         <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
-            <button type="button"
-                    hx-get="/app/emisores/view/list"
-                    hx-target="#main-content"
-                    class="btn-outline">
+            <button type="button" hx-get="/app/emisores/view/list" hx-target="#main-content" class="btn-outline">
                 <span th:text="${readOnly} ? 'Volver' : 'Cancelar'">Cancelar</span>
             </button>
-
             <button type="submit" class="btn" th:if="${readOnly == null || !readOnly}">
-                Confirmar y Guardar
+                Confirmar
             </button>
         </div>
     </form>
