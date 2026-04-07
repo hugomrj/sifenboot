@@ -7,6 +7,10 @@
 
     --bg-page: #FFFFFF;
     --bg-dashboard: #FAFBFC;
+
+    --bg-dashboard: #F5F5F7;
+
+
     --ui-border: #F1F2F4;
     --ui-hover: #F8FAFC;
 
@@ -75,7 +79,7 @@ body {
     left: 0;
     bottom: 0;
     z-index: 90;
-    padding: 20px 16px;
+    padding: 0.5rem 1rem;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
 }
@@ -83,7 +87,7 @@ body {
 .main-content {
     margin-top: var(--navbar-height);
     margin-left: var(--sidebar-width);
-    padding: 40px;
+    padding: 1rem;
     background: var(--bg-dashboard);
     min-height: calc(100vh - var(--navbar-height));
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -177,7 +181,7 @@ body {
     background: var(--bg-page);
     border: 1px solid var(--ui-border);
     border-radius: var(--radius-md);
-    padding: 2rem;
+    padding: 1rem 2rem ;
     overflow: hidden;
 }
 
@@ -227,9 +231,10 @@ body {
 }
 .menu-toggle:hover { background: var(--brand-secondary); }
 
+
+
+
 /* --- FORMS --- */
-
-
 .form-group {
     margin-bottom: 20px; /* Separación entre los bloques de input */
 }
@@ -256,13 +261,13 @@ body {
     transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-
-
-
 .form-input:focus {
-    background: #FFFFFF;
+    background: var(--bg-page);
     border-color: var(--ui-border);
 }
+
+
+
 
 
 
@@ -333,6 +338,62 @@ body {
 
 /* Global Disabled */
 .btn:disabled, .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+
+/* --- FLAT ACTION BUTTONS (Para Tablas) --- */
+
+/* Base común para botones de tabla */
+.btn-flat-info,
+.btn-flat-action,
+.btn-flat-danger {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Color Informativo (Ver/Detalles) - Azul */
+.btn-flat-info {
+    color: #0284c7;
+}
+.btn-flat-info:hover {
+    background-color: #f0f9ff;
+    color: #0369a1;
+}
+
+/* Color Acción (Editar) - Gris Oscuro/Negro */
+.btn-flat-action {
+    color: var(--text-main);
+}
+.btn-flat-action:hover {
+    background-color: var(--brand-secondary);
+    color: #000000;
+}
+
+/* Color Peligro (Eliminar) - Rojo */
+.btn-flat-danger {
+    color: #dc2626;
+}
+.btn-flat-danger:hover {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+/* Efecto al presionar cualquier botón flat */
+.btn-flat-info:active,
+.btn-flat-action:active,
+.btn-flat-danger:active {
+    transform: scale(0.95);
+}
+
 
 
 
@@ -562,3 +623,28 @@ body {
 
 /* --- UTILIDADES EXTRA --- */
 .font-mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+
+
+
+
+
+/* Utilidades para formularios en 2 y 3 columnas */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive: En móviles (menos de 600px) que todo vuelva a 1 columna */
+@media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}

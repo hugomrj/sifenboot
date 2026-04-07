@@ -49,10 +49,31 @@
 
                 <td class="text-right">
                     <div class="flex justify-end gap-4">
-                        <button class="btn-flat-action">Editar</button>
-                        <button class="btn-flat-danger">Eliminar</button>
+                        <button class="btn-flat-info"
+                                th:attr="hx-get=@{/app/emisores/view/details/{id}(id=${e.id})}"
+                                hx-target="#main-content">
+                            Ver
+                        </button>
+
+                        <button class="btn-flat-action"
+                                th:attr="hx-get=@{/app/emisores/view/edit/{id}(id=${e.id})}"
+                                hx-target="#main-content">
+                            Editar
+                        </button>
+
+                        <button class="btn-flat-danger"
+                                th:attr="hx-delete=@{/app/emisores/view/delete/{id}(id=${e.id})}"
+                                hx-confirm="¿Estás seguro de que deseas eliminar este emisor? Esta acción no se puede deshacer."
+                                hx-target="#main-content"
+                                hx-swap="innerHTML">
+                            Eliminar
+                        </button>
                     </div>
                 </td>
+
+
+
+
             </tr>
             </tbody>
         </table>

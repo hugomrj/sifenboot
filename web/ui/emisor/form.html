@@ -1,0 +1,91 @@
+<div id="emisor-form-container" class="card fade-in">
+    <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Nuevo Emisor</h2>
+        <p class="text-sm text-gray-500 mt-1">Datos fiscales para la plataforma Sifenboot</p>
+    </div>
+
+    <form hx-post="/app/emisores/view/save"
+          hx-target="#main-content"
+          th:object="${emisor}"
+          autocomplete="off">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label class="form-label">RUC</label>
+                <input type="text" th:field="*{ruc}" class="form-input" placeholder="80000000-1"
+                       th:readonly="${readOnly}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Código (Alias)</label>
+                <input type="text" th:field="*{codEmisor}" class="form-input" placeholder="sucursal-central"
+                       th:readonly="${readOnly}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Razón Social</label>
+            <input type="text" th:field="*{razonSocial}" class="form-input" placeholder="Nombre legal de la empresa"
+                   th:readonly="${readOnly}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Nombre Fantasía</label>
+            <input type="text" th:field="*{nombreFantasia}" class="form-input" placeholder="Nombre comercial"
+                   th:readonly="${readOnly}">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label class="form-label">Tipo Contribuyente</label>
+                <select th:field="*{tipoContribuyente}" class="form-input" th:disabled="${readOnly}">
+                    <option value="1">Persona Física</option>
+                    <option value="2">Persona Jurídica</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Timbrado N°</label>
+                <input type="text" th:field="*{numeroTimbrado}" class="form-input" placeholder="12345678"
+                       th:readonly="${readOnly}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Vencimiento</label>
+                <input type="date" th:field="*{inicioVigenciaTimbrado}" class="form-input"
+                       th:readonly="${readOnly}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Dirección</label>
+            <input type="text" th:field="*{direccion}" class="form-input" placeholder="Calle, N° de casa, Ciudad"
+                   th:readonly="${readOnly}" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" th:field="*{email}" class="form-input" placeholder="ejemplo@empresa.com"
+                       th:readonly="${readOnly}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Teléfono</label>
+                <input type="text" th:field="*{telefono}" class="form-input" placeholder="+595 ..."
+                       th:readonly="${readOnly}">
+            </div>
+        </div>
+
+        <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
+            <button type="button"
+                    hx-get="/app/emisores/view/list"
+                    hx-target="#main-content"
+                    class="btn-outline">
+                <span th:text="${readOnly} ? 'Volver' : 'Cancelar'">Cancelar</span>
+            </button>
+
+            <button type="submit" class="btn" th:if="${readOnly == null || !readOnly}">
+                Confirmar y Guardar
+            </button>
+        </div>
+    </form>
+</div>

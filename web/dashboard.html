@@ -66,18 +66,23 @@
                         <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                     <div class="nav-sub-list">
+
                         <div class="nav-sub-list">
-                            <a href="javascript:void(0)"
-                               hx-get="/app/emisores/view/list"
-                               hx-target="#mainContent"
-                               hx-swap="innerHTML"
-                               class="nav-sub-item">Listado de Empresas</a>
 
                             <a href="javascript:void(0)"
-                               hx-get="/app/emisores/view/nuevo"
-                               hx-target="#mainContent"
+                               hx-get="/app/emisores/view/list"
+                               hx-target="#main-content"
                                hx-swap="innerHTML"
-                               class="nav-sub-item">Registrar Nueva</a>
+                               class="nav-sub-item">Listado de Empresas
+                            </a>
+
+                            <a href="javascript:void(0)"
+                               hx-get="/app/emisores/view/new"
+                               hx-target="#main-content"
+                               hx-swap="innerHTML"
+                               class="nav-sub-item"> Registrar Nuevo
+                            </a>
+
                         </div>
 
 
@@ -130,7 +135,7 @@
     </aside>
 
 
-    <main class="main-content" id="mainContent">
+    <main class="main-content" id="main-content">
 
     </main>
 </div>
@@ -152,7 +157,7 @@
 <script>
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
+    const mainContent = document.getElementById('main-content');
     const overlay = document.getElementById('sidebarOverlay');
 
     menuToggle.addEventListener('click', () => {
