@@ -1,6 +1,8 @@
 package org.sifenboot.shell.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
@@ -16,9 +18,12 @@ public class Certificado {
     @JoinColumn(name = "emisor_id", nullable = false, unique = true)
     private Emisor emisor;
 
-    @Lob
-    @Column(name = "p12_contenido", nullable = false)
+
+    @Lob // Indica que es un objeto grande
+    @JdbcType(VarbinaryJdbcType.class) // Fuerza a que sea tratado como bytea de Postgres
+    @Column(name = "p12_contenido")
     private byte[] p12Contenido;
+
 
     @Column(name = "p12_password", nullable = false)
     private String p12Password;

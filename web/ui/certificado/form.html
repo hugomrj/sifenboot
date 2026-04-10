@@ -1,0 +1,101 @@
+<div id="certificado-form-container" class="card fade-in">
+    <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
+        <h4 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Certificado Digital</h4>
+        <p class="text-sm text-gray-500 mt-1">Firma electrónica (.p12) para la validación de documentos ante el SIFEN</p>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success mb-6" style="padding: 1rem; border-radius: 8px; background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+    <div class="form-group mb-8">
+        <label class="form-label font-bold text-gray-700">1. Seleccionar Emisor</label>
+        <select name="emisorId"
+                class="form-input"
+                style="max-width: 400px; background-color: var(--ui-bg-subtle);"
+                hx-get="/app/certificados/load"
+                hx-target="#form-fields"
+                hx-trigger="change">
+            <option value="">-- Seleccione una Razón Social --</option>
+            <option th:each="e : ${emisores}"
+                    th:value="${e.id}"
+                    th:text="${e.razonSocial}"></option>
+        </select>
+    </div>
+
+    <div id="form-fields">
+        <div class="text-center py-12" style="border: 2px dashed var(--ui-border); border-radius: 12px;">
+            <p class="text-gray-400">Seleccione un emisor para gestionar o cargar su certificado digital.</p>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="form-fields" id="form-fields">
+    <div th:if="${certificado != null && certificado.emisor != null}" class="fade-in">
+
+        <form hx-post="/app/certificados/save"
+              hx-encoding="multipart/form-data"
+              hx-target="#main-content"
+              autocomplete="off">
+
+            <input type="hidden" name="emisor.id" th:value="${certificado.emisor.id}">
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Contraseña del Certificado</label>
+                    <input type="password" name="p12Password"
+                           th:value="${certificado.p12Password}"
+                           class="form-input"
+                           placeholder="••••••••"
+                           th:readonly="${!isNew}" required>
+                    <p class="text-xs text-gray-400 mt-1">Contraseña definida al exportar el archivo .p12</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Fecha de Vencimiento</label>
+                    <input type="date" name="fechaVencimientoP12"
+                           th:value="${certificado.fechaVencimientoP12}"
+                           class="form-input"
+                           th:readonly="${!isNew}" required>
+                </div>
+            </div>
+
+            <div class="mt-6" th:if="${isNew}">
+                <div class="form-group">
+                    <label class="form-label">Archivo de Firma (.p12)</label>
+                    <div style="position: relative;">
+                        <input type="file" name="archivoP12"
+                               class="form-input"
+                               accept=".p12"
+                               style="padding: 10px;" required>
+                    </div>
+                    <p class="text-xs text-blue-500 mt-2">
+                        <i class="bi bi-info-circle"></i> Solo se admiten archivos con formato PKCS#12 (.p12)
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-4 p-4" th:if="${!isNew}" style="background-color: #fff7ed; border-radius: 8px; border: 1px solid #ffedd5;">
+                <p class="text-sm text-orange-700">
+                    <i class="bi bi-shield-check"></i> Este emisor ya cuenta con un certificado activo. Para actualizarlo, primero debe eliminar el actual.
+                </p>
+            </div>
+
+            <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
+                <button type="submit" class="btn" th:if="${isNew}">
+                    <i class="bi bi-cloud-upload mr-2"></i> Vincular Certificado
+                </button>
+
+                <button type="button"
+                        class="btn-outline"
+                        style="color: #dc2626; border-color: #fca5a5;"
+                        th:if="${!isNew}"
+                        th:hx-delete="'/app/certificados/delete/' + ${certificado.emisor.id}"
+                        hx-target="#main-content"
+                        hx-confirm="¿Está seguro de eliminar este certificado? Esta acción es irreversible.">
+                    <i class="bi bi-trash mr-2"></i> Eliminar Certificado
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
