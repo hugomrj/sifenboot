@@ -5,6 +5,7 @@
     </div>
 
     <div th:if="${mensaje}" class="alert alert-success mb-6" style="padding: 1rem; border-radius: 8px; background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;">
+        <i class="bi bi-check-circle-fill mr-2"></i>
         <span th:text="${mensaje}"></span>
     </div>
 
@@ -46,8 +47,9 @@
                     <input type="password" name="p12Password"
                            th:value="${certificado.p12Password}"
                            class="form-input"
+                           th:readonly="${!isNew}"
                            placeholder="••••••••"
-                           th:readonly="${!isNew}" required>
+                           required>
                     <p class="text-xs text-gray-400 mt-1">Contraseña definida al exportar el archivo .p12</p>
                 </div>
 
@@ -62,7 +64,7 @@
 
             <div class="mt-6" th:if="${isNew}">
                 <div class="form-group">
-                    <label class="form-label">Archivo de Firma (.p12)</label>
+                    <label class="form-label font-bold">Archivo de Firma (.p12)</label>
                     <div style="position: relative;">
                         <input type="file" name="archivoP12"
                                class="form-input"
@@ -75,25 +77,30 @@
                 </div>
             </div>
 
-            <div class="mt-4 p-4" th:if="${!isNew}" style="background-color: #fff7ed; border-radius: 8px; border: 1px solid #ffedd5;">
-                <p class="text-sm text-orange-700">
-                    <i class="bi bi-shield-check"></i> Este emisor ya cuenta con un certificado activo. Para actualizarlo, primero debe eliminar el actual.
+            <div class="mt-6 p-4" th:if="${!isNew}" style="background-color: #eff6ff; border-radius: 8px; border: 1px solid #dbeafe;">
+                <p class="text-sm text-blue-800">
+                    <i class="bi bi-shield-check-fill mr-2"></i>
+                    <strong>Certificado Activo:</strong> Este emisor ya cuenta con un certificado vinculado.
+                </p>
+                <p class="text-xs text-blue-600 mt-1 ml-6">
+                    Para cargar uno nuevo o corregir la contraseña, debe eliminar el actual primero.
                 </p>
             </div>
 
-            <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
-                <button type="submit" class="btn" th:if="${isNew}">
+            <div class="form-actions" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border); display: flex; justify-content: flex-end; gap: 10px;">
+
+                <button type="submit" class="btn btn-primary" th:if="${isNew}">
                     <i class="bi bi-cloud-upload mr-2"></i> Vincular Certificado
                 </button>
 
                 <button type="button"
-                        class="btn-outline"
-                        style="color: #dc2626; border-color: #fca5a5;"
+                        class="btn"
+                        style="background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca;"
                         th:if="${!isNew}"
                         th:hx-delete="'/app/certificados/delete/' + ${certificado.emisor.id}"
                         hx-target="#main-content"
-                        hx-confirm="¿Está seguro de eliminar este certificado? Esta acción es irreversible.">
-                    <i class="bi bi-trash mr-2"></i> Eliminar Certificado
+                        hx-confirm="¿Está seguro de eliminar este certificado? Esta acción es irreversible y deshabilitará la firma para este emisor.">
+                    <i class="bi bi-trash mr-2"></i> Eliminar Certificado Actual
                 </button>
             </div>
         </form>

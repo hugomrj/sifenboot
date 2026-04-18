@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/app/certificados")
@@ -45,26 +46,30 @@ public class CertificadoViewController {
         return "ui/certificado/form";
     }
 
-    // Carga dinámica al seleccionar emisor
     @GetMapping("/load")
     public String loadByEmisor(@RequestParam("emisorId") Long emisorId, Model model) {
-        if (emisorId == null) return "ui/certificado/form :: form-fields";
-
-        Certificado certificado = certificadoService.getByEmisor(emisorId)
-                .orElse(new Certificado());
-
-        if (certificado.getId() == null) {
-            Emisor emisor = new Emisor();
-            emisor.setId(emisorId);
-            certificado.setEmisor(emisor);
-            model.addAttribute("isNew", true);
-        } else {
-            model.addAttribute("isNew", false);
+        if (emisorId == null) {
+            model.addAttribute("isNew", true); // Agregar esto
+            return "ui/certificado/form :: form-fields";
         }
 
-        model.addAttribute("certificado", certificado);
+        Optional<Certificado> certificadoOpt = certificadoService.getByEmisor(emisorId);
+
+        if (certificadoOpt.isPresent()) {
+            model.addAttribute("certificado", certificadoOpt.get());
+            model.addAttribute("isNew", false); // Caso: Existe
+        } else {
+            Certificado nuevo = new Certificado();
+            Emisor emisor = new Emisor();
+            emisor.setId(emisorId);
+            nuevo.setEmisor(emisor);
+            model.addAttribute("certificado", nuevo);
+            model.addAttribute("isNew", true); // Caso: Nuevo
+        }
+
         return "ui/certificado/form :: form-fields";
     }
+
 
     @PostMapping("/save")
     public String saveAction(@ModelAttribute Certificado certificado,
