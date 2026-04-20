@@ -1,6 +1,7 @@
     package org.sifenboot.shell.controller.view.emisor;
 
     import org.sifenboot.shell.model.Emisor;
+    import org.sifenboot.shell.service.DepartamentoService;
     import org.sifenboot.shell.service.EmisorService;
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
@@ -13,35 +14,37 @@
     public class EmisorViewController {
 
         private final EmisorService emisorService;
+        private final DepartamentoService departamentoService; // Inyectar esto
 
-        public EmisorViewController(EmisorService emisorService) {
+        public EmisorViewController(EmisorService emisorService, DepartamentoService departamentoService) {
             this.emisorService = emisorService;
+            this.departamentoService = departamentoService;
         }
 
-        // Listado principal
         @GetMapping("/list")
         public String listPage(Model model) {
+            // Obtenemos la lista de emisores para la tabla
             model.addAttribute("emisores", emisorService.findAll());
+            // Retorna el fragmento de la lista
             return "ui/emisor/list";
         }
 
-        // Formulario para NUEVO emisor
         @GetMapping("/new")
         public String formPage(Model model) {
             Emisor emisor = new Emisor();
-            // Seteamos el default de ambiente para el radio/select del form
             emisor.setAmbiente("test");
 
             model.addAttribute("emisor", emisor);
+            model.addAttribute("departamentos", departamentoService.findAll());
             model.addAttribute("titulo", "Nuevo Emisor");
             return "ui/emisor/form";
         }
 
-        // Formulario para EDITAR emisor existente
         @GetMapping("/edit/{id}")
         public String editPage(@PathVariable Long id, Model model) {
             Emisor emisor = emisorService.findById(id);
             model.addAttribute("emisor", emisor);
+            model.addAttribute("departamentos", departamentoService.findAll());
             model.addAttribute("titulo", "Editar Emisor: " + emisor.getRazonSocial());
             return "ui/emisor/form";
         }

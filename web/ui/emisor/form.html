@@ -10,12 +10,21 @@
           autocomplete="off">
 
         <input type="hidden" th:field="*{id}">
+        <input type="hidden" id="dep-desc" th:field="*{departamentoDescripcion}">
 
         <div class="grid-2">
             <div class="form-group">
-                <label class="form-label">RUC</label>
-                <input type="text" th:field="*{ruc}" class="form-input" placeholder="80000000-1"
-                       th:readonly="${readOnly}" required>
+                <label class="form-label">RUC y DV</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" th:field="*{ruc}" class="form-input"
+                           style="flex: 4;" placeholder="80000000"
+                           th:readonly="${readOnly}" required>
+                    <span style="font-weight: bold; color: var(--ui-border);">-</span>
+                    <input type="number" th:field="*{rucDv}" class="form-input"
+                           style="flex: 1; text-align: center; min-width: 60px;"
+                           placeholder="0" min="0" max="9"
+                           th:readonly="${readOnly}" required>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Código (Alias)</label>
@@ -57,9 +66,43 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Dirección</label>
-            <input type="text" th:field="*{direccion}" class="form-input" placeholder="Calle, N° de casa, Ciudad"
+            <label class="form-label">Dirección Calle</label>
+            <input type="text" th:field="*{direccion}" class="form-input" placeholder="Calle principal"
                    th:readonly="${readOnly}" required>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label">N° Casa (dNumCas)</label>
+                <input type="number" th:field="*{numeroCasa}" class="form-input" placeholder="0"
+                       th:readonly="${readOnly}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Departamento (cDepEmi)</label>
+                <select id="dep-select" th:field="*{departamentoCodigo}" class="form-input"
+                        th:disabled="${readOnly}" required
+                        onchange="document.getElementById('dep-desc').value = this.options[this.selectedIndex].text">
+                    <option value="">-- Seleccione --</option>
+                    <option th:each="d : ${departamentos}"
+                            th:value="${d.id}"
+                            th:text="${d.descripcion}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid-2" style="grid-template-columns: 140px 1fr; gap: 16px;">
+            <div class="form-group">
+                <label class="form-label">Cód. Actividad</label>
+                <input type="number" th:field="*{actividadEconomicaCodigo}"
+                       class="form-input" placeholder="62010"
+                       th:readonly="${readOnly}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descripción Actividad</label>
+                <input type="text" th:field="*{actividadEconomicaDescripcion}"
+                       class="form-input" placeholder="Rubro de la empresa"
+                       th:readonly="${readOnly}" required>
+            </div>
         </div>
 
         <div class="grid-2">
@@ -77,7 +120,6 @@
 
         <div class="mt-8 pt-6" style="border-top: 2px dashed var(--ui-border); padding-top: 24px;">
             <h4 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">Configuración de Conexión SIFEN</h4>
-
             <div class="grid-3">
                 <div class="form-group">
                     <label class="form-label">Ambiente</label>

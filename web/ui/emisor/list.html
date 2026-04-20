@@ -1,79 +1,84 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Lista de Emisores</h3>
-        <p class="card-subtitle">Contribuyentes habilitados para emisión electrónica</p>
+<div class="card fade-in">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h3 class="card-title text-2xl font-bold" style="color: var(--brand-primary);">Lista de Emisores</h3>
+            <p class="card-subtitle" style="color: #666;">Contribuyentes habilitados para la plataforma Sifenboot</p>
+        </div>
+        <button hx-get="/app/emisores/view/new"
+                hx-target="#main-content"
+                class="btn"
+                style="background-color: var(--brand-primary); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer;">
+            + Nuevo Emisor
+        </button>
     </div>
 
     <div class="table-container">
         <table class="table-flat">
             <thead>
-            <tr>
+            <tr style="border-bottom: 2px solid var(--brand-secondary);">
                 <th>Contribuyente</th>
-                <th>Datos del Timbrado</th>
-                <th>Contacto</th>
+                <th>Actividad Económica</th>
+                <th>Ubicación</th>
+                <th>Timbrado</th>
                 <th class="text-right">Acciones</th>
             </tr>
             </thead>
 
             <tbody id="tabla-datos">
-            <tr th:each="e : ${emisores}">
+            <tr th:each="e : ${emisores}" style="border-bottom: 1px solid var(--brand-secondary);">
                 <td>
                     <div class="text-stack">
-                        <div class="text-primary" th:text="${e.razonSocial}"></div>
-                        <div class="text-secondary">
-                            <span class="text-primary-sm" th:text="${e.ruc}"></span>
-                            <span class="text-muted text-italic"
-                                  th:if="${e.nombreFantasia != null && !e.nombreFantasia.empty}"
-                                  th:text="${'(' + e.nombreFantasia + ')'}">
-                                </span>
+                        <div class="text-primary font-bold" style="color: var(--brand-primary); font-size: 1rem;" th:text="${e.razonSocial}"></div>
+                        <div class="text-secondary" style="display: flex; gap: 8px; align-items: center; margin-top: 2px; font-size: 0.85rem;">
+                            <span class="font-bold" th:text="${e.ruc + '-' + e.rucDv}"></span>
+                            <span style="color: #CCC;">|</span>
+                            <span  style="font-size: 1rem;  color: var(--brand-accent);" th:text="${e.codEmisor}"></span>
+                        </div>
+                        <div class="text-muted text-italic" style="font-size: 0.9rem; color: #777;"
+                             th:if="${e.nombreFantasia != null && !e.nombreFantasia.empty}"
+                             th:text="${e.nombreFantasia}">
+                        </div>
+                    </div>
+                </td>
+
+                <td style="max-width: 250px;">
+                    <div class="text-stack">
+                        <div style="font-family: monospace; font-weight: bold; color: var(--brand-primary); font-size: 0.85rem;"
+                             th:text="${e.actividadEconomicaCodigo}"></div>
+                        <div style="font-size: 0.75rem; color: #666; line-height: 1.2; text-transform: uppercase;"
+                             th:text="${e.actividadEconomicaDescripcion}"></div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="text-stack">
+                        <div class="font-medium" style="color: var(--brand-primary); font-size: 0.9rem;"
+                             th:text="${e.departamento != null ? e.departamento.descripcion : 'SIN DEP.'}"></div>
+                        <div style="font-size: 0.8rem; color: #888;">
+                            <span th:text="${e.direccion}"></span>
+                            <span th:if="${e.numeroCasa > 0}" th:text="${' N° ' + e.numeroCasa}"></span>
                         </div>
                     </div>
                 </td>
 
                 <td>
                     <div class="text-stack">
-                        <div class="text-primary-sm" th:text="${e.numeroTimbrado}"></div>
-                        <div class="text-secondary">
-                            <span class="text-muted">Inicia:</span>
-                            <span class="text-medium" th:text="${e.fechaInicioTimbrado}"></span>
+                        <div style="font-family: monospace; font-weight: bold; color: var(--brand-primary);" th:text="${e.numeroTimbrado}"></div>
+                        <div style="font-size: 0.75rem; color: #888;">
+                            <span th:text="${#temporals.format(e.fechaInicioTimbrado, 'dd/MM/yyyy')}"></span>
                         </div>
                     </div>
                 </td>
 
-                <td>
-                    <div class="text-stack">
-                        <div class="text-medium text-main" th:text="${e.email}"></div>
-                        <div class="text-secondary text-muted" th:text="${e.telefono}"></div>
-                    </div>
-                </td>
+
 
                 <td class="text-right">
-                    <div class="flex justify-end gap-4">
-                        <button class="btn-flat-info"
-                                th:attr="hx-get=@{/app/emisores/view/details/{id}(id=${e.id})}"
-                                hx-target="#main-content">
-                            Ver
-                        </button>
-
-                        <button class="btn-flat-action"
-                                th:attr="hx-get=@{/app/emisores/view/edit/{id}(id=${e.id})}"
-                                hx-target="#main-content">
-                            Editar
-                        </button>
-
-                        <button class="btn-flat-danger"
-                                th:attr="hx-delete=@{/app/emisores/view/delete/{id}(id=${e.id})}"
-                                hx-confirm="¿Estás seguro de que deseas eliminar este emisor? Esta acción no se puede deshacer."
-                                hx-target="#main-content"
-                                hx-swap="innerHTML">
-                            Eliminar
-                        </button>
+                    <div class="flex justify-end gap-2">
+                        <button class="btn-flat-info" th:attr="hx-get=@{/app/emisores/view/details/{id}(id=${e.id})}" hx-target="#main-content">Ver</button>
+                        <button class="btn-flat-action" th:attr="hx-get=@{/app/emisores/view/edit/{id}(id=${e.id})}" hx-target="#main-content">Editar</button>
+                        <button class="btn-flat-danger" th:attr="hx-delete=@{/app/emisores/view/delete/{id}(id=${e.id})}" hx-confirm="¿Eliminar emisor?" hx-target="#main-content">Borrar</button>
                     </div>
                 </td>
-
-
-
-
             </tr>
             </tbody>
         </table>
