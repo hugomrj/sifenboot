@@ -1,4 +1,4 @@
-package org.sifenboot.common.config;
+package org.sifenboot.identity.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

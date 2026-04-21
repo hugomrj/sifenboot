@@ -1,6 +1,6 @@
 package org.sifenboot.shell.service;
 
-import org.sifenboot.shell.model.Certificado;
+import org.sifenboot.identity.domain.repository.Certificado;
 import org.sifenboot.shell.repository.CertificadoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

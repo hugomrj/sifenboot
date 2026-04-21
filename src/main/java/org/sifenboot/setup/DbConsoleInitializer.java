@@ -10,13 +10,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+
 public class DbConsoleInitializer {
 
     public static void main(String[] args) {
         System.out.println(">> [INICIO] Iniciando proceso de configuración de Base de Datos...");
 
+        // Usamos Scanner para solicitar la contraseña al usuario
+        Scanner consoleScanner = new Scanner(System.in);
+        System.out.print(">> Ingrese la contraseña para el usuario administrador (Enter para usar 'admin'): ");
+        String inputPass = consoleScanner.nextLine().trim();
+
+        // Si el usuario no ingresa nada, usamos "admin" por defecto
+        String finalPassword = inputPass.isEmpty() ? "admin" : inputPass;
+        System.out.println(">> Se utilizará la contraseña: " + (inputPass.isEmpty() ? "admin (por defecto)" : "*******"));
+
         try {
-            // 1. Cargar configuración
             Properties props = loadProperties();
 
             String host = props.getProperty("db.host", "localhost");
@@ -28,13 +37,11 @@ public class DbConsoleInitializer {
             String baseUrl = "jdbc:postgresql://" + host + ":" + port + "/postgres";
             String targetUrl = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
 
-            // 2. Crear la Base de Datos si no existe
             ensureDatabaseExists(baseUrl, dbName, user, pass);
 
-            // 3. Leer el Script SQL
-            String sqlScript = loadSqlScript("db/setup.sql");
+            // Pasamos la contraseña elegida al cargador de script
+            String sqlScript = loadSqlScript("db/setup.sql", finalPassword);
 
-            // 4. Ejecutar el Script en la base de datos destino
             if (!sqlScript.isEmpty()) {
                 executeSqlScript(targetUrl, sqlScript, user, pass);
             } else {
@@ -46,8 +53,6 @@ public class DbConsoleInitializer {
         } catch (Exception e) {
             System.err.println("\n>> [ERROR CRÍTICO]: Proceso interrumpido.");
             System.err.println(">> Detalle: " + e.getMessage());
-            // Imprimimos la pila solo si necesitas ver la línea exacta del error
-            // e.printStackTrace();
         }
     }
 
@@ -66,8 +71,6 @@ public class DbConsoleInitializer {
 
     private static void ensureDatabaseExists(String url, String dbName, String user, String pass) throws Exception {
         System.out.println(">> [2/4] Verificando existencia de la base de datos '" + dbName + "'...");
-
-        // Aquí corregimos el error del executeUpdate que tenías
         try (Connection conn = DriverManager.getConnection(url, user, pass);
              Statement stmt = conn.createStatement()) {
 
@@ -84,11 +87,8 @@ public class DbConsoleInitializer {
         }
     }
 
-
-
-
-
-    private static String loadSqlScript(String path) throws Exception {
+    // Hemos modificado la firma para recibir la password elegida
+    private static String loadSqlScript(String path, String passwordToHash) throws Exception {
         System.out.println(">> [3/4] Leyendo script SQL: " + path);
         try (InputStream is = DbConsoleInitializer.class.getClassLoader().getResourceAsStream(path)) {
             if (is == null) {
@@ -97,38 +97,26 @@ public class DbConsoleInitializer {
             Scanner s = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
             String content = s.hasNext() ? s.next() : "";
 
-            // 1. Buscamos la etiqueta "-- @password: valor" usando Regex
-            Pattern pattern = Pattern.compile("-- @password:\\s*(\\S+)");
-            Matcher matcher = pattern.matcher(content);
+            // Generamos el hash con BCrypt de la contraseña recibida
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String hashReal = encoder.encode(passwordToHash);
 
-            if (matcher.find()) {
-                String passwordPlano = matcher.group(1); // Extrae "admin"
-                System.out.println("   - Detectada contraseña en SQL: " + passwordPlano);
-
-                // 2. Generamos el hash con BCrypt
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-                String hashReal = encoder.encode(passwordPlano);
-
-                // 3. Reemplazamos el placeholder :pass_admin por el hash real
+            // Reemplazamos el placeholder :pass_admin por el hash real
+            if (content.contains(":pass_admin")) {
                 content = content.replace(":pass_admin", hashReal);
-                System.out.println("   - Hash inyectado correctamente.");
+                System.out.println("   - Hash inyectado correctamente en el script.");
+            } else {
+                System.out.println("   - [!] No se encontró el marcador :pass_admin en el SQL.");
             }
 
             return content;
         }
     }
 
-
-
-
-
-
     private static void executeSqlScript(String url, String script, String user, String pass) throws Exception {
         System.out.println(">> [4/4] Ejecutando setup.sql en la base de datos destino...");
         try (Connection conn = DriverManager.getConnection(url, user, pass);
              Statement stmt = conn.createStatement()) {
-
-            // Ejecuta el contenido del script
             stmt.execute(script);
             System.out.println("   - Estructura de tablas y datos iniciales aplicados.");
         } catch (SQLException e) {

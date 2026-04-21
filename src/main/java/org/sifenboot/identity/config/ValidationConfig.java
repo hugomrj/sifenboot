@@ -1,4 +1,4 @@
-package org.sifenboot.common.config;
+package org.sifenboot.identity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,9 @@
-package org.sifenboot.shell.model;
+package org.sifenboot.identity.domain.repository;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
+import org.sifenboot.shell.model.Emisor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 

@@ -1,6 +1,6 @@
 package org.sifenboot.shell.repository;
 
-import org.sifenboot.shell.model.Certificado;
+import org.sifenboot.identity.domain.repository.Certificado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

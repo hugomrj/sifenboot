@@ -1,6 +1,6 @@
 package org.sifenboot.shell.controller.view.certificado;
 
-import org.sifenboot.shell.model.Certificado;
+import org.sifenboot.identity.domain.repository.Certificado;
 import org.sifenboot.shell.model.Emisor;
 import org.sifenboot.shell.service.CertificadoService;
 import org.sifenboot.shell.service.EmisorService;
