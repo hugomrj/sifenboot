@@ -8,6 +8,8 @@ import org.sifenboot.core.integration.util.xml.FileXML;
 import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.XmlUtils;
 import org.sifenboot.core.repository.factura.FacturaRepository;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Node;
@@ -26,6 +28,7 @@ public class RecibirFacturaService {
     private final SifenXmlSigner xmlSifenSigner;
     private final QrNodeBuilder qrNodeBuilder;
     private final ObjectMapper objectMapper;
+    private final CertificadoService certificadoService;
 
 
     @Autowired
@@ -34,17 +37,19 @@ public class RecibirFacturaService {
             DeXmlGenerator xmlGenerator,
             SifenXmlSigner xmlSifenSigner,
             QrNodeBuilder qrNodeBuilder,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            CertificadoService certificadoService
     ) {
         this.facturaRepository = facturaRepository;
         this.xmlGenerator = xmlGenerator;
         this.xmlSifenSigner = xmlSifenSigner;
         this.qrNodeBuilder = qrNodeBuilder;
         this.objectMapper = objectMapper;
+        this.certificadoService = certificadoService;
     }
 
 
-    public Object execute(JsonNode facturaInput) throws Exception {
+    public Object execute(String emisorCod,  JsonNode facturaInput) throws Exception {
 
 
         System.out.println("== INICIO PROCESO FACTURA ==");
@@ -61,8 +66,9 @@ public class RecibirFacturaService {
         // 4. DOM → String
         String xmlFinal = FileXML.xmlToString(nodoConQR);
 
+        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
         // 5. Enviar al servidor
-        JsonNode respuestaJson = facturaRepository.enviarFactura(xmlFinal);
+        JsonNode respuestaJson = facturaRepository.enviarFactura(xmlFinal, certificado);
         System.out.println(respuestaJson);
 
 

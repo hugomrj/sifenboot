@@ -1,7 +1,7 @@
 <div id="emisor-form-container" class="card fade-in">
     <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
         <h4 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Nuevo Emisor</h4>
-        <p class="text-sm text-gray-500 mt-1">Datos fiscales y credenciales para la plataforma Sifenboot</p>
+        <p class="text-sm text-gray-500 mt-1">Datos fiscales y comerciales de la empresa</p>
     </div>
 
     <form hx-post="/app/emisores/view/save"
@@ -10,7 +10,9 @@
           autocomplete="off">
 
         <input type="hidden" th:field="*{id}">
-        <input type="hidden" id="dep-desc" th:field="*{departamentoDescripcion}">
+        <input type="hidden" th:field="*{configuracion.id}">
+
+        <input type="hidden" id="dep-desc" name="departamentoDescripcion">
 
         <div class="grid-2">
             <div class="form-group">
@@ -27,8 +29,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Código (Alias)</label>
-                <input type="text" th:field="*{codEmisor}" class="form-input" placeholder="sucursal-central"
+                <label class="form-label">Código (identificador api)</label>
+                <input type="text" th:field="*{codEmisor}" class="form-input" placeholder="sinespacios"
                        th:readonly="${readOnly}" required>
             </div>
         </div>
@@ -74,12 +76,12 @@
         <div class="grid-2">
             <div class="form-group">
                 <label class="form-label">N° Casa (dNumCas)</label>
-                <input type="number" th:field="*{numeroCasa}" class="form-input" placeholder="0"
+                <input type="number" th:field="*{numeroCasa}" class="form-input"
                        th:readonly="${readOnly}" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Departamento (cDepEmi)</label>
-                <select id="dep-select" th:field="*{departamentoCodigo}" class="form-input"
+                <select id="dep-select" th:field="*{departamento.id}" class="form-input"
                         th:disabled="${readOnly}" required
                         onchange="document.getElementById('dep-desc').value = this.options[this.selectedIndex].text">
                     <option value="">-- Seleccione --</option>
@@ -105,40 +107,39 @@
             </div>
         </div>
 
-        <div class="grid-2">
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" th:field="*{email}" class="form-input" placeholder="ejemplo@empresa.com"
-                       th:readonly="${readOnly}">
+        <div class="mt-8 pt-6" style="border-top: 2px dashed var(--ui-border); padding-top: 24px; background-color: var(--ui-bg-light); padding: 20px; border-radius: 8px;">
+            <div class="flex items-center gap-2 mb-4">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-blue-600">Configuración Técnica SIFEN</h4>
             </div>
-            <div class="form-group">
-                <label class="form-label">Teléfono</label>
-                <input type="text" th:field="*{telefono}" class="form-input" placeholder="+595 ..."
-                       th:readonly="${readOnly}">
-            </div>
-        </div>
 
-        <div class="mt-8 pt-6" style="border-top: 2px dashed var(--ui-border); padding-top: 24px;">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">Configuración de Conexión SIFEN</h4>
             <div class="grid-3">
                 <div class="form-group">
                     <label class="form-label">Ambiente</label>
-                    <select th:field="*{ambiente}" class="form-input" style="border-color: #dbeafe;" th:disabled="${readOnly}">
+                    <select th:field="*{configuracion.ambiente}" class="form-input" style="border-color: #dbeafe;" th:disabled="${readOnly}">
                         <option value="test">Test (Pruebas)</option>
                         <option value="prod">Producción</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">ID CSC (SET)</label>
-                    <input type="text" th:field="*{idCsc}" class="form-input" placeholder="0001"
+                    <input type="text" th:field="*{configuracion.idCsc}" class="form-input" placeholder="0001"
                            th:readonly="${readOnly}" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">CSC</label>
-                    <input type="text" th:field="*{csc}" class="form-input font-mono"
+                    <input type="text" th:field="*{configuracion.csc}" class="form-input font-mono"
                            th:readonly="${readOnly}" required>
                 </div>
             </div>
+
+            <div class="grid-2 mt-4">
+                <div class="form-group">
+                    <label class="form-label">API Token (Seguridad)</label>
+                    <input type="text" th:field="*{configuracion.apiToken}" class="form-input"
+                           placeholder="token api" th:readonly="${readOnly}">
+                </div>
+            </div>
+
         </div>
 
         <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
@@ -146,7 +147,7 @@
                 <span th:text="${readOnly} ? 'Volver' : 'Cancelar'">Cancelar</span>
             </button>
             <button type="submit" class="btn" th:if="${readOnly == null || !readOnly}">
-                Confirmar
+                Guardar Configuración
             </button>
         </div>
     </form>

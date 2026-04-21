@@ -20,7 +20,7 @@
             <option value="">-- Seleccione una Razón Social --</option>
             <option th:each="e : ${emisores}"
                     th:value="${e.id}"
-                    th:text="${e.razonSocial}"></option>
+                    th:text="${e.razonSocial + '  ( ' + e.codEmisor + ' ) '}"></option>
         </select>
     </div>
 

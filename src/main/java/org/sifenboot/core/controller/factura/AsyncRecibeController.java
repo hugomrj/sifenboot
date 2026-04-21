@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 
 @RestController
-@RequestMapping("/factura/async/recibe")
+//@RequestMapping("/factura/async/recibe")
+@RequestMapping("/api/empresa/{emisor}")
 @Tag(name = "Factura Async")
 public class AsyncRecibeController {
 
@@ -18,11 +19,13 @@ public class AsyncRecibeController {
         this.recibirFacturaService = recibirFacturaService;
     }
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> asyncRecibe(@RequestBody JsonNode json) {
+    @PostMapping("/factura/async/recibe")
+    public ResponseEntity<?> asyncRecibe(
+            @PathVariable String emisor,
+            @RequestBody JsonNode json) {
         try {
 
-            var result = recibirFacturaService.execute(json);
+            var result = recibirFacturaService.execute(emisor, json);
             return ResponseEntity.ok(result);
         
         } catch (Exception e) {

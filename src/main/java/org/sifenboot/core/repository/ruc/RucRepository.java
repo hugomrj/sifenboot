@@ -9,6 +9,7 @@ import org.sifenboot.core.integration.sifen.util.SifenDvCalculator;
 import org.sifenboot.core.integration.soap.client.RucClient;
 import org.sifenboot.core.integration.util.message.SoapBodyExtractor;
 
+import org.sifenboot.security.certificado.model.Certificado;
 import org.springframework.stereotype.Repository;
 
 import java.net.http.HttpResponse;
@@ -16,17 +17,18 @@ import java.net.http.HttpResponse;
 @Repository
 public class RucRepository {
 
-    private final RucClient rucClient;
+    private final RucClient client;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public RucRepository(RucClient rucClient) {
-        this.rucClient = rucClient;
+    public RucRepository(RucClient client) {
+        this.client = client;
     }
 
 
-    public JsonNode buscarPorRuc(String ruc) {
-        try {
-            HttpResponse<String> httpResponse = rucClient.consultaRUC(ruc);
+        public JsonNode buscarPorRuc(String ruc, Certificado certificado) {
+            try {
+                HttpResponse<String> httpResponse = client.consultaRUC(ruc, certificado);
+
             int statusCode = httpResponse.statusCode();
 
             // Solo considerar error cuando es 500+

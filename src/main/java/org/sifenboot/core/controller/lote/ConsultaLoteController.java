@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/consulta/lote")
+@RequestMapping("/api/empresa/{emisor}")
 @Tag(name = "Consulta Lote")
 public class ConsultaLoteController {
 
@@ -18,12 +18,12 @@ public class ConsultaLoteController {
         this.consultaLoteService = consultaLoteService;
     }
 
-
-    @PostMapping(consumes = "application/json", produces = "application/json")
+    @PostMapping("/consulta/lote")
     public ResponseEntity<?> consultarLote(
-            @Valid @RequestBody ConsultaLoteRequest request
-    ) {
-        var result = consultaLoteService.consultar(request.getLote());
+            @PathVariable String emisor,
+            @Valid @RequestBody ConsultaLoteRequest request) {
+
+        var result = consultaLoteService.consultar(emisor, request.getLote());
         return ResponseEntity.ok(result);
     }
 }

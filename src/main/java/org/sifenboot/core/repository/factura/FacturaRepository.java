@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sifenboot.core.integration.soap.client.LoteClient;
 import org.json.JSONObject;
 import org.json.XML;
+import org.sifenboot.security.certificado.model.Certificado;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -14,17 +15,17 @@ import java.net.http.HttpResponse;
 @Repository
 public class FacturaRepository {
 
-    private final LoteClient loteClient;
+    private final LoteClient client;
     private final ObjectMapper objectMapper;
 
     public FacturaRepository(LoteClient loteClient, ObjectMapper objectMapper) {
-        this.loteClient = loteClient;
+        this.client = loteClient;
         this.objectMapper = objectMapper;
     }
 
-    public JsonNode enviarFactura(String xml) {
+    public JsonNode enviarFactura(String xml, Certificado certificado) {
 
-        HttpResponse<String> httpResponse = loteClient.recibeLote(xml);
+        HttpResponse<String> httpResponse = client.recibeLote(xml, certificado);
 
         String xmlOutput = httpResponse.body();
 

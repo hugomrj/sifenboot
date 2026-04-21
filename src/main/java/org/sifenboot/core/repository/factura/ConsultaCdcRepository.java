@@ -1,6 +1,7 @@
 package org.sifenboot.core.repository.factura;
 
 import org.sifenboot.core.integration.soap.client.DEClient;
+import org.sifenboot.security.certificado.model.Certificado;
 import org.springframework.stereotype.Repository;
 import java.net.http.HttpResponse;
 
@@ -8,15 +9,15 @@ import java.net.http.HttpResponse;
 @Repository
 public class ConsultaCdcRepository {
 
-    private final DEClient deClient;
+    private final DEClient client;
 
-    public ConsultaCdcRepository(DEClient deClient) {
-        this.deClient = deClient;
+    public ConsultaCdcRepository(DEClient client) {
+        this.client = client;
     }
 
-    public String buscarPorCdc(String cdc) {
+    public String buscarPorCdc(String cdc,  Certificado certificado) {
         try {
-            HttpResponse<String> httpResponse = deClient.consultaDE(cdc);
+            HttpResponse<String> httpResponse = client.consultaDE(cdc, certificado);
             String xml = httpResponse.body();
 
             // NO decodificar entidades aquí - dejar que el servicio lo maneje

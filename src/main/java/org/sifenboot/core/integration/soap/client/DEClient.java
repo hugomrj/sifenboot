@@ -2,11 +2,12 @@ package org.sifenboot.core.integration.soap.client;
 
 import org.sifenboot.core.integration.sifen.ServerSifen;
 import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
-import org.sifenboot.core.integration.soap.config.SSLConfig;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.config.identity.SSLConfig;
 import org.sifenboot.core.integration.soap.request.DeConsultaSoapRequest;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -18,32 +19,33 @@ public class DEClient {
     private final DeConsultaSoapRequest deRequest;
     private final SSLConfig sslConfig;
     private final ServerSifen serverSifen;
-    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
 
     private HttpClient httpClient;
 
     public DEClient(
             DeConsultaSoapRequest deRequest,
             SSLConfig sslConfig,
-            ServerSifen serverSifen,
-            SifenProperties_Deprecated sifenPropertiesDeprecated
+            ServerSifen serverSifen
     ) {
         this.deRequest = deRequest;
         this.sslConfig = sslConfig;
         this.serverSifen = serverSifen;
-        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
     }
-/*
-    @PostConstruct
-    void initialize() {
-        this.httpClient = HttpClient.newBuilder()
-                .sslContext(sslConfig.createSSLContext())
-                .build();
-    }
-*/
-    public HttpResponse<String> consultaDE(String cdc) {
+
+    public HttpResponse<String> consultaDE(String cdc, Certificado certificado) {
         try {
-            String endpointUrl = buildEndpointUrl();
+
+            SSLContext sslContext = sslConfig.createSSLContext(
+                    certificado.getP12Contenido(),
+                    certificado.getP12Password()
+            );
+
+            HttpClient httpClient = HttpClient.newBuilder()
+                    .sslContext(sslContext)
+                    .build();
+
+            String ambiente = certificado.getEmisor().getConfiguracion().getAmbiente();
+            String endpointUrl = buildEndpointUrl(ambiente  );
             String xmlRequest = deRequest.createQueryXml(cdc);
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -64,10 +66,10 @@ public class DEClient {
         }
     }
 
-    private String buildEndpointUrl() {
-        String environment = sifenPropertiesDeprecated.getAmbiente();
-        String baseUrl = serverSifen.getServer(environment);
+    private String buildEndpointUrl(String ambiente) {
+        String baseUrl = serverSifen.getServer(ambiente);
         return baseUrl + "/de/ws/consultas/consulta.wsdl";
     }
+
 }
 

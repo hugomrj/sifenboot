@@ -1,20 +1,16 @@
 package org.sifenboot.core.controller.factura;
 
-
 import org.sifenboot.core.dto.factura.request.ConsultaCdcRequest;
 import org.sifenboot.core.dto.factura.response.ConsultaCdcResponse;
 import org.sifenboot.core.service.factura.ConsultarCdcService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/consulta/cdc")
+@RequestMapping("/api/empresa/{emisor}")
 @Tag(name = "Consulta CDC")
 public class ConsultaCdcController {
 
@@ -24,15 +20,13 @@ public class ConsultaCdcController {
         this.consultarCdcService = consultarCdcService;
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PostMapping("/consulta/cdc")
     public ResponseEntity<ConsultaCdcResponse> consultarCdc(
-            @Valid @RequestBody ConsultaCdcRequest request
-    ) {
+            @PathVariable String emisor,
+            @Valid @RequestBody ConsultaCdcRequest request) {
+
         ConsultaCdcResponse response =
-                consultarCdcService.consultar(request.getCdc());
+                consultarCdcService.consultar( emisor, request.getCdc());
 
         return ResponseEntity.ok(response);
     }

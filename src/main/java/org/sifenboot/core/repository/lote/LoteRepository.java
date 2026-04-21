@@ -6,6 +6,7 @@ import org.sifenboot.core.integration.soap.client.LoteClient;
 import org.sifenboot.core.integration.util.message.SoapBodyExtractor;
 import org.json.JSONObject;
 import org.json.XML;
+import org.sifenboot.security.certificado.model.Certificado;
 import org.springframework.stereotype.Repository;
 
 import java.net.http.HttpResponse;
@@ -21,10 +22,10 @@ public class LoteRepository {
         this.loteClient = loteClient;
     }
 
-    public JsonNode consultarLote(String lote) {
+    public JsonNode consultarLote(String lote, Certificado certificado) {
 
         try {
-            HttpResponse<String> httpResponse = loteClient.consultaLote(lote);
+            HttpResponse<String> httpResponse = loteClient.consultaLote(lote, certificado );
             int statusCode = httpResponse.statusCode();
 
             // Solo error real si es 500+

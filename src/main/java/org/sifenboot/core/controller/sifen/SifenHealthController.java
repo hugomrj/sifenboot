@@ -1,7 +1,7 @@
 package org.sifenboot.core.controller.sifen;
 
 import org.sifenboot.core.integration.sifen.ServerSifen;
-import org.sifenboot.core.integration.soap.config.SSLConfig;
+import org.sifenboot.security.config.identity.SSLConfig;
 import org.sifenboot.core.integration.soap.request.LoteConsultaSoapRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

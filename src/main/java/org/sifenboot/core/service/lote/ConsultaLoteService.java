@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.sifenboot.core.dto.Lote.response.ConsultaLoteResponse;
 import org.sifenboot.core.repository.lote.LoteRepository;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,15 +14,21 @@ import java.util.List;
 @Service
 public class ConsultaLoteService {
 
-    private final LoteRepository loteRepository;
+    private final CertificadoService certificadoService;
+    private final LoteRepository repository;
 
-    public ConsultaLoteService(LoteRepository loteRepository) {
-        this.loteRepository = loteRepository;
+    public ConsultaLoteService(LoteRepository repository, CertificadoService certificadoService) {
+        this.repository = repository;
+        this.certificadoService = certificadoService;
     }
 
-    public ConsultaLoteResponse consultar(String lote) {
 
-        JsonNode res = loteRepository.consultarLote(lote);
+    public ConsultaLoteResponse consultar(String emisorCod, String lote) {
+
+        // Obtener el certificado
+        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+
+        JsonNode res = repository.consultarLote(lote, certificado);
 
         String codigoLote = res.path("dCodResLot").asText();
         String mensajeLote = res.path("dMsgResLot").asText();

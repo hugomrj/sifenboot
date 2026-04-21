@@ -23,7 +23,7 @@ public class ConsultaRucController {
             @PathVariable String emisor,
             @Valid @RequestBody ConsultaRucRequest request) {
 
-        var result = consultarRucService.consultar(request.getRuc());
+        var result = consultarRucService.consultar(emisor, request.getRuc());
         return ResponseEntity.ok(result);
     }
 }

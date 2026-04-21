@@ -2,9 +2,8 @@ package org.sifenboot.core.integration.soap.client;
 
 import org.sifenboot.core.integration.sifen.ServerSifen;
 import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
-import org.sifenboot.core.integration.soap.config.SSLConfig;
+import org.sifenboot.security.config.identity.SSLConfig;
 import org.sifenboot.core.integration.soap.request.EventoCancelarSoapRequest;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

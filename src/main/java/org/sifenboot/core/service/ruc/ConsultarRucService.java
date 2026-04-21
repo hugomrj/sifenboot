@@ -4,24 +4,34 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.sifenboot.core.dto.ruc.response.RucExisteResponse;
 import org.sifenboot.core.dto.ruc.response.RucNoExisteResponse;
 import org.sifenboot.core.repository.ruc.RucRepository;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class ConsultarRucService {
 
-    private final RucRepository rucRepository;
+    private final RucRepository repository;
+    private final CertificadoService certificadoService;
 
-    public ConsultarRucService(RucRepository rucRepository) {
-        this.rucRepository = rucRepository;
+    public ConsultarRucService(RucRepository rucRepository, CertificadoService certificadoService) {
+        this.repository = rucRepository;
+        this.certificadoService = certificadoService;
     }
 
-    public Object consultar(String ruc) {
+    // Ahora recibimos el código del emisor (ej: 'wasabi')
+    public Object consultar(String emisorCod, String ruc) {
 
         if (ruc == null || ruc.isBlank()) {
             throw new IllegalArgumentException("El RUC no puede estar vacío");
         }
 
-        JsonNode result = rucRepository.buscarPorRuc(ruc);
+        // Obtener el certificado
+        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+
+        // 2. Le pasamos el certificado al repositorio para que firme la petición
+        JsonNode result = repository.buscarPorRuc(ruc, certificado);
 
         String codigo = result.path("codigoRespuesta").asText();
 
@@ -32,12 +42,10 @@ public class ConsultarRucService {
                     result.path("mensajeRespuesta").asText("RUC no existe"),
                     result.path("statusCode").asInt(200),
                     result.path("mensaje").asText("RUC no existe"),
-                    ruc    // ← agregar esto
+                    ruc
             );
         }
 
-
-        
         // --- RUC EXISTE (0502) ---
         if ("0502".equals(codigo)) {
             JsonNode datos = result.path("datosRUC");
@@ -57,8 +65,6 @@ public class ConsultarRucService {
             );
         }
 
-        // --- Código inesperado ---
         throw new IllegalStateException("Código de respuesta no reconocido: " + codigo);
-        //throw new CodeSifenRUCNofFoundException("Código de respuesta no reconocido: " + codigo);
     }
 }
