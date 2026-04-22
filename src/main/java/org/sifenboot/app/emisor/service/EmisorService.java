@@ -1,5 +1,6 @@
 package org.sifenboot.app.emisor.service;
 
+import org.sifenboot.app.emisor.infra.EmisorSchemaProvisioner;
 import org.sifenboot.app.emisor.model.Emisor;
 import org.sifenboot.app.emisor.repository.EmisorRepository;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,12 @@ import java.util.List;
 public class EmisorService {
 
     private final EmisorRepository emisorRepository;
+    private final EmisorSchemaProvisioner schemaProvisioner;
 
-    public EmisorService(EmisorRepository emisorRepository) {
+    public EmisorService(EmisorRepository emisorRepository,
+                         EmisorSchemaProvisioner schemaProvisioner) {
         this.emisorRepository = emisorRepository;
+        this.schemaProvisioner = schemaProvisioner;
     }
 
     public List<Emisor> findAll() {
@@ -61,8 +65,21 @@ public class EmisorService {
             emisor.setTipoContribuyente(1); // Default: Persona Física o General
         }
 
-        return emisorRepository.save(emisor);
+        if (emisor.getConfiguracion() != null) {
+            emisor.getConfiguracion().setEmisor(emisor);
+        }
+
+
+        Emisor savedEmisor = emisorRepository.save(emisor);
+        String schemaName = savedEmisor.getCodEmisor();
+        // Crear el esquema
+        schemaProvisioner.crearEstructura(schemaName);
+
+
+        return savedEmisor;
     }
+
+
 
     @Transactional
     public void deleteById(Long id) {
@@ -71,6 +88,8 @@ public class EmisorService {
         }
         emisorRepository.deleteById(id);
     }
+
+
 
 
 }

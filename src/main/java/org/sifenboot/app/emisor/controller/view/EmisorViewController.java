@@ -14,7 +14,7 @@
     public class EmisorViewController {
 
         private final EmisorService emisorService;
-        private final DepartamentoService departamentoService; // Inyectar esto
+        private final DepartamentoService departamentoService;
 
         public EmisorViewController(EmisorService emisorService, DepartamentoService departamentoService) {
             this.emisorService = emisorService;
