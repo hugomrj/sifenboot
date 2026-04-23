@@ -28,8 +28,10 @@ public class EmisorService {
                 .orElseThrow(() -> new RuntimeException("Emisor no encontrado con ID: " + id));
     }
 
+
     @Transactional
     public Emisor save(Emisor emisor) {
+
         // 1. Normalización de Identificadores (CodEmisor y RUC)
         if (emisor.getCodEmisor() != null && !emisor.getCodEmisor().isBlank()) {
             emisor.setCodEmisor(emisor.getCodEmisor().toLowerCase().trim().replaceAll("\\s+", "-"));

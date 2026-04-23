@@ -1,3 +1,4 @@
+-- Usuarios del sistema
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE,
@@ -9,23 +10,14 @@ INSERT INTO usuarios (username, password)
 VALUES ('admin', ':pass_admin')
 ON CONFLICT (username) DO NOTHING;
 
-
--- Tabla de usuarios (ya la tienes)
-CREATE TABLE IF NOT EXISTS usuarios (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
-    password TEXT
-);
-
-
--- 1. Tabla de Departamentos (Igual)
-CREATE TABLE departamentos (
+-- Departamentos (Rubrica de Sifen)
+CREATE TABLE IF NOT EXISTS departamentos (
     id INTEGER PRIMARY KEY,
     descripcion VARCHAR(50) NOT NULL UNIQUE
 );
 
--- 2. Tabla de Emisores (Limpia de datos técnicos)
-CREATE TABLE emisores (
+-- Emisores (Datos de negocio)
+CREATE TABLE IF NOT EXISTS emisores (
     id SERIAL PRIMARY KEY,
     cod_emisor VARCHAR(50) UNIQUE NOT NULL,
     ruc VARCHAR(20) UNIQUE NOT NULL,
@@ -48,21 +40,21 @@ CREATE TABLE emisores (
     CONSTRAINT check_ruc_dv CHECK (ruc_dv >= 0 AND ruc_dv <= 9)
 );
 
--- 3. NUEVA: Tabla de Configuración SIFEN (El búnker técnico)
-CREATE TABLE emisores_configuraciones (
+-- Configuración SIFEN
+CREATE TABLE IF NOT EXISTS emisores_configuraciones (
     id SERIAL PRIMARY KEY,
     emisor_id INTEGER NOT NULL UNIQUE,
     ambiente VARCHAR(10) NOT NULL DEFAULT 'test',
     id_csc VARCHAR(10) NOT NULL,
     csc VARCHAR(100) NOT NULL,
-    api_token VARCHAR(255), -- Para autenticar a tus clientes (San Isidro, etc.)
+    api_token VARCHAR(255),
 
     CONSTRAINT fk_emisor_config FOREIGN KEY (emisor_id) REFERENCES emisores(id) ON DELETE CASCADE,
     CONSTRAINT check_ambiente_config CHECK (ambiente IN ('test', 'prod'))
 );
 
--- 4. Tabla de Certificados (Igual, pero referenciando a emisores)
-CREATE TABLE certificados (
+-- Certificados
+CREATE TABLE IF NOT EXISTS certificados (
     id SERIAL PRIMARY KEY,
     emisor_id INTEGER NOT NULL UNIQUE,
     p12_contenido BYTEA NOT NULL,
@@ -72,30 +64,36 @@ CREATE TABLE certificados (
     CONSTRAINT fk_emisor_cert FOREIGN KEY (emisor_id) REFERENCES emisores(id) ON DELETE CASCADE
 );
 
--- 5. Índices para velocidad
-CREATE INDEX idx_emisores_cod ON emisores(cod_emisor);
-CREATE INDEX idx_emisor_config_emisor_id ON emisores_configuraciones(emisor_id);
-CREATE INDEX idx_cert_emisor_id ON certificados(emisor_id);
+-- ESTADOS DE DOCUMENTO (Global)
+CREATE TABLE IF NOT EXISTS estados_documento (
+    id SMALLINT PRIMARY KEY,
+    codigo VARCHAR(25) UNIQUE NOT NULL,
+    descripcion VARCHAR(100) NOT NULL
+);
 
+-- Inserts de Estados Iniciales
+INSERT INTO estados_documento (id, codigo, descripcion) VALUES
+    (1, 'RECIBIDO', 'JSON recibido y transformado a XML localmente'),
+    (2, 'ENVIADO_A_SET', 'Lote enviado a SIFEN, esperando procesamiento'),
+    (3, 'APROBADO', 'Documento aprobado por la SET, CDC generado'),
+    (4, 'RECHAZADO', 'Rechazado por la SET (error de validación)'),
+    (5, 'ERROR_CONEXION', 'Falló el envío por timeout o caída de SIFEN'),
+    (6, 'CANCELADO', 'Documento anulado por nota de crédito')
+ON CONFLICT (id) DO NOTHING;
 
+-- Índices globales
+CREATE INDEX IF NOT EXISTS idx_emisores_cod ON emisores(cod_emisor);
+CREATE INDEX IF NOT EXISTS idx_emisor_config_emisor_id ON emisores_configuraciones(emisor_id);
+CREATE INDEX IF NOT EXISTS idx_cert_emisor_id ON certificados(emisor_id);
 
-
+-- Inserts de departamentos
 INSERT INTO departamentos (id, descripcion) VALUES
-(1, 'CAPITAL'),
-(2, 'CONCEPCION'),
-(3, 'SAN PEDRO'),
-(4, 'CORDILLERA'),
-(5, 'GUAIRA'),
-(6, 'CAAGUAZU'),
-(7, 'CAAZAPA'),
-(8, 'ITAPUA'),
-(9, 'MISIONES'),
-(10, 'PARAGUARI'),
-(11, 'ALTO PARANA'),
-(12, 'CENTRAL'),
-(13, 'NEEMBUCU'),
-(14, 'AMAMBAY'),
-(15, 'CANINDEYU'),
-(16, 'PRESIDENTE HAYES'),
-(17, 'BOQUERON'),
-(18, 'ALTO PARAGUAY');
+(1, 'CAPITAL'), (2, 'CONCEPCION'), (3, 'SAN PEDRO'), (4, 'CORDILLERA'),
+(5, 'GUAIRA'), (6, 'CAAGUAZU'), (7, 'CAAZAPA'), (8, 'ITAPUA'),
+(9, 'MISIONES'), (10, 'PARAGUARI'), (11, 'ALTO PARANA'), (12, 'CENTRAL'),
+(13, 'NEEMBUCU'), (14, 'AMAMBAY'), (15, 'CANINDEYU'), (16, 'PRESIDENTE HAYES'),
+(17, 'BOQUERON'), (18, 'ALTO PARAGUAY')
+ON CONFLICT (id) DO NOTHING;
+
+
+

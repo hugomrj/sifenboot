@@ -14,50 +14,53 @@ public class EmisorSchemaProvisioner {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void crearEstructura(String schemaName) {
         // 1. Crear el esquema del emisor
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
 
         // 2. TABLA MAESTRA: DOCUMENTO
-        // Representa el estado actual y los datos base de la factura
         jdbcTemplate.execute(String.format(
-                "CREATE TABLE IF NOT EXISTS %s.documento (" +
+                "CREATE TABLE IF NOT EXISTS %s.documentos (" +
                         "id BIGSERIAL PRIMARY KEY, " +
                         "cdc VARCHAR(80) UNIQUE, " +
-                        "tipo_documento INTEGER, " +      // Ej: 1 (Factura), 2 (Nota de Crédito)
-                        "establecimiento VARCHAR(3), " +  // Ej: '001'
-                        "punto_expedicion VARCHAR(3), " + // Ej: '001'
-                        "numero_documento VARCHAR(15), " +
-                        "estado VARCHAR(25) DEFAULT 'RECIBIDO', " + // RECIBIDO, PROCESANDO, APROBADO, RECHAZADO
-                        "ultimo_lote VARCHAR(20), " +
-                        "xml_firmado TEXT, " +
+                        "tipo_documento INTEGER NOT NULL, " +
+                        "establecimiento VARCHAR(3) NOT NULL, " +
+                        "punto_expedicion VARCHAR(3) NOT NULL, " +
+                        "numero_documento VARCHAR(15) NOT NULL, " +
+                        "estado_id SMALLINT NOT NULL DEFAULT 1, " + // FK a public.estados_documento
+                        "numero_lote VARCHAR(20), " +
+                        "xml_enviado TEXT, " +
+                        "xml_respuesta TEXT, " +
                         "json_data JSONB, " +
-                        "fecha_emision TIMESTAMP, " +
+                        "fecha_emision TIMESTAMP NOT NULL, " +
                         "fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                        "fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                        "fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                        // Aquí apuntas directamente al esquema public
+                        "CONSTRAINT fk_doc_estado FOREIGN KEY (estado_id) REFERENCES public.estados_documento(id)" +
                         ")", schemaName));
 
-        // 3. TABLA DE TRAZABILIDAD: DOCUMENTO_EVENTO
-        // Bitácora interna de intentos, lotes y respuestas de la SET
+        // 3. TABLA DE RESPUESTAS (Auditoría de comunicación con la SET)
         jdbcTemplate.execute(String.format(
-                "CREATE TABLE IF NOT EXISTS %s.documento_evento (" +
+                "CREATE TABLE IF NOT EXISTS %s.documento_respuestas (" +
                         "id BIGSERIAL PRIMARY KEY, " +
-                        "documento_id BIGINT REFERENCES %s.documento(id) ON DELETE CASCADE, " +
-                        "tipo_evento VARCHAR(50), " +  // Ej: 'ENVIO_LOTE', 'CONSULTA_RESULTADO', 'ERROR_CONEXION'
+                        "documento_id BIGINT NOT NULL REFERENCES %s.documentos(id) ON DELETE CASCADE, " +
                         "numero_lote VARCHAR(20), " +
-                        "codigo_status VARCHAR(10), " + // El código de respuesta de Sifen (ej: 0300)
-                        "mensaje_resultado TEXT, " +
+                        "tipo_operacion VARCHAR(30) NOT NULL, " + // 'ENVIO_LOTE', 'CONSULTA_LOTE'
+                        "codigo_respuesta VARCHAR(10), " +       // '0300', '0302'
+                        "mensaje_respuesta TEXT, " +
+                        "xml_respuesta_cruda TEXT, " +
                         "fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                         ")", schemaName, schemaName));
 
-        // 4. ÍNDICE DE ESTADO (Crucial para el rendimiento del Worker)
+        // 4. Índices para el rendimiento del Worker (Polling)
         jdbcTemplate.execute(String.format(
-                "CREATE INDEX IF NOT EXISTS idx_doc_estado_%s ON %s.documento (estado)",
+                "CREATE INDEX IF NOT EXISTS idx_doc_estado_%s ON %s.documentos (estado_id)",
+                schemaName, schemaName));
+
+        // Índice para agrupar por lotes al consultar
+        jdbcTemplate.execute(String.format(
+                "CREATE INDEX IF NOT EXISTS idx_doc_lote_%s ON %s.documentos (numero_lote) WHERE numero_lote IS NOT NULL",
                 schemaName, schemaName));
     }
-
-
-
 }
