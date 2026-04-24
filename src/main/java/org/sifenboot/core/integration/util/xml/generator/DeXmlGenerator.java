@@ -5,7 +5,7 @@ import org.sifenboot.core.integration.builder.CdcBuilder;
 import org.sifenboot.core.integration.builder.DeXmlBuilder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
-import org.sifenboot.core.integration.de.DeComplemento;
+import org.sifenboot.core.sifen.de.DeComplemento;
 
 @Component
 public class DeXmlGenerator {

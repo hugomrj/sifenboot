@@ -1,7 +1,7 @@
 package org.sifenboot.core.integration.builder;
 
-import org.sifenboot.core.integration.de.Mapping;
-import org.sifenboot.core.integration.sifen.util.SifenDvCalculator;
+import org.sifenboot.core.sifen.de.Mapping;
+import org.sifenboot.core.sifen.util.SifenDvCalculator;
 import org.sifenboot.core.integration.util.io.StringUtils;
 
 import java.text.SimpleDateFormat;

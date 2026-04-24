@@ -1,7 +1,7 @@
 package org.sifenboot.core.integration.soap.client;
 
 
-import org.sifenboot.core.integration.sifen.ServerSifen;
+import org.sifenboot.core.sifen.ServerSifen;
 import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.security.config.identity.SSLConfig;
 import org.sifenboot.core.integration.soap.request.RucConsultaSoapRequest;
