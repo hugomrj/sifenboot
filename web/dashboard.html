@@ -103,8 +103,12 @@
                         <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                     <div class="nav-sub-list">
-                        <a href="/facturas" class="nav-sub-item">Listado General</a>
-                        <a href="/facturas/lotes" class="nav-sub-item">Lotes Enviados</a>
+                        <a href="/emisor/0/documentos"
+                           hx-get="/emisor/0/documentos"
+                           hx-target="#main-content"
+                           class="nav-sub-item">
+                            Documentos
+                        </a>
                     </div>
                 </div>
 
@@ -117,9 +121,14 @@
     </aside>
 
 
-    <main class="main-content" id="main-content">
-
+    <main class="main-content"
+          id="main-content"
+          hx-get="/emisor/resumen"
+          hx-trigger="load"
+          hx-swap="innerHTML">
     </main>
+
+
 </div>
 
 

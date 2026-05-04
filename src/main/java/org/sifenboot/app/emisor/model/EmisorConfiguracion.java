@@ -3,7 +3,7 @@ package org.sifenboot.app.emisor.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "emisores_configuraciones")
+@Table(name = "emisores_configuraciones", schema = "public")
 public class EmisorConfiguracion {
 
     @Id

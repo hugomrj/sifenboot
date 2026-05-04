@@ -32,6 +32,8 @@ public class EmisorService {
     @Transactional
     public Emisor save(Emisor emisor) {
 
+        boolean esNuevo = (emisor.getId() == null);
+
         // 1. Normalización de Identificadores (CodEmisor y RUC)
         if (emisor.getCodEmisor() != null && !emisor.getCodEmisor().isBlank()) {
             emisor.setCodEmisor(emisor.getCodEmisor().toLowerCase().trim().replaceAll("\\s+", "-"));
@@ -73,10 +75,10 @@ public class EmisorService {
 
 
         Emisor savedEmisor = emisorRepository.save(emisor);
-        String schemaName = savedEmisor.getCodEmisor();
-        // Crear el esquema
-        schemaProvisioner.crearEstructura(schemaName);
-
+        if (esNuevo) {
+            String schemaName = savedEmisor.getCodEmisor();
+            schemaProvisioner.crearEstructura(schemaName);
+        }
 
         return savedEmisor;
     }

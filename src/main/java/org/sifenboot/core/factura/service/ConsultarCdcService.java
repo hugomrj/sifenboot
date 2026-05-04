@@ -29,7 +29,7 @@ public class ConsultarCdcService {
         }
 
         // Obtener el certificado
-        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+        Certificado certificado = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
 
         String xml = repository.buscarPorCdc(cdc, certificado);
 

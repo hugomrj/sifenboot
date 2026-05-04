@@ -17,7 +17,8 @@ public class EmisorSchemaProvisioner {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void crearEstructura(String schemaName) {
         // 1. Crear el esquema del emisor
-        jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
+        String sql = String.format("CREATE SCHEMA IF NOT EXISTS \"%s\"", schemaName);
+        jdbcTemplate.execute(sql);
 
         // 2. TABLA MAESTRA: DOCUMENTO
         jdbcTemplate.execute(String.format(
@@ -28,15 +29,17 @@ public class EmisorSchemaProvisioner {
                         "establecimiento VARCHAR(3) NOT NULL, " +
                         "punto_expedicion VARCHAR(3) NOT NULL, " +
                         "numero_documento VARCHAR(15) NOT NULL, " +
-                        "estado_id SMALLINT NOT NULL DEFAULT 1, " + // FK a public.estados_documento
+                        "nombre_receptor VARCHAR(255), " +
+                        "ruc_receptor VARCHAR(20), " +
+                        "estado_id SMALLINT NOT NULL DEFAULT 1, " +
                         "numero_lote VARCHAR(20), " +
+                        "monto_total NUMERIC(15,2), " +
                         "xml_enviado TEXT, " +
                         "xml_respuesta TEXT, " +
                         "json_data JSONB, " +
                         "fecha_emision TIMESTAMP NOT NULL, " +
                         "fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                         "fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                        // Aquí apuntas directamente al esquema public
                         "CONSTRAINT fk_doc_estado FOREIGN KEY (estado_id) REFERENCES public.estados_documento(id)" +
                         ")", schemaName));
 
@@ -62,5 +65,10 @@ public class EmisorSchemaProvisioner {
         jdbcTemplate.execute(String.format(
                 "CREATE INDEX IF NOT EXISTS idx_doc_lote_%s ON %s.documentos (numero_lote) WHERE numero_lote IS NOT NULL",
                 schemaName, schemaName));
+
+        jdbcTemplate.execute(String.format(
+                "CREATE INDEX IF NOT EXISTS idx_documentos_nombre_receptor ON %s.documentos (nombre_receptor)",
+                schemaName));
+
     }
 }

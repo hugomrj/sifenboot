@@ -66,7 +66,7 @@ public class RecibirFacturaService {
         // 4. DOM → String
         String xmlFinal = FileXML.xmlToString(nodoConQR);
 
-        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+        Certificado certificado = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
         // 5. Enviar al servidor
         JsonNode respuestaJson = facturaRepository.enviarFactura(xmlFinal, certificado);
         System.out.println(respuestaJson);

@@ -28,7 +28,7 @@ public class ConsultarRucService {
         }
 
         // Obtener el certificado
-        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+        Certificado certificado = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
 
         // 2. Le pasamos el certificado al repositorio para que firme la petición
         JsonNode result = repository.buscarPorRuc(ruc, certificado);

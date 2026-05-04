@@ -44,11 +44,10 @@
             <div class="grid-2">
                 <div class="form-group">
                     <label class="form-label">Contraseña del Certificado</label>
-                    <input type="password" name="p12Password"
+                    <input type="text" name="p12Password"
                            th:value="${certificado.p12Password}"
                            class="form-input"
                            th:readonly="${!isNew}"
-                           placeholder="••••••••"
                            required>
                     <p class="text-xs text-gray-400 mt-1">Contraseña definida al exportar el archivo .p12</p>
                 </div>

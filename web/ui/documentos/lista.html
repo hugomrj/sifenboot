@@ -1,0 +1,217 @@
+<!-- =========================
+     FRAGMENTO PRINCIPAL
+     ========================= -->
+<div th:fragment="lista-documentos" class="p-6">
+
+    <!-- Toggle oculto para cambiar entre vista cards y tabla -->
+    <!-- Se usa con Tailwind peer para aplicar estilos condicionales -->
+    <input type="checkbox" id="view-toggle" class="hidden peer">
+
+    <!-- =========================
+         HEADER / TÍTULO
+         ========================= -->
+    <div class="mb-6 pb-6 border-b border-gray-100">
+
+        <!-- fila 1: título + volver -->
+        <div class="flex justify-between items-center mb-3">
+            <h1 class="text-2xl font-bold text-gray-900">
+                Documentos
+            </h1>
+
+            <a href="/emisor/resumen"
+               hx-get="/emisor/resumen"
+               hx-target="#main-content"
+               class="link whitespace-nowrap">
+                ← Volver
+            </a>
+        </div>
+
+        <!-- fila 2: select + botón -->
+        <div class="w-full max-w-3xl flex gap-2">
+            <select id="emisorSelect"
+                    class="flex-1 text-sm border border-gray-200 rounded px-3 py-2 bg-white">
+
+                <option value="0"
+                        th:selected="${data.codEmisor == null || data.codEmisor == '0'}">
+                    Seleccionar emisor
+                </option>
+
+                <option th:each="e : ${emisores}"
+                        th:value="${e.codEmisor}"
+                        th:selected="${e.codEmisor == data.codEmisor}"
+                        th:text="${e.razonSocial}">
+                </option>
+
+            </select>
+
+
+            <button
+                    class="btn btn-outline"
+                    hx-target="#main-content"
+                    hx-trigger="click"
+                    hx-on:click="htmx.ajax('GET', '/emisor/' + document.getElementById('emisorSelect').value + '/documentos', {target:'#main-content'})">
+                Ver
+            </button>
+
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         SWITCH DE VISTA (CARDS / TABLA)
+         ========================= -->
+    <div class="flex justify-end mb-6">
+        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+
+            <!-- Botón vista CARDS -->
+            <!-- Activo por defecto -->
+            <label for="view-toggle"
+                   class="cursor-pointer p-2 rounded-md transition-all
+                          text-gray-500 hover:text-gray-800
+                          peer-checked:text-gray-500 peer-checked:bg-transparent peer-checked:shadow-none
+                          bg-white shadow-sm text-blue-600">
+                <!-- icon grid -->
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="2"
+                          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+            </label>
+
+            <!-- Botón vista TABLA -->
+            <label for="view-toggle"
+                   class="cursor-pointer p-2 rounded-md transition-all
+                          text-gray-500 hover:text-gray-800
+                          peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-blue-600">
+                <!-- icon list -->
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                </svg>
+            </label>
+
+        </div>
+    </div>
+
+    <!-- =========================
+         VISTA CARDS (DEFAULT)
+         ========================= -->
+    <!-- Se oculta cuando el checkbox está activado -->
+    <div class="peer-checked:hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+
+        <!-- Card individual -->
+        <div th:each="doc : ${data.facturas}"
+             class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+
+            <!-- Header de card -->
+            <div class="flex justify-between items-start mb-2">
+
+                <!-- Número de documento -->
+                <span class="text-[10px] font-mono text-gray-500"
+                      th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|">
+                </span>
+
+                <!-- Estado -->
+                <!-- Cambia color según estado -->
+                <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded"
+                      th:text="${doc.estado.descripcion}"
+                      th:classappend="${doc.estado.descripcion == 'APROBADO'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-blue-100 text-blue-700'}">
+                </span>
+            </div>
+
+            <!-- Nombre cliente -->
+            <h3 class="text-sm font-bold text-gray-900 truncate"
+                th:text="${doc.nombreReceptor}">
+                Nombre Cliente
+            </h3>
+
+            <!-- RUC -->
+            <p class="text-[10px] text-gray-500 mb-2"
+               th:text="${doc.rucReceptor}">
+                RUC
+            </p>
+
+            <!-- Footer card -->
+            <div class="flex justify-between items-center border-t pt-2 mt-2">
+
+                <!-- Monto -->
+                <h3 class="text-md font-bold text-gray-900"
+                    th:text="${#numbers.formatDecimal(doc.montoTotal, 0, 'POINT', 0, 'COMMA')}">
+                </h3>
+
+                <!-- Fecha -->
+                <p class="text-[10px] text-gray-400"
+                   th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy HH:mm')}">
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================
+         VISTA TABLA
+         ========================= -->
+    <!-- Se muestra cuando el checkbox está activado -->
+    <div class="hidden peer-checked:block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+
+        <table class="w-full text-sm text-left">
+
+            <!-- Header tabla -->
+            <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
+            <tr>
+                <th class="px-6 py-4">Documento</th>
+                <th class="px-6 py-4">Receptor</th>
+                <th class="px-6 py-4">Fecha</th>
+                <th class="px-6 py-4">Estado</th>
+                <th class="px-6 py-4 text-right">Monto</th>
+            </tr>
+            </thead>
+
+            <!-- Body tabla -->
+            <tbody class="divide-y divide-gray-200">
+
+            <tr th:each="doc : ${data.facturas}" class="hover:bg-gray-50">
+
+                <!-- Documento -->
+                <td class="px-6 py-4 font-mono font-medium"
+                    th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|">
+                </td>
+
+                <!-- Cliente -->
+                <td class="px-6 py-4">
+                    <div class="font-medium text-gray-900"
+                         th:text="${doc.nombreReceptor}">
+                        Nombre
+                    </div>
+                    <div class="text-[10px] text-gray-500"
+                         th:text="${doc.rucReceptor}">
+                        RUC
+                    </div>
+                </td>
+
+                <!-- Fecha -->
+                <td class="px-6 py-4"
+                    th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy HH:mm')}">
+                </td>
+
+                <!-- Estado -->
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 text-[10px] uppercase font-bold rounded"
+                          th:text="${doc.estado.descripcion}">
+                    </span>
+                </td>
+
+                <!-- Monto -->
+                <td class="px-6 py-4 text-right font-bold"
+                    th:text="${#numbers.formatDecimal(doc.montoTotal, 0, 'POINT', 0, 'COMMA')}">
+                </td>
+
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -30,8 +30,6 @@
         }
 
 
-
-
         @GetMapping("/new")
         public String formPage(Model model) {
             Emisor emisor = new Emisor();

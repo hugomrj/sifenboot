@@ -25,9 +25,9 @@ public class RucRepository {
     }
 
 
-        public JsonNode buscarPorRuc(String ruc, Certificado certificado) {
-            try {
-                HttpResponse<String> httpResponse = client.consultaRUC(ruc, certificado);
+    public JsonNode buscarPorRuc(String ruc, Certificado certificado) {
+        try {
+            HttpResponse<String> httpResponse = client.consultaRUC(ruc, certificado);
 
             int statusCode = httpResponse.statusCode();
 
@@ -86,7 +86,7 @@ public class RucRepository {
                 response.put("error", "Respuesta inesperada: " + dMsgRes);
             }
 
-            return response;
+        return response;
 
         } catch (Exception e) {
             return mapper.createObjectNode()

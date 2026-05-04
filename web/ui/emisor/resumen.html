@@ -1,0 +1,41 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+    <div class="card bg-white p-6 rounded-2xl border border-gray-200 transition-all duration-300 ease-in-out hover:shadow-lg hover:border-cyan-400 hover:-translate-y-1" th:each="stat : ${stats}">
+
+        <div class="text-stack" style="line-height:1.4;">
+            <span class="text-xs text-cyan-600 font-medium tracking-wider uppercase"
+                  th:text="${#strings.toUpperCase(stat.codEmisor)}">
+                codigo
+            </span>
+
+            <h2 class="text-lg font-bold text-gray-900 leading-tight tracking-tight mt-1"
+                th:text="${stat.razonSocial}">
+            </h2>
+
+            <span class="text-sm text-gray-500 mt-1 block"
+                  th:if="${stat.nombreFantasia != null}"
+                  th:text="${stat.nombreFantasia}">
+            </span>
+        </div>
+
+        <div class="text-stack mt-6" style="line-height:1.5;">
+            <span class="text-muted text-[0.7rem] uppercase font-bold tracking-wider text-gray-400">
+                Total Facturado
+            </span>
+
+            <div class="flex items-baseline my-2">
+                <span class="text-2xl font-bold text-gray-900"
+                      th:text="${#numbers.formatDecimal(stat.totalFacturado, 0, 'POINT', 0, 'POINT')}"></span>
+                <span class="text-xs text-gray-500 ml-1 font-medium">GS</span>
+            </div>
+
+            <a th:href="@{/emisor/{cod}/documentos(cod=${stat.codEmisor})}"
+               th:attr="hx-get=@{/emisor/{cod}/documentos(cod=${stat.codEmisor})}"
+               hx-target="#main-content"
+               hx-push-url="false"
+               class="link whitespace-nowrap">
+                Detalle →
+            </a>
+
+        </div>
+    </div>
+</div>

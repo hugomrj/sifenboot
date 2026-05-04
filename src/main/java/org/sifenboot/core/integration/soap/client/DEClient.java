@@ -45,7 +45,7 @@ public class DEClient {
                     .build();
 
             String ambiente = certificado.getEmisor().getConfiguracion().getAmbiente();
-            String endpointUrl = buildEndpointUrl(ambiente  );
+            String endpointUrl = buildEndpointUrl(ambiente );
             String xmlRequest = deRequest.createQueryXml(cdc);
 
             HttpRequest request = HttpRequest.newBuilder()

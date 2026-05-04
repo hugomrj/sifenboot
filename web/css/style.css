@@ -216,6 +216,10 @@ body {
     border-bottom: 1px solid var(--ui-border);
 }
 
+.card:hover {
+   /* border-color: var(--brand-accent);*/
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
 
 
 
@@ -262,9 +266,6 @@ body {
     background: var(--bg-page);
     border-color: var(--ui-border);
 }
-
-
-
 
 
 
@@ -391,6 +392,30 @@ body {
     transform: scale(0.95);
 }
 
+
+
+/* --- LINK ACTION --- */
+.link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.link:hover {
+    color: var(--brand-accent);
+}
+
+/* Variante más fuerte */
+.link-primary {
+    color: var(--brand-accent);
+    font-weight: 600;
+}
+
+.link-primary:hover {
+    text-decoration: underline;
+}
 
 
 

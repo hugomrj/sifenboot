@@ -47,6 +47,8 @@ public class  RucClient {
                     .build();
 
             String ambiente = certificado.getEmisor().getConfiguracion().getAmbiente();
+
+
             String endpointUrl = buildEndpointUrl(ambiente);
             String xmlRequest = rucRequest.createQueryXml(ruc);
 

@@ -26,7 +26,7 @@ public class ConsultaLoteService {
     public ConsultaLoteResponse consultar(String emisorCod, String lote) {
 
         // Obtener el certificado
-        Certificado certificado = certificadoService.obtenerPorCodigoEmisor(emisorCod);
+        Certificado certificado = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
 
         JsonNode res = repository.consultarLote(lote, certificado);
 
