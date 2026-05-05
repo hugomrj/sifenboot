@@ -1,9 +1,4 @@
 sifen:
-  # ambiente: ${SIFEN_AMBIENTE}  <-- ELIMINAR (Ahora está en tabla certificados)
-  # cert-path: ${SIFEN_CERT_PATH} <-- ELIMINAR (Ahora está en tabla certificados)
-  # cert-pass: ${SIFEN_CERT_PASS} <-- ELIMINAR (Ahora está en tabla certificados)
-  # id-csc: ${SIFEN_ID_CSC}       <-- ELIMINAR (Ahora está en tabla certificados)
-  # csc: ${SIFEN_CSC}             <-- ELIMINAR (Ahora está en tabla certificados)
   timeout: 30000
 
 server:
@@ -15,9 +10,9 @@ spring:
     name: sifen-api-java
 
   datasource:
-    url: jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.name:sifenboot}
-    username: ${db.user:postgres}
-    password: ${db.pass:password}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sifenboot}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
     driver-class-name: org.postgresql.Driver
 
   # --- AGREGAR ESTO PARA THYMELEAF ---

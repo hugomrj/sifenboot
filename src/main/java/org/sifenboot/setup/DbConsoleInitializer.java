@@ -1,13 +1,16 @@
 package org.sifenboot.setup;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.*;
+import java.util.List;
 import java.util.Properties;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 
 
@@ -16,30 +19,30 @@ public class DbConsoleInitializer {
     public static void main(String[] args) {
         System.out.println(">> [INICIO] Iniciando proceso de configuración de Base de Datos...");
 
-        // Usamos Scanner para solicitar la contraseña al usuario
         Scanner consoleScanner = new Scanner(System.in);
         System.out.print(">> Ingrese la contraseña para el usuario administrador (Enter para usar 'admin'): ");
         String inputPass = consoleScanner.nextLine().trim();
 
-        // Si el usuario no ingresa nada, usamos "admin" por defecto
         String finalPassword = inputPass.isEmpty() ? "admin" : inputPass;
         System.out.println(">> Se utilizará la contraseña: " + (inputPass.isEmpty() ? "admin (por defecto)" : "*******"));
 
         try {
-            Properties props = loadProperties();
+            // Cargamos configuración desde .env o variables de sistema
+            Properties props = loadEnvFile();
 
-            String host = props.getProperty("db.host", "localhost");
-            String port = props.getProperty("db.port", "5432");
-            String dbName = props.getProperty("db.name", "sifenboot");
-            String user = props.getProperty("db.user", "postgres");
-            String pass = props.getProperty("db.pass", "password");
+            // Leemos las variables estandarizadas (MAYÚSCULAS)
+            String host = props.getProperty("DB_HOST", "localhost");
+            String port = props.getProperty("DB_PORT", "5432");
+            String dbName = props.getProperty("DB_NAME", "sifenboot");
+            String user = props.getProperty("DB_USER", "postgres");
+            String pass = props.getProperty("DB_PASS", "password");
 
             String baseUrl = "jdbc:postgresql://" + host + ":" + port + "/postgres";
             String targetUrl = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
 
             ensureDatabaseExists(baseUrl, dbName, user, pass);
 
-            // Pasamos la contraseña elegida al cargador de script
+            // Cargamos el SQL inyectando la contraseña hasheada
             String sqlScript = loadSqlScript("db/setup.sql", finalPassword);
 
             if (!sqlScript.isEmpty()) {
@@ -52,25 +55,41 @@ public class DbConsoleInitializer {
 
         } catch (Exception e) {
             System.err.println("\n>> [ERROR CRÍTICO]: Proceso interrumpido.");
-            System.err.println(">> Detalle: " + e.getMessage());
+            e.printStackTrace(); // Imprimimos el stack trace completo para depurar si falla
         }
     }
 
-    private static Properties loadProperties() throws Exception {
-        System.out.println(">> [1/4] Cargando database.properties...");
+    // Método para leer .env manualmente (ya que esta clase corre fuera de Spring)
+    private static Properties loadEnvFile() throws IOException {
         Properties props = new Properties();
-        try (InputStream input = DbConsoleInitializer.class.getClassLoader().getResourceAsStream("database.properties")) {
-            if (input == null) {
-                throw new RuntimeException("No se encontró el archivo 'database.properties' en resources.");
+        File envFile = new File(".env"); // Busca en la raíz del proyecto
+
+        if (envFile.exists()) {
+            System.out.println(">> [CONFIG] Cargando variables desde .env");
+            List<String> lines = Files.readAllLines(envFile.toPath());
+            for (String line : lines) {
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    continue;
+                }
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    props.setProperty(parts[0].trim(), parts[1].trim());
+                }
             }
-            props.load(input);
-            System.out.println("   - Configuración cargada.");
-            return props;
+        } else {
+            System.out.println(">> [CONFIG] No se encontró .env, usando variables de entorno del sistema.");
         }
+
+        // Sobrescribimos con variables del sistema si existen (ideal para Docker/CI)
+        System.getenv().forEach(props::setProperty);
+
+        return props;
     }
+
+    // ELIMINÉ EL MÉTODO loadProperties ANTIGUO PORQUE YA NO SE USA
 
     private static void ensureDatabaseExists(String url, String dbName, String user, String pass) throws Exception {
-        System.out.println(">> [2/4] Verificando existencia de la base de datos '" + dbName + "'...");
+        System.out.println(">> [DB] Verificando existencia de la base de datos '" + dbName + "'...");
         try (Connection conn = DriverManager.getConnection(url, user, pass);
              Statement stmt = conn.createStatement()) {
 
@@ -87,9 +106,8 @@ public class DbConsoleInitializer {
         }
     }
 
-    // Hemos modificado la firma para recibir la password elegida
     private static String loadSqlScript(String path, String passwordToHash) throws Exception {
-        System.out.println(">> [3/4] Leyendo script SQL: " + path);
+        System.out.println(">> [SQL] Leyendo script: " + path);
         try (InputStream is = DbConsoleInitializer.class.getClassLoader().getResourceAsStream(path)) {
             if (is == null) {
                 throw new RuntimeException("No se pudo encontrar el archivo SQL en: " + path);
@@ -97,16 +115,14 @@ public class DbConsoleInitializer {
             Scanner s = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
             String content = s.hasNext() ? s.next() : "";
 
-            // Generamos el hash con BCrypt de la contraseña recibida
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashReal = encoder.encode(passwordToHash);
 
-            // Reemplazamos el placeholder :pass_admin por el hash real
             if (content.contains(":pass_admin")) {
                 content = content.replace(":pass_admin", hashReal);
-                System.out.println("   - Hash inyectado correctamente en el script.");
+                System.out.println("   - Hash de contraseña inyectado.");
             } else {
-                System.out.println("   - [!] No se encontró el marcador :pass_admin en el SQL.");
+                System.out.println("   - [!] Advertencia: No se encontró marcador :pass_admin.");
             }
 
             return content;
@@ -114,11 +130,11 @@ public class DbConsoleInitializer {
     }
 
     private static void executeSqlScript(String url, String script, String user, String pass) throws Exception {
-        System.out.println(">> [4/4] Ejecutando setup.sql en la base de datos destino...");
+        System.out.println(">> [SQL] Ejecutando script en base de datos destino...");
         try (Connection conn = DriverManager.getConnection(url, user, pass);
              Statement stmt = conn.createStatement()) {
             stmt.execute(script);
-            System.out.println("   - Estructura de tablas y datos iniciales aplicados.");
+            System.out.println("   - Script ejecutado correctamente.");
         } catch (SQLException e) {
             throw new RuntimeException("Error al ejecutar el SQL: " + e.getMessage(), e);
         }
