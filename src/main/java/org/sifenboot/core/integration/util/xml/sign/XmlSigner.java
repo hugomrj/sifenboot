@@ -1,6 +1,8 @@
 package org.sifenboot.core.integration.util.xml.sign;
 
 import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +14,7 @@ import javax.xml.crypto.dsig.spec.*;
 
 import org.w3c.dom.Node;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -27,11 +30,12 @@ import java.util.logging.Logger;
 @Service
 public class XmlSigner {
 
-    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
+    //private final SifenProperties_Deprecated sifenPropertiesDeprecated;
+    private final CertificadoService certificadoService;
 
     @Autowired
-    public XmlSigner(SifenProperties_Deprecated sifenPropertiesDeprecated) {
-        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
+    public XmlSigner(CertificadoService certificadoService) {
+        this.certificadoService = certificadoService;
     }
 
     public Node sign(Node parentNode,
@@ -89,14 +93,24 @@ public class XmlSigner {
     }
 
 
-    public Node sign(Node parentNode, String signedNodeId) {
+    public Node sign(String emisorCod, Node parentNode, String signedNodeId) {
+
         try {
+            // Obtener el certificado
+            Certificado certificado
+                    = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
+
+            if (certificado == null) {
+                Logger.getLogger(XmlSigner.class.getName())
+                        .log(Level.SEVERE, "No se encontro certificado activo para el emisor: " + emisorCod);
+                return null;
+            }
+
+
             KeyStore ks = KeyStore.getInstance("PKCS12");
 
-            try (InputStream in =
-                         new FileInputStream(sifenPropertiesDeprecated.getCertPath())) {
-
-                ks.load(in, sifenPropertiesDeprecated.getCertPass().toCharArray());
+            try (InputStream in = new ByteArrayInputStream(certificado.getP12Contenido())) {
+                ks.load(in, certificado.getP12Password().toCharArray());
             }
 
             String alias = ks.aliases().nextElement();
@@ -105,7 +119,7 @@ public class XmlSigner {
 
             PrivateKey pk = (PrivateKey) ks.getKey(
                     alias,
-                    sifenPropertiesDeprecated.getCertPass().toCharArray()
+                    certificado.getP12Password().toCharArray()
             );
 
             return sign(parentNode, signedNodeId, cert, pk);
@@ -116,4 +130,6 @@ public class XmlSigner {
             return null;
         }
     }
+
+
 }

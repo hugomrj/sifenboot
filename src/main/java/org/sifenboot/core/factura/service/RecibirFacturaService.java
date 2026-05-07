@@ -58,7 +58,7 @@ public class RecibirFacturaService {
         String xmlGenerado = xmlGenerator.generar(facturaInput);
 
         // 2. Firmar
-        Node nodoFirmado = xmlSifenSigner.signXml(xmlGenerado);
+        Node nodoFirmado = xmlSifenSigner.signXml(emisorCod, xmlGenerado);
 
         // 3. Agregar QR
         Node nodoConQR = qrNodeBuilder.addQrNode(nodoFirmado);

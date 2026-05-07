@@ -1,6 +1,7 @@
 package org.sifenboot.core.integration.util.xml.sign;
 
 import org.sifenboot.core.integration.util.xml.FileXML;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,7 +15,7 @@ public class SifenXmlSigner {
         this.xmlSigner = xmlSigner;
     }
 
-    public Node signXml(String xml) {
+    public Node signXml(String emisorCod, String xml) {
 
         // obtener nodo raíz
         Node root = FileXML.getRootNode(xml, "rDE");
@@ -27,6 +28,6 @@ public class SifenXmlSigner {
         signedElement.setIdAttribute("Id", true);
 
         // firmar y retornar
-        return xmlSigner.sign(root, signedNodeId);
+        return xmlSigner.sign(emisorCod, root, signedNodeId);
     }
 }

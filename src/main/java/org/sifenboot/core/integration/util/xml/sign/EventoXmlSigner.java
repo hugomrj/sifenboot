@@ -2,10 +2,13 @@ package org.sifenboot.core.integration.util.xml.sign;
 
 import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.core.integration.util.xml.FileXML;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -18,17 +21,21 @@ import java.util.logging.Logger;
 @Component
 public class EventoXmlSigner {
 
-    private final SifenProperties_Deprecated sifenPropertiesDeprecated;
+    private final CertificadoService certificadoService;
     private final XmlSigner xmlSigner;
 
-    public EventoXmlSigner(SifenProperties_Deprecated sifenPropertiesDeprecated, XmlSigner xmlSigner) {
-        this.sifenPropertiesDeprecated = sifenPropertiesDeprecated;
+    public EventoXmlSigner(CertificadoService certificadoService, XmlSigner xmlSigner) {
+        this.certificadoService = certificadoService;
         this.xmlSigner = xmlSigner;
     }
 
-    public Node firmar(String xml) {
+    public Node firmar(String emisorCod, String xml) {
 
         try {
+
+            Certificado certificado
+                    = certificadoService.getActiveCertificateByEmisorCode(emisorCod);
+
             // 1️⃣ Obtener nodo raíz a firmar
             Node root = FileXML.getRootNode(xml, "rGesEve");
 
@@ -45,11 +52,10 @@ public class EventoXmlSigner {
             // KeyStore default type = pkcs12
 
 
-                try (InputStream in = new FileInputStream(
-                    sifenPropertiesDeprecated.getCertPath()
-            )) {
-                ks.load(in, sifenPropertiesDeprecated.getCertPass().toCharArray());
+            try (InputStream in = new ByteArrayInputStream(certificado.getP12Contenido())) {
+                ks.load(in, certificado.getP12Password().toCharArray());
             }
+
 
             String alias = ks.aliases().nextElement();
 
@@ -58,7 +64,7 @@ public class EventoXmlSigner {
 
             PrivateKey privateKey = (PrivateKey) ks.getKey(
                     alias,
-                    sifenPropertiesDeprecated.getCertPass().toCharArray()
+                    certificado.getP12Password().toCharArray()
             );
 
             // 4️⃣ Firmar (misma canonicalización que legacy)

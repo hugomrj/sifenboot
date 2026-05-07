@@ -20,13 +20,14 @@ public class EventoCancelarService {
         this.parser = parser;
     }
 
-    public CancelarResponse execute(String codEmisor,CancelarRequest request) {
+    public CancelarResponse execute(String codEmisor, CancelarRequest request) {
 
         // 1. Buscas al emisor en tu base de datos
         // Emisor emisor = emisorRepo.findByCodEmisor(codEmisor);
 
 
         String xml = cancelarRepository.cancelarEvento(
+                codEmisor,
                 request.getCdc(),
                 request.getMotivo()
         );

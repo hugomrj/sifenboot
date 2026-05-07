@@ -20,7 +20,7 @@ public class EventoCancelarSoapRequest {
         this.eventoXmlSigner = eventoXmlSigner;
     }
 
-    public String createCancelarXml(String cdc, String motivo) {
+    public String createCancelarXml(String emisorCod,  String cdc, String motivo) {
 
 
         String xmlId = SoapIdGenerator.generateId();
@@ -48,7 +48,7 @@ public class EventoCancelarSoapRequest {
 
 
         // FIRMAR XML
-        Node firmado = eventoXmlSigner.firmar(xmlBase);
+        Node firmado = eventoXmlSigner.firmar(emisorCod, xmlBase);
 
         String xmlFirmado = FileXML.xmlToString(firmado);
 

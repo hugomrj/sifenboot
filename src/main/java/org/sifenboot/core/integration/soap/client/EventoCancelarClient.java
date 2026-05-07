@@ -41,12 +41,14 @@ public class EventoCancelarClient {
     }
     */
 
-    public HttpResponse<String> cancelarEvento(String id, String mOtEve) {
+    public HttpResponse<String> cancelarEvento(
+            String emisorCod,  String id, String mOtEve) {
         try {
 
             String endpointUrl = buildCancelarEventoUrl();
 
-            String xmlRequest = eventoCancelarRequest.createCancelarXml(id, mOtEve);
+            String xmlRequest = eventoCancelarRequest.createCancelarXml(
+                    emisorCod, id, mOtEve);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(endpointUrl))

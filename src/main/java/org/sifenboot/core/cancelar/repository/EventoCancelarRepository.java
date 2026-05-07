@@ -14,11 +14,11 @@ public class EventoCancelarRepository {
         this.cancelarClient = cancelarClient;
     }
 
-    public String cancelarEvento(String cdc, String motivo) {
+    public String cancelarEvento(String emisorCod, String cdc, String motivo) {
 
         try {
             HttpResponse<String> httpResponse =
-                    cancelarClient.cancelarEvento(cdc, motivo);
+                    cancelarClient.cancelarEvento( emisorCod,  cdc, motivo);
 
 
             if (httpResponse.statusCode() >= 500) {
