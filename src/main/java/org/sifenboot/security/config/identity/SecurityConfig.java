@@ -16,24 +16,29 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // Configuración para manejar la sesión expirada
                 .exceptionHandling(eh -> eh
                         .authenticationEntryPoint(htmxAuthenticationEntryPoint())
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // --- SWAGGER ---
+                        // --- 1. CAPA CORE (ERP / MÁQUINAS) ---
+                        .requestMatchers("/api/**").permitAll()
+
+                        // --- 2. CAPA PANEL ---
+                        // Quitamos Swagger de aquí para que no sea público
+                        .requestMatchers("/css/**", "/js/**", "/login").permitAll()
+
+                        // --- 3. CAPA APP ---
+                        .requestMatchers("/app/auth/login").permitAll()
+
+                        // --- 4. RUTAS PROTEGIDAS (Dashboard + Swagger) ---
                         .requestMatchers(
+                                "/dashboard",
+                                "/app/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
-                        ).permitAll()
-                        // --- 1. CAPA CORE (ERP / MÁQUINAS) ---
-                        .requestMatchers("/api/**").permitAll()
-                        // --- 2. CAPA PANEL ---
-                        .requestMatchers("/css/**", "/js/**", "/login").permitAll()
-                        // --- 3. CAPA APP ---
-                        .requestMatchers("/app/auth/login").permitAll()
-                        .requestMatchers("/dashboard", "/app/**").authenticated()
+                        ).authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -49,6 +54,9 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+
 
     @Bean
     public AuthenticationEntryPoint htmxAuthenticationEntryPoint() {

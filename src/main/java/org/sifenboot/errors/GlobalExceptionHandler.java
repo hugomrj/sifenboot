@@ -2,6 +2,7 @@ package org.sifenboot.errors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -80,4 +83,32 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.UNAUTHORIZED, "ERR_UNAUTHORIZED", ex.getMessage());
     }
 
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex) {
+
+        Throwable cause = ex.getMostSpecificCause();
+
+        if (cause instanceof PSQLException psqlEx) {
+
+            String constraint = psqlEx.getServerErrorMessage() != null
+                    ? psqlEx.getServerErrorMessage().getConstraint()
+                    : null;
+
+            if ("documentos_cdc_key".equals(constraint)) {
+                return buildResponse(
+                        HttpStatus.CONFLICT,
+                        "ERR_DUPLICATE_CDC",
+                        "El documento ya existe (CDC duplicado)"
+                );
+            }
+        }
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "ERR_DATA_INTEGRITY",
+                "Error de integridad de datos"
+        );
+    }
 }

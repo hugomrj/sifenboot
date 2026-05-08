@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 @RequestScope
 public class DeXmlBuilder {
 
-    //private final SifenProperties_Deprecated sifenPropertiesDeprecated;
     private final DeComplemento complegen;
     private final Mapping mapping;
     private final DeXmlStructure xmlEstructura;
@@ -33,11 +32,7 @@ public class DeXmlBuilder {
         this.mapping = mapping;
         this.xmlEstructura = xmlEstructura;
     }
-/*
-    public SifenProperties_Deprecated getSifenProperties() {
-        return sifenPropertiesDeprecated;
-    }
-*/
+
     public DeComplemento getComplegen() {
         return complegen;
     }

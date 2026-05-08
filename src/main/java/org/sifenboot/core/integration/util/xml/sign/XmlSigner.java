@@ -1,6 +1,5 @@
 package org.sifenboot.core.integration.util.xml.sign;
 
-import org.sifenboot.core.integration.sifen.config.SifenProperties_Deprecated;
 import org.sifenboot.security.certificado.model.Certificado;
 import org.sifenboot.security.certificado.service.CertificadoService;
 import org.springframework.stereotype.Service;

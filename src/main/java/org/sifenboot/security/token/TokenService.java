@@ -1,4 +1,4 @@
-package org.sifenboot.core.security.service;
+package org.sifenboot.security.token;
 import org.sifenboot.app.emisor.model.Emisor;
 import org.sifenboot.app.emisor.repository.EmisorRepository;
 import org.springframework.stereotype.Service;

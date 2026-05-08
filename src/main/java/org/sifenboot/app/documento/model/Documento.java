@@ -54,6 +54,7 @@ public class Documento {
     private String xmlRespuesta;
 
     @Column(name = "json_data", columnDefinition = "jsonb")
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private String jsonData;
 
     @Column(name = "fecha_emision")
