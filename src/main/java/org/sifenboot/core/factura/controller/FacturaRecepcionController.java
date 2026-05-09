@@ -3,6 +3,7 @@ package org.sifenboot.core.factura.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.sifenboot.core.factura.dto.request.FacturaProcesadaDTO;
 import org.sifenboot.core.factura.service.FacturaRecepcionService;
 import org.sifenboot.security.token.TokenService;
 import org.sifenboot.errors.UnauthorizedException;
@@ -39,11 +40,11 @@ public class FacturaRecepcionController {
                     + emisor);
         }
 
-        registrarFacturaService.execute(emisor, request);
+        FacturaProcesadaDTO resultado
+                = registrarFacturaService.execute(emisor, request);
 /*
         return ResponseEntity.accepted().build();
 */
-        return ResponseEntity.ok(Map.of("status", "success",
-                "message", "Recibido en modo prueba"));
+        return ResponseEntity.ok(resultado);
     }
 }

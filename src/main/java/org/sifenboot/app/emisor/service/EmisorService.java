@@ -19,6 +19,11 @@ public class EmisorService {
         this.schemaProvisioner = schemaProvisioner;
     }
 
+    public Emisor findByCodEmisor(String codEmisor) {
+        return emisorRepository.findByCodEmisor(codEmisor)
+                .orElseThrow(() -> new RuntimeException("Emisor no encontrado con código: " + codEmisor));
+    }
+
     public List<Emisor> findAll() {
         return emisorRepository.findAll();
     }

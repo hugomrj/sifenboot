@@ -14,15 +14,25 @@ import java.util.Optional;
 public interface DocumentoRepository extends JpaRepository<Documento, Long> {
 
     /**
-     * Consulta optimizada: Trae documentos junto con sus respuestas
-     * en una sola llamada (evita el problema de LazyInitializationException)
-     */
-    @Query("SELECT DISTINCT d FROM Documento d LEFT JOIN FETCH d.respuestas ORDER BY d.fechaEmision DESC")
-    List<Documento> findAllWithRespuestas();
-
-    /**
      * Busca un documento específico por ID incluyendo su historial de respuestas
      */
     @Query("SELECT d FROM Documento d LEFT JOIN FETCH d.respuestas WHERE d.id = :id")
     Optional<Documento> findByIdWithRespuestas(@Param("id") Long id);
+
+
+    /**
+     * Consulta optimizada: Trae documentos junto con sus respuestas
+     * en una sola llamada (evita LazyInitializationException)
+     */
+    @Query("""
+        SELECT DISTINCT d
+        FROM Documento d
+        LEFT JOIN FETCH d.respuestas
+        ORDER BY
+            d.establecimiento DESC,
+            d.puntoExpedicion DESC,
+            d.numeroDocumento DESC
+    """)
+    List<Documento> findAllWithRespuestas();
+
 }

@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "certificados")
+@Table(name = "certificados", schema = "public")
 public class Certificado {
 
     @Id

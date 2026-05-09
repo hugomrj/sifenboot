@@ -86,7 +86,7 @@ public class DocumentoCoreService {
 
         documento.setEstado(estado);
 
-        return documentoRepository.save(documento);
+        return documentoRepository.saveAndFlush(documento);
     }
 
 

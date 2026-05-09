@@ -3,6 +3,7 @@ package org.sifenboot.core.factura.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sifenboot.app.documento.service.DocumentoCoreService;
+import org.sifenboot.core.factura.dto.request.FacturaProcesadaDTO;
 import org.sifenboot.core.factura.repository.FacturaRepository;
 import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.FileXML;
@@ -22,6 +23,7 @@ public class FacturaRecepcionService {
     private final SifenXmlSigner xmlSifenSigner;
     private final QrNodeBuilder qrNodeBuilder;
     private final DocumentoCoreService documentoCoreService;
+    private final FacturaJsonService facturaJsonService;
 
 
     @Autowired
@@ -29,31 +31,50 @@ public class FacturaRecepcionService {
             DeXmlGenerator xmlGenerator,
             SifenXmlSigner xmlSifenSigner,
             QrNodeBuilder qrNodeBuilder,
-            DocumentoCoreService documentoCoreService
+            DocumentoCoreService documentoCoreService,
+            FacturaJsonService facturaJsonService
     ) {
 
         this.xmlGenerator = xmlGenerator;
         this.xmlSifenSigner = xmlSifenSigner;
         this.qrNodeBuilder = qrNodeBuilder;
         this.documentoCoreService = documentoCoreService;
+        this.facturaJsonService = facturaJsonService;
     }
 
-    public void execute(String emisorCod, JsonNode facturaInput) {
+    public FacturaProcesadaDTO execute(String emisorCod, JsonNode facturaInput) {
 
-
-
+        System.out.println("\n========================================");
         System.out.println("== INICIO PROCESO FACTURA ASYNC ==");
+        System.out.println("========================================");
 
         /*
          * 1. Recibir JSON
-         * 2. Completar datos del emisor
-         * 3. Transformar formato interno → formato SIFEN
-         * 4. Generar XML
-         * 5. Firmar XML
-         * 6. Agregar QR
+         * 2. Generar XML
+         * 3. Firmar XML
+         * 4. Agregar QR
+         * 5. Convertir XML final
+         * 6. Registrar documento
          */
 
-        // 1. Convertir JSON a XML
+        // =========================
+        // DATOS INICIALES
+        // =========================
+
+        System.out.println("[1/6] Procesando factura");
+        System.out.println("Emisor: " + emisorCod);
+
+        // falta tomar el facturaInput y completar los campos que falta
+        // y estan en emisor, se debe filtrar por emisorCod
+        JsonNode facturaEnrJson
+                = facturaJsonService.completar(emisorCod, facturaInput);
+
+        // =========================
+        // GENERAR XML
+        // =========================
+
+        System.out.println("\n[2/6] Generando XML...");
+
         String xmlGenerado = null;
         try {
             xmlGenerado = xmlGenerator.generar(facturaInput);
@@ -61,29 +82,73 @@ public class FacturaRecepcionService {
             throw new RuntimeException(e);
         }
 
-        // 2. Firmar XML
+        System.out.println("✔ XML generado");
+        System.out.println("Tamaño XML: " + xmlGenerado.length());
+
+        // =========================
+        // FIRMAR XML
+        // =========================
+
+        System.out.println("\n[3/6] Firmando XML...");
+
         Node nodoFirmado = xmlSifenSigner.signXml(emisorCod, xmlGenerado);
 
-        // 3. Agregar QR
+        System.out.println("✔ XML firmado");
+
+        // =========================
+        // AGREGAR QR
+        // =========================
+
+        System.out.println("\n[4/6] Agregando QR...");
+
         Node nodoConQR = qrNodeBuilder.addQrNode(nodoFirmado);
 
-        // 4. DOM → String
-        String xmlFinal = FileXML.xmlToString(nodoConQR);
+        System.out.println("✔ QR agregado");
 
-        documentoCoreService.registrarDocumentoFirmado(
-                emisorCod, facturaInput, xmlFinal);
+        // =========================
+        // XML FINAL
+        // =========================
 
+        System.out.println("\n[5/6] Generando XML final...");
 
-        System.out.println(xmlFinal);
+        String xmlDE = FileXML.xmlToString(nodoConQR);
 
-        // TODO:
-        // guardar XML
-        // enviar a SIFEN
-        // persistir estado
-        // manejar cola async
+        System.out.println("✔ XML final generado");
+        System.out.println("Tamaño final XML: " + xmlDE.length());
 
+        // =========================
+        // REGISTRAR DOCUMENTO
+        // =========================
+
+        System.out.println("\n[6/6] Registrando documento...");
+
+        var documento = documentoCoreService.registrarDocumentoFirmado(
+                emisorCod,
+                facturaInput,
+                xmlDE
+        );
+
+        System.out.println("✔ Documento registrado");
+
+        // =========================
+        // FIN
+        // =========================
+
+        System.out.println("\n========================================");
         System.out.println("== FIN PROCESO FACTURA ASYNC ==");
+        System.out.println("========================================\n");
+
+        // 6. Retornar el DTO con los datos del proceso
+        return new FacturaProcesadaDTO(
+                emisorCod,
+                documento.getCdc(),
+                xmlDE,
+                documento.getEstado().getCodigo()
+        );
 
 
     }
+
+
+
 }
