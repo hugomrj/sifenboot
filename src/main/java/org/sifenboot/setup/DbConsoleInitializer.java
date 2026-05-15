@@ -47,6 +47,17 @@ public class DbConsoleInitializer {
 
             if (!sqlScript.isEmpty()) {
                 executeSqlScript(targetUrl, sqlScript, user, pass);
+
+                // Dentro del main de DbConsoleInitializer.java
+                GeographicLoader.importGeographicData(
+                        targetUrl,
+                        user,
+                        pass,
+                        "src/main/java/org/sifenboot/setup/json/ubicaciones.json"
+                );
+
+
+
             } else {
                 System.out.println(">> [ADVERTENCIA] El script SQL está vacío o no se encontró.");
             }

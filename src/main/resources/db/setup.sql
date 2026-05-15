@@ -10,13 +10,36 @@ INSERT INTO usuarios (username, password)
 VALUES ('admin', ':pass_admin')
 ON CONFLICT (username) DO NOTHING;
 
--- Departamentos (Rubrica de Sifen)
+
+-- 1. Departamentos (Ya la tienes, pero aseguramos integridad)
 CREATE TABLE IF NOT EXISTS departamentos (
     id INTEGER PRIMARY KEY,
-    descripcion VARCHAR(50) NOT NULL UNIQUE
+    descripcion VARCHAR(100) NOT NULL
 );
 
+-- 2. Distritos
+CREATE TABLE IF NOT EXISTS distritos (
+    id INTEGER PRIMARY KEY,
+    departamento_id INTEGER NOT NULL,
+    descripcion VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_departamento FOREIGN KEY (departamento_id) REFERENCES departamentos(id) ON DELETE CASCADE
+);
+
+-- 3. Localidades
+-- Usamos un SERIAL o una PK compuesta porque los códigos de localidad
+-- a veces se repiten entre distritos en los documentos de SET/SIFEN
+CREATE TABLE IF NOT EXISTS localidades (
+    id SERIAL PRIMARY KEY,
+    distrito_id INTEGER NOT NULL,
+    codigo_localidad INTEGER NOT NULL,
+    descripcion VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_distrito FOREIGN KEY (distrito_id) REFERENCES distritos(id) ON DELETE CASCADE
+);
+
+
+
 -- Emisores (Datos de negocio)
+-- 4. Emisores (Actualizado con relaciones)
 CREATE TABLE IF NOT EXISTS emisores (
     id SERIAL PRIMARY KEY,
     cod_emisor VARCHAR(50) UNIQUE NOT NULL,
@@ -30,14 +53,17 @@ CREATE TABLE IF NOT EXISTS emisores (
     direccion TEXT NOT NULL,
     numero_casa INTEGER DEFAULT 0,
     departamento_id INTEGER,
+    distrito_id INTEGER,
+    localidad_id INTEGER,
     telefono VARCHAR(50),
     email VARCHAR(100),
     actividad_economica_codigo INTEGER,
     actividad_economica_descripcion TEXT,
     creado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_departamento FOREIGN KEY (departamento_id) REFERENCES departamentos(id),
-    CONSTRAINT check_ruc_dv CHECK (ruc_dv >= 0 AND ruc_dv <= 9)
+    CONSTRAINT fk_emisor_depto FOREIGN KEY (departamento_id) REFERENCES departamentos(id),
+    CONSTRAINT fk_emisor_distrito FOREIGN KEY (distrito_id) REFERENCES distritos(id),
+    CONSTRAINT fk_emisor_localidad FOREIGN KEY (localidad_id) REFERENCES localidades(id)
 );
 
 -- Configuración SIFEN
@@ -86,14 +112,6 @@ CREATE INDEX IF NOT EXISTS idx_emisores_cod ON emisores(cod_emisor);
 CREATE INDEX IF NOT EXISTS idx_emisor_config_emisor_id ON emisores_configuraciones(emisor_id);
 CREATE INDEX IF NOT EXISTS idx_cert_emisor_id ON certificados(emisor_id);
 
--- Inserts de departamentos
-INSERT INTO departamentos (id, descripcion) VALUES
-(1, 'CAPITAL'), (2, 'CONCEPCION'), (3, 'SAN PEDRO'), (4, 'CORDILLERA'),
-(5, 'GUAIRA'), (6, 'CAAGUAZU'), (7, 'CAAZAPA'), (8, 'ITAPUA'),
-(9, 'MISIONES'), (10, 'PARAGUARI'), (11, 'ALTO PARANA'), (12, 'CENTRAL'),
-(13, 'NEEMBUCU'), (14, 'AMAMBAY'), (15, 'CANINDEYU'), (16, 'PRESIDENTE HAYES'),
-(17, 'BOQUERON'), (18, 'ALTO PARAGUAY')
-ON CONFLICT (id) DO NOTHING;
 
 
 

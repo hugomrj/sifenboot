@@ -61,7 +61,7 @@ public class RecibirFacturaService {
         Node nodoFirmado = xmlSifenSigner.signXml(emisorCod, xmlGenerado);
 
         // 3. Agregar QR
-        Node nodoConQR = qrNodeBuilder.addQrNode(nodoFirmado);
+        Node nodoConQR = qrNodeBuilder.addQrNode(emisorCod, nodoFirmado);
 
         // 4. DOM → String
         String xmlFinal = FileXML.xmlToString(nodoConQR);

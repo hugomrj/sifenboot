@@ -6,6 +6,13 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+
 @Component
 public class SifenXmlSigner {
 
@@ -27,7 +34,41 @@ public class SifenXmlSigner {
         String signedNodeId = signedElement.getAttribute("Id");
         signedElement.setIdAttribute("Id", true);
 
-        // firmar y retornar
-        return xmlSigner.sign(emisorCod, root, signedNodeId);
+        // firmar
+        Node signedNode = xmlSigner.sign(emisorCod, root, signedNodeId);
+
+
+
+
+        // DEBUG XML FIRMADO
+        try {
+
+            Transformer transformer =
+                    TransformerFactory.newInstance().newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            StringWriter writer = new StringWriter();
+
+            transformer.transform(
+                    new DOMSource(signedNode),
+                    new StreamResult(writer)
+            );
+
+            System.out.println("\n===== XML FIRMADO =====");
+            System.out.println(writer);
+            System.out.println("=======================\n");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+        // retornar
+        return signedNode;
     }
 }

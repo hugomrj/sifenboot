@@ -1,9 +1,9 @@
 package org.sifenboot.security.certificado.controller.view;
 
 import org.sifenboot.security.certificado.model.Certificado;
-import org.sifenboot.app.emisor.model.Emisor;
+import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.security.certificado.service.CertificadoService;
-import org.sifenboot.app.emisor.service.EmisorService;
+import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

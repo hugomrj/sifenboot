@@ -3,7 +3,7 @@ package org.sifenboot.security.certificado.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
-import org.sifenboot.app.emisor.model.Emisor;
+import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 

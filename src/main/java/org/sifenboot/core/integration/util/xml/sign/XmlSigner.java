@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 @Service
 public class XmlSigner {
 
-    //private final SifenProperties_Deprecated sifenPropertiesDeprecated;
     private final CertificadoService certificadoService;
 
     @Autowired

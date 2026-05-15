@@ -22,20 +22,39 @@ db.user=postgres
 db.pass=su_password
 </code></pre>
 
+
+
+
+
 ### Inicialización de Base de Datos
-El proyecto incluye un script lanzador independiente para automatizar la creación de la base de datos, las tablas y el usuario administrador inicial (admin / admin123).
 
-### Ejecución rápida (Recomendado)
-Desde la raíz del proyecto, ejecute el siguiente comando:
+El proyecto incluye un módulo de configuración independiente bajo el paquete `org.sifenboot.setup` para automatizar la creación de la base de datos, el aprovisionamiento de las tablas del sistema, el registro del usuario administrador inicial y la carga del diccionario geográfico de SIFEN (Departamentos, Distritos y Localidades).
 
-<pre><code>java SetupDatabase.java</code></pre>
+#### Instrucciones de Ejecución (Vía Maven)
 
-Nota: Este comando utiliza las capacidades de Java 21 para ejecutar código fuente directamente. No requiere compilación previa ni ensucia el proyecto con archivos .class.
+Al encontrarse el inicializador estructurado dentro del árbol de fuentes del proyecto, la ejecución debe realizarse a través del Maven Wrapper para asegurar la correcta resolución del classpath (Jackson, Driver de PostgreSQL y dependencias de seguridad).
 
-### Ejecución vía Maven (Alternativa)
-Si prefiere utilizar el ciclo de vida de Maven directamente:
+Desde la raíz del proyecto, ejecute el siguiente comando según su sistema operativo:
 
-<pre><code>./mvnw compile exec:java -Dexec.mainClass="org.sifenboot.setup.DbConsoleInitializer"</code></pre>
+#### Linux / macOS
+
+```bash
+./mvnw compile exec:java -Dexec.mainClass="org.sifenboot.setup.SetupDatabase"
+```
+
+#### En Windows (CMD):
+
+```DOS
+mvnw.cmd compile exec:java -Dexec.mainClass="org.sifenboot.setup.SetupDatabase"
+```
+
+>  Nota:
+> Este proceso es interactivo y le solicitará ingresar la contraseña para el usuario administrador en la consola (presione Enter para usar `admin` por defecto).
+>
+> Asegúrese de que el archivo `src/main/java/org/sifenboot/setup/json/ubicaciones.json` esté presente antes de iniciar.
+
+
+
 
 ### Compilación y Ejecución
 Una vez inicializada la base de datos, puede levantar el servicio siguiendo estos pasos:

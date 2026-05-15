@@ -53,7 +53,8 @@ public class SifenProperties_Deprecated {
     public void setTimeout(int timeout) { this.timeout = timeout; }
 
     public String getUrlConsultaQr() { return urlConsultaQr; }
-    public void setUrlConsultaQr(String urlConsultaQr) { this.urlConsultaQr = urlConsultaQr; }
+    public void setUrlConsultaQr(String urlConsultaQr)
+    { this.urlConsultaQr = urlConsultaQr; }
 
     public String getEffectiveCsc() { return effectiveCsc; }
     public void setEffectiveCsc(String effectiveCsc) { this.effectiveCsc = effectiveCsc; }
