@@ -1,7 +1,9 @@
 package org.sifenboot.app.admin.emisor.model;
 
 import jakarta.persistence.*;
-import org.sifenboot.app.admin.departamento.model.Departamento;
+import org.sifenboot.app.admin.referencia_geografica.model.Departamento;
+import org.sifenboot.app.admin.referencia_geografica.model.Distrito;
+import org.sifenboot.app.admin.referencia_geografica.model.Localidad;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,55 +11,71 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "emisores", schema = "public")
 public class Emisor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "cod_emisor", unique = true, nullable = false)
+    @Column(name = "cod_emisor", unique = true, nullable = false, length = 50)
     private String codEmisor;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
     private String ruc;
 
     @Column(name = "ruc_dv", nullable = false)
     private Integer rucDv;
 
-    @Column(name = "razon_social", nullable = false)
+    @Column(name = "razon_social", nullable = false, columnDefinition = "TEXT")
     private String razonSocial;
 
-    @Column(name = "nombre_fantasia")
+    @Column(name = "nombre_fantasia", columnDefinition = "TEXT")
     private String nombreFantasia;
 
     @Column(name = "tipo_contribuyente", nullable = false)
     private Integer tipoContribuyente;
 
-    @Column(name = "numero_timbrado", nullable = false)
+    @Column(name = "numero_timbrado", nullable = false, length = 20)
     private String numeroTimbrado;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fecha_inicio_timbrado", nullable = false)
     private LocalDate fechaInicioTimbrado;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String direccion;
 
     @Column(name = "numero_casa")
     private Integer numeroCasa = 0;
 
+    // --- Relaciones Geográficas ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departamento_id")
     private Departamento departamento;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "distrito_id")
+    private Distrito distrito;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "localidad_id")
+    private Localidad localidad;
+
+    // ------------------------------
+
+    @Column(length = 50)
     private String telefono;
+
+    @Column(length = 100)
     private String email;
 
     @Column(name = "actividad_economica_codigo")
     private Integer actividadEconomicaCodigo;
 
-    @Column(name = "actividad_economica_descripcion")
+    @Column(name = "actividad_economica_descripcion", columnDefinition = "TEXT")
     private String actividadEconomicaDescripcion;
 
-    // Relación con la nueva tabla de configuración
     @OneToOne(mappedBy = "emisor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private EmisorConfiguracion configuracion;
 
@@ -67,8 +85,9 @@ public class Emisor {
     public Emisor() {}
 
     // --- Getters y Setters ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getCodEmisor() { return codEmisor; }
     public void setCodEmisor(String codEmisor) { this.codEmisor = codEmisor; }
@@ -103,9 +122,11 @@ public class Emisor {
     public Departamento getDepartamento() { return departamento; }
     public void setDepartamento(Departamento departamento) { this.departamento = departamento; }
 
+    public Distrito getDistrito() { return distrito; }
+    public void setDistrito(Distrito distrito) { this.distrito = distrito; }
 
-
-
+    public Localidad getLocalidad() { return localidad; }
+    public void setLocalidad(Localidad localidad) { this.localidad = localidad; }
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }

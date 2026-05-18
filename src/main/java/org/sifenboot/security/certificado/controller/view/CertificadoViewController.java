@@ -47,7 +47,7 @@ public class CertificadoViewController {
     }
 
     @GetMapping("/load")
-    public String loadByEmisor(@RequestParam("emisorId") Long emisorId, Model model) {
+    public String loadByEmisor(@RequestParam("emisorId") Integer emisorId, Model model) {
         if (emisorId == null) {
             model.addAttribute("isNew", true); // Agregar esto
             return "ui/certificado/form :: form-fields";

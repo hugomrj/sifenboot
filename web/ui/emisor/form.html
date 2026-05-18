@@ -12,8 +12,6 @@
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{configuracion.id}">
 
-        <input type="hidden" id="dep-desc" name="departamentoDescripcion">
-
         <div class="grid-2">
             <div class="form-group">
                 <label class="form-label">RUC y DV</label>
@@ -67,32 +65,140 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Dirección Calle</label>
-            <input type="text" th:field="*{direccion}" class="form-input" placeholder="Calle principal"
-                   th:readonly="${readOnly}" required>
+
+
+
+
+        <!-- Dirección Calle y N° Casa en la misma línea -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            <div class="form-group md:col-span-3">
+                <label class="form-label">Dirección Calle</label>
+                <input type="text"
+                       th:field="*{direccion}"
+                       class="form-input"
+                       placeholder="Calle principal"
+                       th:readonly="${readOnly}"
+                       required>
+            </div>
+
+            <div class="form-group md:col-span-1">
+                <label class="form-label">N° Casa</label>
+                <input type="number"
+                       th:field="*{numeroCasa}"
+                       class="form-input"
+                       placeholder="123"
+                       th:readonly="${readOnly}"
+                       required>
+            </div>
+
         </div>
 
-        <div class="grid-2">
+
+
+        <!-- Ubicación Geográfica en Cascada -->
+        <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
+
+                <!-- DEPARTAMENTO -->
+                <div class="form-group">
+                    <label class="form-label">Departamento</label>
+                    <select
+                            th:field="*{departamento.id}"
+                            id="departamento"
+
+                            th:disabled="${readOnly}"
+                            required
+
+                            hx-get="/app/common/geo/distritos"
+                            hx-trigger="change"
+                            hx-target="#distrito"
+                            hx-swap="innerHTML">
+
+                        <option value="">-- Seleccione --</option>
+
+                        <option th:each="d : ${departamentos}"
+                                th:value="${d.id}"
+                                th:text="${d.descripcion}">
+                        </option>
+
+                    </select>
+                </div>
+
+
+            <!-- DISTRITO -->
             <div class="form-group">
-                <label class="form-label">N° Casa (dNumCas)</label>
-                <input type="number" th:field="*{numeroCasa}" class="form-input"
-                       th:readonly="${readOnly}" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Departamento (cDepEmi)</label>
-                <select id="dep-select" th:field="*{departamento.id}" class="form-input"
-                        th:disabled="${readOnly}" required
-                        onchange="document.getElementById('dep-desc').value = this.options[this.selectedIndex].text">
+                <label class="form-label">Distrito</label>
+
+                <div id="distrito-container">
+                <select th:field="*{distrito.id}"
+                        id="distrito"
+                        class="form-select"
+
+                        th:disabled="${readOnly}"
+                        required
+
+                        hx-get="/app/common/geo/localidades"
+                        hx-trigger="change"
+                        hx-target="#localidad"
+                        hx-swap="innerHTML">
+
                     <option value="">-- Seleccione --</option>
-                    <option th:each="d : ${departamentos}"
+
+                    <option th:each="d : ${distritos}"
                             th:value="${d.id}"
-                            th:text="${d.descripcion}"></option>
+                            th:text="${d.descripcion}">
+                    </option>
+
+                </select>
+                </div>
+            </div>
+
+
+
+
+            <!-- LOCALIDAD -->
+            <div class="form-group">
+                <label class="form-label">Ciudad/Localidad</label>
+
+                <select th:field="*{localidad.id}"
+                        id="localidad"
+
+                        th:disabled="${readOnly}"
+                        required>
+
+                    <option value="">-- Seleccione --</option>
+
+                    <option th:each="l : ${localidades}"
+                            th:value="${l.id}"
+                            th:text="${l.descripcion}">
+                    </option>
+
                 </select>
             </div>
+
+
         </div>
 
-        <div class="grid-2" style="grid-template-columns: 140px 1fr; gap: 16px;">
+
+
+        <!-- Teléfono y Email -->
+        <div class="grid-2" style="margin-top: 16px;">
+            <div class="form-group">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" th:field="*{telefono}" class="form-input" placeholder="021 123456"
+                       th:readonly="${readOnly}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" th:field="*{email}" class="form-input" placeholder="contacto@empresa.com"
+                       th:readonly="${readOnly}">
+            </div>
+        </div>
+
+
+
+
+        <div class="grid-2" style="grid-template-columns: 140px 1fr; gap: 16px; margin-top: 16px;">
             <div class="form-group">
                 <label class="form-label">Cód. Actividad</label>
                 <input type="number" th:field="*{actividadEconomicaCodigo}"
@@ -139,7 +245,6 @@
                            placeholder="token api" th:readonly="${readOnly}">
                 </div>
             </div>
-
         </div>
 
         <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
@@ -152,3 +257,71 @@
         </div>
     </form>
 </div>
+
+
+
+
+<script>
+
+    window.departamentoChoices = window.departamentoChoices || null;
+    window.distritoChoices = window.distritoChoices || null;
+    window.localidadChoices = window.localidadChoices || null;
+
+    function initChoices() {
+
+        const departamento = document.querySelector('#departamento');
+        const distrito = document.querySelector('#distrito');
+        const localidad = document.querySelector('#localidad');
+
+        // DEPARTAMENTO
+        if (departamento) {
+
+            if (window.departamentoChoices) {
+                window.departamentoChoices.destroy();
+            }
+
+            window.departamentoChoices = new Choices(departamento, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false
+            });
+        }
+
+        // DISTRITO
+        if (distrito) {
+
+            if (window.distritoChoices) {
+                window.distritoChoices.destroy();
+            }
+
+            window.distritoChoices = new Choices(distrito, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false
+            });
+        }
+
+        // LOCALIDAD
+        if (localidad) {
+
+            if (window.localidadChoices) {
+                window.localidadChoices.destroy();
+            }
+
+            window.localidadChoices = new Choices(localidad, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false
+            });
+        }
+    }
+
+    initChoices();
+
+    document.body.addEventListener('htmx:afterSwap', function () {
+
+        initChoices();
+
+    });
+
+</script>

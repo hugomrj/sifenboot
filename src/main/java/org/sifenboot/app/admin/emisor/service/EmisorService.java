@@ -24,14 +24,25 @@ public class EmisorService {
                 .orElseThrow(() -> new RuntimeException("Emisor no encontrado con código: " + codEmisor));
     }
 
-    public List<Emisor> findAll() {
-        return emisorRepository.findAll();
+
+
+    public Emisor findById(Integer id) {
+        // ANTES (o por defecto): return emisorRepository.findById(id).orElse(...);
+
+        // AHORA: Usamos tu método personalizado que trae Distrito y Localidad
+        return emisorRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Emisor no encontrado con id: " + id));
     }
 
-    public Emisor findById(Long id) {
-        return emisorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emisor no encontrado con ID: " + id));
+
+
+
+    public List<Emisor> findAll() {
+        // Usamos el nuevo método que hace JOIN FETCH
+        return emisorRepository.findAllWithGeoData();
     }
+
+
 
 
     @Transactional
@@ -91,7 +102,7 @@ public class EmisorService {
 
 
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         if (!emisorRepository.existsById(id)) {
             throw new RuntimeException("Error: El emisor con ID " + id + " no existe.");
         }

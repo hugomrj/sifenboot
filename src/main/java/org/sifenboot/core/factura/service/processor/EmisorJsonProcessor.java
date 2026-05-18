@@ -1,31 +1,23 @@
-package org.sifenboot.core.factura.service;
+package org.sifenboot.core.factura.service.processor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.sifenboot.core.integration.builder.CodigoSeguridadGenerator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 
-@Service
-public class FacturaJsonService {
+@Component
+public class EmisorJsonProcessor {
 
-    private final EmisorService emisorService;
-    private final CodigoSeguridadGenerator codigoSeguridadGenerator;
+    public static JsonNode process(Emisor emisor , JsonNode facturaJson) {
 
-    public FacturaJsonService(
-            EmisorService emisorService,
-            CodigoSeguridadGenerator codigoSeguridadGenerator
-    ) {
-        this.emisorService = emisorService;
-        this.codigoSeguridadGenerator = codigoSeguridadGenerator;
-    }
+        if (!(facturaJson instanceof ObjectNode)) {
+            return null;
+        }
 
-    public JsonNode completar(String codEmisor, JsonNode facturaInput) {
-
-        Emisor emisor = emisorService.findByCodEmisor(codEmisor);
-        ObjectNode json = facturaInput.deepCopy();
+        ObjectNode json = (ObjectNode) facturaJson;
 
         // iTipEmi
         if (!json.has("iTipEmi")) {
@@ -40,7 +32,7 @@ public class FacturaJsonService {
         // dCodSeg
         JsonNode dCodSegNode = json.get("dCodSeg");
         if (dCodSegNode == null || dCodSegNode.asText().isBlank()) {
-            json.put("dCodSeg", codigoSeguridadGenerator.generar());
+            json.put("dCodSeg", CodigoSeguridadGenerator.generar());
         }
 
         // iTiDE
@@ -62,7 +54,6 @@ public class FacturaJsonService {
         // --- Datos del Emisor SIFEN ---
 
         if (!json.has("dRucEm")) {
-            // SIFEN requiere el RUC sin DV en dRucEm. Si lo guardás como String con guión, limpialo aquí.
             json.put("dRucEm", emisor.getRuc());
         }
 
@@ -93,26 +84,31 @@ public class FacturaJsonService {
         // Ubicación (Departamento)
         if (emisor.getDepartamento() != null) {
             if (!json.has("cDepEmi")) {
-                json.put("cDepEmi", emisor.getDepartamento().getId()); // O el código que uses para la SET
+                json.put("cDepEmi", emisor.getDepartamento().getId());
             }
             if (!json.has("dDesDepEmi")) {
                 json.put("dDesDepEmi", emisor.getDepartamento().getDescripcion());
             }
         }
 
-        // NOTA: Como 'Distrito' y 'Ciudad' no están explícitos en tu modelo 'Emisor',
-        // te dejo los bloques listos por si la info viene en el input o si debés hardcodearlos temporalmente.
-        if (!json.has("cDisEmi")) {
-            // json.put("cDisEmi", ...);
+        // Ubicación (Distrito)
+        if (emisor.getDistrito() != null) {
+            if (!json.has("cDisEmi")) {
+                json.put("cDisEmi", emisor.getDistrito().getId());
+            }
+            if (!json.has("dDesDisEmi")) {
+                json.put("dDesDisEmi", emisor.getDistrito().getDescripcion());
+            }
         }
-        if (!json.has("dDesDisEmi")) {
-            // json.put("dDesDisEmi", ...);
-        }
-        if (!json.has("cCiuEmi")) {
-            // json.put("cCiuEmi", ...);
-        }
-        if (!json.has("dDesCiuEmi")) {
-            // json.put("dDesCiuEmi", ...);
+
+        // Localidad / Ciudad
+        if (emisor.getLocalidad() != null) {
+            if (!json.has("cCiuEmi")) {
+                json.put("cCiuEmi", emisor.getLocalidad().getCodigoLocalidad());
+            }
+            if (!json.has("dDesCiuEmi")) {
+                json.put("dDesCiuEmi", emisor.getLocalidad().getDescripcion());
+            }
         }
 
         // Contacto

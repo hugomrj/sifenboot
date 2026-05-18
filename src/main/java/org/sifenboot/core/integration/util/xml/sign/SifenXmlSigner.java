@@ -38,8 +38,6 @@ public class SifenXmlSigner {
         Node signedNode = xmlSigner.sign(emisorCod, root, signedNodeId);
 
 
-
-
         // DEBUG XML FIRMADO
         try {
 
@@ -55,17 +53,10 @@ public class SifenXmlSigner {
                     new StreamResult(writer)
             );
 
-            System.out.println("\n===== XML FIRMADO =====");
-            System.out.println(writer);
-            System.out.println("=======================\n");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
 
 
         // retornar

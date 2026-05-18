@@ -1,7 +1,7 @@
-package org.sifenboot.app.admin.departamento.service;
+package org.sifenboot.app.admin.referencia_geografica.service;
 
-import org.sifenboot.app.admin.departamento.model.Departamento;
-import org.sifenboot.app.admin.departamento.repository.DepartamentoRepository;
+import org.sifenboot.app.admin.referencia_geografica.model.Departamento;
+import org.sifenboot.app.admin.referencia_geografica.repository.DepartamentoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

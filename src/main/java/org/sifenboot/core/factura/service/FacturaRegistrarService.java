@@ -2,7 +2,13 @@ package org.sifenboot.core.factura.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.sifenboot.app.admin.documento.service.DocumentoCoreService;
+import org.sifenboot.app.admin.emisor.model.Emisor;
+import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.sifenboot.core.factura.dto.request.FacturaProcesadaDTO;
+import org.sifenboot.core.factura.service.processor.DetallesJsonProcessor;
+import org.sifenboot.core.factura.service.processor.EmisorJsonProcessor;
+import org.sifenboot.core.factura.service.processor.MonedaJsonProcessor;
+import org.sifenboot.core.factura.service.processor.TotalesJsonProcessor;
 import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.FileXML;
 import org.sifenboot.core.integration.util.xml.generator.DeXmlGenerator;
@@ -20,7 +26,7 @@ public class FacturaRegistrarService {
     private final SifenXmlSigner xmlSifenSigner;
     private final QrNodeBuilder qrNodeBuilder;
     private final DocumentoCoreService documentoCoreService;
-    private final FacturaJsonService facturaJsonService;
+    private final EmisorService emisorService;
 
 
     @Autowired
@@ -29,14 +35,14 @@ public class FacturaRegistrarService {
             SifenXmlSigner xmlSifenSigner,
             QrNodeBuilder qrNodeBuilder,
             DocumentoCoreService documentoCoreService,
-            FacturaJsonService facturaJsonService
+            EmisorService emisorService
     ) {
 
         this.xmlGenerator = xmlGenerator;
         this.xmlSifenSigner = xmlSifenSigner;
         this.qrNodeBuilder = qrNodeBuilder;
         this.documentoCoreService = documentoCoreService;
-        this.facturaJsonService = facturaJsonService;
+        this.emisorService = emisorService;
     }
 
     public FacturaProcesadaDTO execute(String emisorCod, JsonNode facturaInput) {
@@ -44,6 +50,9 @@ public class FacturaRegistrarService {
         System.out.println("\n========================================");
         System.out.println("== INICIO PROCESO FACTURA ASYNC ==");
         System.out.println("========================================");
+
+        Emisor emisor = emisorService.findByCodEmisor(emisorCod);
+
 
         /*
          * 1. Recibir JSON
@@ -61,12 +70,28 @@ public class FacturaRegistrarService {
         System.out.println("[1/6] Procesando factura");
         System.out.println("Emisor: " + emisorCod);
 
-        // falta tomar el facturaInput y completar los campos que falta
-        // y estan en emisor, se debe filtrar por emisorCod
-        JsonNode facturaEnrJson
-                = facturaJsonService.completar(emisorCod, facturaInput);
+        JsonNode jsonProcessor;
 
-    System.out.println(facturaEnrJson.toPrettyString());
+        jsonProcessor= EmisorJsonProcessor.process(
+                emisor, facturaInput);
+
+        // llamar moneda
+        jsonProcessor = MonedaJsonProcessor.process(jsonProcessor);
+
+        // Paso B: Recorre el array de detalles y resuelve códigos de unidad de medida
+        jsonProcessor = DetallesJsonProcessor.process(jsonProcessor);
+
+
+        jsonProcessor = TotalesJsonProcessor.process(jsonProcessor);
+
+
+
+
+
+
+
+
+    System.out.println(jsonProcessor.toPrettyString());
 
         // =========================
         // GENERAR XML
@@ -76,7 +101,7 @@ public class FacturaRegistrarService {
 
         String xmlGenerado = null;
         try {
-            xmlGenerado = xmlGenerator.generar(facturaEnrJson);
+            xmlGenerado = xmlGenerator.generar(jsonProcessor);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -114,7 +139,7 @@ public class FacturaRegistrarService {
         String xmlDE = FileXML.xmlToString(nodoConQR);
 
         System.out.println("✔ XML final generado");
-        System.out.println("Tamaño final XML: " + xmlDE.length());
+        //System.out.println("Tamaño final XML: " + xmlDE.length());
 
         // =========================
         // REGISTRAR DOCUMENTO

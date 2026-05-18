@@ -1,6 +1,6 @@
-package org.sifenboot.app.admin.departamento.repository;
+package org.sifenboot.app.admin.referencia_geografica.repository;
 
-import org.sifenboot.app.admin.departamento.model.Departamento;
+import org.sifenboot.app.admin.referencia_geografica.model.Departamento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

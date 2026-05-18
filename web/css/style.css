@@ -267,8 +267,78 @@ body {
     border-color: var(--ui-border);
 }
 
+/* Eliminar flechas de inputs number */
+.form-input[type="number"]::-webkit-outer-spin-button,
+.form-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
 
 
+/* =========================
+   SELECT
+========================= */
+
+.form-select {
+    width: 100%;
+}
+
+
+
+/* CHOICES */
+.choices .choices__inner {
+    width: 100%;
+    min-height: auto;
+
+    padding: 14px 16px;
+
+    background: var(--brand-secondary)!important;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+
+    font-family: inherit;
+    font-size: 0.95rem;
+
+    outline: none;
+
+    transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+}
+
+/* FOCUS */
+.choices.is-focused .choices__inner,
+.choices.is-open .choices__inner {
+    background: var(--bg-page);
+    border-color: var(--ui-border);
+}
+
+//* READONLY / DISABLED */
+
+
+choices.is-disabled .choices__inner{
+    background : var(--brand-secondary)!important;
+}
+
+.choices.is-disabled .choices__list--single .choices__item {
+    background: var(--brand-secondary)!important;
+    color:  var(--text-main) !important;
+}
+
+.choices.is-disabled .choices__inner {
+    pointer-events: none;
+}
+.choices.is-disabled,
+.choices.is-disabled *,
+.choices.is-disabled::after {
+    cursor: default !important;
+}
 
 
 /* --- BUTTONS --- */
@@ -391,6 +461,51 @@ body {
 .btn-flat-danger:active {
     transform: scale(0.95);
 }
+
+
+
+.table-detail,
+.table-edit,
+.table-danger {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+/* Ver / Detalles */
+.table-detail {
+    color: #64748b;
+}
+
+.table-detail:hover {
+    color: #334155;
+}
+
+/* Editar */
+.table-edit {
+    color: #4b5563;
+}
+
+.table-edit:hover {
+    color: #111827;
+}
+
+/* Borrar */
+.table-danger {
+    color: #9ca3af;
+}
+
+.table-danger:hover {
+    color: #dc2626;
+}
+
+
+
+
 
 
 

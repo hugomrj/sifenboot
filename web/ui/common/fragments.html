@@ -1,0 +1,18 @@
+<!-- resources/templates/ui/common/fragments.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="select-options">
+
+    <option value="">-- Seleccione --</option>
+
+    <option th:each="o : ${options}"
+            th:value="${o.id}"
+            th:text="${o.descripcion}">
+    </option>
+
+</th:block>
+
+</body>
+</html>

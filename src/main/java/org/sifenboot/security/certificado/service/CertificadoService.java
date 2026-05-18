@@ -50,7 +50,7 @@ public class CertificadoService {
     }
 
 
-    public Optional<Certificado> getByEmisor(Long emisorId) {
+    public Optional<Certificado> getByEmisor(Integer emisorId) {
         System.out.println(">>> Buscando certificado para emisor: " + emisorId);
         return certificadoRepository.findByEmisorId(emisorId);
     }
@@ -58,7 +58,7 @@ public class CertificadoService {
 
     @Transactional
     public Certificado save(Certificado certificado, MultipartFile archivoP12) throws IOException {
-        Long emisorId = certificado.getEmisor().getId();
+        Integer emisorId = certificado.getEmisor().getId();
         System.out.println(">>> Iniciando guardado de certificado para Emisor ID: " + emisorId);
 
         // 1. Buscamos si ya existe para reusar el ID (evita el borrado manual)

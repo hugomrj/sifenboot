@@ -283,7 +283,7 @@ public class DeXmlStructure {
         gCuotas.hijos_add( mapping, "dVencCuo", jsonobject );
 
 
-        JsonNode arrayDetalles = jsonobject.path("Detalles");
+        JsonNode arrayDetalles = jsonobject.path("items");
         int cantdet = arrayDetalles.isArray() ? arrayDetalles.size() : 0;
 
 
