@@ -11,20 +11,45 @@ PostgreSQL 15+
 
 Maven Wrapper (incluido)
 
-### Configuración Previa
-Antes de iniciar, asegúrese de que el archivo src/main/resources/database.properties contenga las credenciales correctas de su instancia de PostgreSQL:
+## Configuración previa
 
-#### /src/resources/database.properties
-<pre><code>db.host=localhost
-db.port=5432
-db.name=sifenboot
-db.user=postgres
-db.pass=su_password
-</code></pre>
+Antes de iniciar, configure las credenciales de PostgreSQL.
 
+El proceso de inicialización buscará la configuración en este orden:
 
+1. Archivo `.env` (recomendado)
+2. Variables de entorno del sistema
+3. Solicitud interactiva por consola (solo contraseña)
 
+### Opción 1 — Archivo `.env`
 
+Crear un archivo `.env` en la raíz del proyecto:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sifenboot
+DB_USER=postgres
+DB_PASS=su_password
+```
+
+### Opción 2 — Variables de entorno
+
+```bash
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_NAME=sifenboot
+export DB_USER=postgres
+export DB_PASS=su_password
+```
+
+### Ejecutar configuración
+
+```bash
+mvn exec:java
+```
+
+Si no se encuentra `.env`, el sistema utilizará las variables del entorno y podrá solicitar la contraseña por consola.
 
 ### Inicialización de Base de Datos
 
