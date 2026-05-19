@@ -5,6 +5,7 @@ import org.sifenboot.app.admin.documento.service.DocumentoCoreService;
 import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.sifenboot.core.factura.dto.request.FacturaProcesadaDTO;
+import org.sifenboot.core.factura.service.mapping.JsonSifenMapping;
 import org.sifenboot.core.factura.service.processor.*;
 import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.FileXML;
@@ -50,39 +51,29 @@ public class FacturaRegistrarService {
 
         Emisor emisor = emisorService.findByCodEmisor(emisorCod);
 
+        // =========================================================================
+        // PASO 0: TRADUCCIÓN DE FORMATO ERP/FRONTEND A ESTRUCTURA ESTÁNDAR SIFEN
+        // =========================================================================
+        JsonNode jsonProcessor = JsonSifenMapping.process(facturaInput);
 
-        /*
-         * 1. Recibir JSON
-         * 2. Generar XML
-         * 3. Firmar XML
-         * 4. Agregar QR
-         * 5. Convertir XML final
-         * 6. Registrar documento
-         */
+        // =========================================================================
+        // PROCESADORES DE NEGOCIO (Operan ya sobre campos oficiales: iTipEmi, etc.)
+        // =========================================================================
 
-        // =========================
-        // DATOS INICIALES
-        // =========================
+        // Inyecta datos del emisor en la raíz
+        jsonProcessor = EmisorJsonProcessor.process(emisor, jsonProcessor);
 
-        System.out.println("[1/6] Procesando factura");
-        System.out.println("Emisor: " + emisorCod);
-
-        JsonNode jsonProcessor;
-
-        jsonProcessor= EmisorJsonProcessor.process(
-                emisor, facturaInput);
-
-        // llamar moneda
+        // Resuelve monedas y conversiones si aplica
         jsonProcessor = MonedaJsonProcessor.process(jsonProcessor);
 
-        // Paso B: Recorre el array de detalles y resuelve códigos de unidad de medida
+        // Recorre el array de ítems y resuelve códigos de unidad de medida / empaques
         jsonProcessor = DetallesJsonProcessor.process(jsonProcessor);
 
+        // Cálculos de totales comerciales
         jsonProcessor = TotalesJsonProcessor.process(jsonProcessor);
 
+        // Cálculos de IVA, bases gravadas y exclusiones por iTImp
         jsonProcessor = ImpuestoJsonProcessor.process(jsonProcessor);
-
-
 
 
 
