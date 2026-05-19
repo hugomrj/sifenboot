@@ -5,10 +5,7 @@ import org.sifenboot.app.admin.documento.service.DocumentoCoreService;
 import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.sifenboot.core.factura.dto.request.FacturaProcesadaDTO;
-import org.sifenboot.core.factura.service.processor.DetallesJsonProcessor;
-import org.sifenboot.core.factura.service.processor.EmisorJsonProcessor;
-import org.sifenboot.core.factura.service.processor.MonedaJsonProcessor;
-import org.sifenboot.core.factura.service.processor.TotalesJsonProcessor;
+import org.sifenboot.core.factura.service.processor.*;
 import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.FileXML;
 import org.sifenboot.core.integration.util.xml.generator.DeXmlGenerator;
@@ -81,9 +78,9 @@ public class FacturaRegistrarService {
         // Paso B: Recorre el array de detalles y resuelve códigos de unidad de medida
         jsonProcessor = DetallesJsonProcessor.process(jsonProcessor);
 
-
         jsonProcessor = TotalesJsonProcessor.process(jsonProcessor);
 
+        jsonProcessor = ImpuestoJsonProcessor.process(jsonProcessor);
 
 
 
@@ -108,6 +105,7 @@ public class FacturaRegistrarService {
 
         System.out.println("✔ XML generado");
         System.out.println("Tamaño XML: " + xmlGenerado.length());
+        System.out.println(xmlGenerado);
 
         // =========================
         // FIRMAR XML

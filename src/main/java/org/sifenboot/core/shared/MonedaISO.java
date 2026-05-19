@@ -2,11 +2,24 @@ package org.sifenboot.core.shared;
 
 
 public enum MonedaISO {
+
     PYG("Guarani"),
     USD("Dolar americano"),
     EUR("Euro"),
     ARS("Peso argentino"),
-    BRL("Real");
+    BRL("Real brasileño"),
+    CLP("Peso chileno"),
+    BOB("Boliviano"),
+    UYU("Peso uruguayo"),
+    PEN("Sol peruano"),
+    COP("Peso colombiano"),
+    MXN("Peso mexicano"),
+    GBP("Libra esterlina"),
+    CHF("Franco suizo"),
+    JPY("Yen japonés"),
+    CNY("Yuan chino"),
+    CAD("Dolar canadiense"),
+    AUD("Dolar australiano");
 
     private final String descripcion;
 
