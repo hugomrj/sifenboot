@@ -48,13 +48,14 @@ public class EmisorJsonProcessor {
         // dNumTim
         JsonNode dNumTimNode = json.get("dNumTim");
         if (dNumTimNode == null || dNumTimNode.asText().isBlank()) {
-            json.put("dNumTim", emisor.getNumeroTimbrado());
+            json.put("dNumTim", Integer.parseInt(emisor.getNumeroTimbrado()));
         }
+
 
         // --- Datos del Emisor SIFEN ---
 
         if (!json.has("dRucEm")) {
-            json.put("dRucEm", emisor.getRuc());
+            json.put("dRucEm", Long.parseLong(emisor.getRuc()));
         }
 
         if (!json.has("dDVEmi")) {

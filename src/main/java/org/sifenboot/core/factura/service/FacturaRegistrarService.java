@@ -64,7 +64,7 @@ public class FacturaRegistrarService {
         jsonProcessor = EmisorJsonProcessor.process(emisor, jsonProcessor);
 
         // Resuelve monedas y conversiones si aplica
-        jsonProcessor = MonedaJsonProcessor.process(jsonProcessor);
+        jsonProcessor = ContextoJsonProcessor.process(jsonProcessor);
 
         // Recorre el array de ítems y resuelve códigos de unidad de medida / empaques
         jsonProcessor = DetallesJsonProcessor.process(jsonProcessor);

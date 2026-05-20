@@ -103,6 +103,9 @@ public class DeXmlStructure {
 
         gEmis.getHijos().add(new DeXmlElement("dDirEmi", mapping,  null ));
         gEmis.getHijos().add(new DeXmlElement("dNumCas", mapping,  null ));
+        gEmis.getHijos().add(new DeXmlElement("dCompDir1", mapping,  null ));
+        gEmis.getHijos().add(new DeXmlElement("dCompDir2", mapping,  null ));
+
         gEmis.getHijos().add(new DeXmlElement("cDepEmi", mapping,  null ));
         gEmis.getHijos().add(new DeXmlElement("dDesDepEmi", mapping,  null ));
 
@@ -116,6 +119,7 @@ public class DeXmlStructure {
         gEmis.getHijos().add(new DeXmlElement("dDesCiuEmi", mapping,  null ));
         gEmis.getHijos().add(new DeXmlElement("dTelEmi", mapping,  null ));
         gEmis.getHijos().add(new DeXmlElement("dEmailE", mapping,  null ));
+        gEmis.getHijos().add(new DeXmlElement("dDenSuc", mapping,  null ));
 
         DeXmlElement gActEco = new DeXmlElement("gActEco");
         gEmis.getHijos().add(gActEco);
@@ -144,6 +148,7 @@ public class DeXmlStructure {
 
         gDatRec.hijos_add( mapping, "dDirRec", jsonobject );
         gDatRec.hijos_add( mapping, "dNumCasRec", jsonobject );
+
         gDatRec.hijos_add( mapping, "cDepRec", jsonobject );
         gDatRec.hijos_add( mapping, "dDesDepRec", jsonobject );
         gDatRec.hijos_add( mapping, "cDisRec", jsonobject );
