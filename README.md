@@ -184,7 +184,7 @@ Credenciales por defecto:
 
 ```txt
 Usuario: admin
-Contraseña: admin
+Contraseña: tu_constraseña
 ```
 
 ---

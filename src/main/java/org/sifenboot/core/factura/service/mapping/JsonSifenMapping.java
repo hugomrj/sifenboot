@@ -32,6 +32,7 @@ public class JsonSifenMapping {
         mapearCampo(root, sifenJson, "punto_expedicion", "dPunExp");
         mapearCampo(root, sifenJson, "numero_documento", "dNumDoc");
         mapearCampo(root, sifenJson, "fecha_emision", "dFeEmiDE");
+        mapearCampo(root, sifenJson, "codigo_seguridad", "dCodSeg");
 
         // Datos del Receptor
         mapearCampo(root, sifenJson, "naturaleza_receptor", "iNatRec");
