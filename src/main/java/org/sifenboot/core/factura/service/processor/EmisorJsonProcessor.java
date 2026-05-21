@@ -51,6 +51,13 @@ public class EmisorJsonProcessor {
             json.put("dNumTim", Integer.parseInt(emisor.getNumeroTimbrado()));
         }
 
+        // dFeIniT (Fecha de inicio del Timbrado)
+        if (!json.has("dFeIniT") && emisor.getFechaInicioTimbrado() != null) {
+            // Se asume que emisor.getFechaInicioTimbrado() ya devuelve un String "YYYY-MM-DD" o un LocalDate
+            json.put("dFeIniT", emisor.getFechaInicioTimbrado().toString()  );
+        }
+
+
 
         // --- Datos del Emisor SIFEN ---
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.sifenboot.core.factura.service.parser.SifenFechaParser;
 import org.sifenboot.core.shared.*;
+import org.sifenboot.core.integration.util.io.StringUtils; // Asumiendo que usas tu utilitario
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +22,26 @@ public class ContextoJsonProcessor {
         // 1. PROCESAMIENTO DE MONEDA
         // =========================================================================
         String monedaCodigo = "PYG";
-        if (json.has("cMoneTiPag") && !json.get("cMoneTiPag").isNull()) {
+
+        if (json.has("cMoneOpe") && !json.get("cMoneOpe").isNull()) {
+            String inputMoneda = json.get("cMoneOpe").asText().trim().toUpperCase();
+            if (MonedaISO.isValid(inputMoneda)) {
+                monedaCodigo = inputMoneda;
+            }
+        } else if (json.has("cMoneTiPag") && !json.get("cMoneTiPag").isNull()) {
             String inputMoneda = json.get("cMoneTiPag").asText().trim().toUpperCase();
             if (MonedaISO.isValid(inputMoneda)) {
                 monedaCodigo = inputMoneda;
             }
         }
+
+        String monedaDescripcion = MonedaISO.getDescripcionOrDefault(monedaCodigo);
+
+        json.put("cMoneOpe", monedaCodigo);
+        json.put("dDesMoneOpe", monedaDescripcion);
+
         json.put("cMoneTiPag", monedaCodigo);
-        json.put("dDMoneTiPag", MonedaISO.getDescripcionOrDefault(monedaCodigo));
+        json.put("dDMoneTiPag", monedaDescripcion);
 
         // =========================================================================
         // 2. PROCESAMIENTO DE TIPO DE TRANSACCIÓN
@@ -68,9 +81,8 @@ public class ContextoJsonProcessor {
         json.put("iTiPago", tipoPagoCodigo);
         json.put("dDesTiPag", TipoPago.getDescripcionPorCodigo(tipoPagoCodigo));
 
-
         // =========================================================================
-        //  INDICADOR DE PRESENCIA (iIndPres)
+        // 6. INDICADOR DE PRESENCIA (iIndPres)
         // =========================================================================
         int presenciaCodigo = 1;
         if (json.has("iIndPres") && !json.get("iIndPres").isNull()) {
@@ -80,9 +92,9 @@ public class ContextoJsonProcessor {
         json.put("dDesIndPres", IndicadorPresencia.getDescripcionPorCodigo(presenciaCodigo));
 
         // =========================================================================
-        //  PAÍS DEL RECEPTOR (cPaisRec)
+        // 7. PAÍS DEL RECEPTOR (cPaisRec)
         // =========================================================================
-        String paisCodigo = "PRY"; // Paraguay por defecto
+        String paisCodigo = "PRY";
         if (json.has("cPaisRec") && !json.get("cPaisRec").isNull()) {
             paisCodigo = json.get("cPaisRec").asText().trim().toUpperCase();
         }
@@ -90,7 +102,7 @@ public class ContextoJsonProcessor {
         json.put("dDesPaisRe", PaisISO.getDescripcionOrDefault(paisCodigo));
 
         // =========================================================================
-        //  CONDICIÓN DE LA OPERACIÓN (iCondOpe)
+        // 8. CONDICIÓN DE LA OPERACIÓN (iCondOpe)
         // =========================================================================
         int condicionCodigo = 1;
         if (json.has("iCondOpe") && !json.get("iCondOpe").isNull()) {
@@ -99,10 +111,38 @@ public class ContextoJsonProcessor {
         json.put("iCondOpe", condicionCodigo);
         json.put("dDCondOpe", (condicionCodigo == 2) ? "Crédito" : "Contado");
 
+        // =========================================================================
+        // 9. FORMATEO DE NUMERACIÓN (Ceros a la izquierda para dEst, dPunExp, dNumDoc)
+        // =========================================================================
 
+        // Establecimiento (3 dígitos)
+        if (json.has("dEst") && !json.get("dEst").isNull()) {
+            String estRaw = json.get("dEst").asText().trim();
+            json.put("dEst", leftPad(estRaw, '0', 3));
+        }
 
+        // Punto de Expedición (3 dígitos)
+        if (json.has("dPunExp") && !json.get("dPunExp").isNull()) {
+            String punExpRaw = json.get("dPunExp").asText().trim();
+            json.put("dPunExp", leftPad(punExpRaw, '0', 3));
+        }
 
+        // Número de Documento (7 dígitos)
+        if (json.has("dNumDoc") && !json.get("dNumDoc").isNull()) {
+            String numDocRaw = json.get("dNumDoc").asText().trim();
+            json.put("dNumDoc", leftPad(numDocRaw, '0', 7));
+        }
 
         return json;
+    }
+
+    // Método utilitario interno para evitar fallas si no deseas importar dependencias externas
+    private static String leftPad(String input, char padChar, int length) {
+        if (input == null) return "";
+        StringBuilder sb = new StringBuilder(input);
+        while (sb.length() < length) {
+            sb.insert(0, padChar);
+        }
+        return sb.toString();
     }
 }

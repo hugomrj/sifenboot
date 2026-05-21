@@ -57,19 +57,23 @@ public class DetallesJsonProcessor {
                 // ADD dTotBruOpeItem
                 // ADD dTotOpeItem
                 if (item.has("dPUniProSer") && item.has("dCantProSer")) {
-                    String precioRaw = item.get("dPUniProSer").asText();
-                    String cantRaw = item.get("dCantProSer").asText();
+                    JsonNode precioNode = item.get("dPUniProSer");
+                    JsonNode cantNode = item.get("dCantProSer");
 
                     try {
-                        BigDecimal precio = new BigDecimal(precioRaw);
-                        BigDecimal cantidad = new BigDecimal(cantRaw);
+                        // Extraemos los valores numéricos directamente sin importar si vienen con o sin comillas
+                        BigDecimal precio = precioNode.isNumber() ? precioNode.decimalValue() : new BigDecimal(precioNode.asText());
+                        BigDecimal cantidad = cantNode.isNumber() ? cantNode.decimalValue() : new BigDecimal(cantNode.asText());
 
+                        // Aseguramos que los campos originales de entrada también se guarden como String en el JSON de salida
+                        item.put("dPUniProSer", precio.stripTrailingZeros().toPlainString());
+                        item.put("dCantProSer", cantidad.stripTrailingZeros().toPlainString());
+
+                        // Cálculo: dTotBruOpeItem
                         BigDecimal totalBruto = precio.multiply(cantidad);
-                        String totalBrutoStr = totalBruto.stripTrailingZeros().toPlainString();
+                        item.put("dTotBruOpeItem", totalBruto.stripTrailingZeros().toPlainString());
 
-                        item.put("dTotBruOpeItem", totalBrutoStr);
-
-                        // 6. CÁLCULO: dTotOpeItem (Valor total de la operación por ítem)
+                        // Cálculo: dTotOpeItem (Valor total de la operación por ítem)
                         BigDecimal totalOperacion;
 
                         if (iTiDE == 4) {
@@ -92,19 +96,22 @@ public class DetallesJsonProcessor {
                             totalOperacion = totalBruto;
                         }
 
+                        // Guardamos el resultado final como String plain
                         item.put("dTotOpeItem", totalOperacion.stripTrailingZeros().toPlainString());
 
                     } catch (NumberFormatException e) {
-                        log.error("Error al calcular montos del ítem. Valores no numéricos - Precio: '{}', Cantidad: '{}'",
-                                precioRaw, cantRaw);
+                        log.error("Error al calcular montos del ítem. Valores inválidos - Precio: '{}', Cantidad: '{}'",
+                                precioNode.asText(), cantNode.asText());
                     }
                 }
 
-                // //ADD dDesAfecIVA
-                // ADD dDesAfecIVA
+
+                // =========================================================================
+                //  ADD iAfecIVA & dDesAfecIVA
+                // =========================================================================
                 int codigoAfec = 1; // Valor por defecto: Gravado IVA
 
-                if (item.has("iAfecIVA")) {
+                if (item.has("iAfecIVA") && !item.get("iAfecIVA").isNull()) {
                     codigoAfec = item.get("iAfecIVA").asInt();
                 } else {
                     item.put("iAfecIVA", codigoAfec);
@@ -112,46 +119,40 @@ public class DetallesJsonProcessor {
 
                 try {
                     String descripcion = AfectacionIVA.obtenerDescripcion(codigoAfec);
-
                     if (descripcion != null) {
                         item.put("dDesAfecIVA", descripcion);
                     } else {
-                        log.warn(
-                                "Código de iAfecIVA desconocido: {}",
-                                codigoAfec
-                        );
+                        log.warn("Código de iAfecIVA desconocido: {}", codigoAfec);
                     }
                 } catch (Exception e) {
-                    log.error(
-                            "Error al procesar iAfecIVA en el ítem",e
-                    );
+                    log.error("Error al procesar iAfecIVA en el ítem", e);
                 }
 
-
-                // ADD dPropIVA
+                // =========================================================================
+                //  ADD dPropIVA
+                // =========================================================================
                 JsonNode dPropIVANode = item.get("dPropIVA");
                 if (dPropIVANode == null || dPropIVANode.asText().isBlank()) {
                     item.put("dPropIVA", 100);
                 }
 
-
-                // ADD dTasaIVA
+                // =========================================================================
+                //  ADD dTasaIVA
+                // =========================================================================
                 JsonNode dTasaIVANode = item.get("dTasaIVA");
-                if (dTasaIVANode == null || dTasaIVANode.asText().isBlank()) {
-
-                    codigoAfec = item.has("iAfecIVA")
-                            ? item.get("iAfecIVA").asInt()
-                            : 1;
-
-                    int tasaIVA;
-                    // Exonerado o Exento
+                if (dTasaIVANode == null || dTasaIVANode.isNull() || !dTasaIVANode.isNumber()) {
+                    String tasaIVA;
+                    // Exonerado (3) o Exento (2) -> Siempre "0"
                     if (codigoAfec == 2 || codigoAfec == 3) {
-                        tasaIVA = 0;
+                        tasaIVA = "0";
                     } else {
-                        // Gravado o Gravado parcial
-                        tasaIVA = 10;
+                        // Gravado -> Por defecto "10" si el cliente no especificó
+                        tasaIVA = "10";
                     }
                     item.put("dTasaIVA", tasaIVA);
+                } else {
+                    // Si el cliente envía 0, 5 o 10 numérico, lo convierte a "0", "5" o "10" en String
+                    item.put("dTasaIVA", String.valueOf(dTasaIVANode.asInt()));
                 }
 
 

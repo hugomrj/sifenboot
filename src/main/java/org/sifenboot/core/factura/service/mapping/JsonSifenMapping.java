@@ -10,43 +10,76 @@ public class JsonSifenMapping {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static JsonNode process(JsonNode erpJson) {
-        if (!(erpJson instanceof ObjectNode)) {
+        if (!(erpJson instanceof ObjectNode root)) {
             return erpJson;
         }
 
-        ObjectNode sifenJson = mapper.createObjectNode();
+        ObjectNode sifenJson = root.deepCopy();
 
-        // 1. Mapeo Raíz (De amigable a SIFEN)
-        if (erpJson.has("tipo_emision"))
-            sifenJson.set("iTipEmi", erpJson.get("tipo_emision"));
-        if (erpJson.has("tipo_documento"))     sifenJson.set("iTiDE", erpJson.get("tipo_documento"));
-        if (erpJson.has("tipo_impuesto"))      sifenJson.set("iTImp", erpJson.get("tipo_impuesto"));
-        if (erpJson.has("total_operacion"))    sifenJson.set("dTotOpe", erpJson.get("total_operacion"));
-        if (erpJson.has("redondeo"))           sifenJson.set("dRedon", erpJson.get("redondeo"));
-        if (erpJson.has("comision"))           sifenJson.set("dComi", erpJson.get("comision"));
-        if (erpJson.has("iva_comision"))       sifenJson.set("dIVAComi", erpJson.get("iva_comision"));
+        // =========================================================================
+        // 1. MAPEO RAÍZ (Campos ERP legibles a esquema nativo SIFEN)
+        // =========================================================================
+        mapearCampo(root, sifenJson, "tipo_emision", "iTipEmi");
+        mapearCampo(root, sifenJson, "tipo_documento", "iTiDE");
+        mapearCampo(root, sifenJson, "tipo_impuesto", "iTImp");
+        mapearCampo(root, sifenJson, "total_operacion", "dTotOpe");
+        mapearCampo(root, sifenJson, "redondeo", "dRedon");
+        mapearCampo(root, sifenJson, "comision", "dComi");
+        mapearCampo(root, sifenJson, "iva_comision", "dIVAComi");
 
-        // 2. Mapeo de Ítems
-        JsonNode itemsErp = erpJson.get("items");
+        // Datos del Timbrado / Numeración
+        mapearCampo(root, sifenJson, "establecimiento", "dEst");
+        mapearCampo(root, sifenJson, "punto_expedicion", "dPunExp");
+        mapearCampo(root, sifenJson, "numero_documento", "dNumDoc");
+        mapearCampo(root, sifenJson, "fecha_emision", "dFeEmiDE");
+
+        // Datos del Receptor
+        mapearCampo(root, sifenJson, "naturaleza_receptor", "iNatRec");
+        mapearCampo(root, sifenJson, "tipo_contribuyente_receptor", "iTiContRec");
+        mapearCampo(root, sifenJson, "tipo_operacion", "iTiOpe");
+        mapearCampo(root, sifenJson, "ruc_receptor", "dRucRec");
+        mapearCampo(root, sifenJson, "dv_receptor", "dDVRec");
+        mapearCampo(root, sifenJson, "nombre_receptor", "dNomRec");
+        mapearCampo(root, sifenJson, "indicador_presencia", "iIndPres");
+
+        // Condición y Pago
+        mapearCampo(root, sifenJson, "condicion_operacion", "iCondOpe");
+        mapearCampo(root, sifenJson, "tipo_pago", "iTiPago");
+
+        // =========================================================================
+        // 2. MAPEO DE ÍTEMS
+        // =========================================================================
+        JsonNode itemsErp = root.get("items");
         if (itemsErp != null && itemsErp.isArray()) {
             ArrayNode itemsSifenArray = mapper.createArrayNode();
 
             for (JsonNode itemNode : itemsErp) {
-                ObjectNode itemSifen = mapper.createObjectNode();
+                if (itemNode instanceof ObjectNode item) {
+                    ObjectNode itemSifen = item.deepCopy();
 
-                if (itemNode.has("codigo"))          itemSifen.set("dCodInt", itemNode.get("codigo"));
-                if (itemNode.has("descripcion"))     itemSifen.set("dDesProSer", itemNode.get("descripcion"));
-                if (itemNode.has("cantidad"))        itemSifen.set("dCantProSer", itemNode.get("cantidad"));
-                if (itemNode.has("precio_unitario")) itemSifen.set("dPUniProSer", itemNode.get("precio_unitario"));
-                if (itemNode.has("tasa_iva"))        itemSifen.set("dTasaIVA", itemNode.get("tasa_iva"));
-                if (itemNode.has("liquidacion_iva")) itemSifen.set("dLiqIVAItem", itemNode.get("liquidacion_iva"));
-                if (itemNode.has("base_gravada"))    itemSifen.set("dBasGravIVA", itemNode.get("base_gravada"));
+                    mapearCampo(item, itemSifen, "codigo", "dCodInt");
+                    mapearCampo(item, itemSifen, "descripcion", "dDesProSer");
+                    mapearCampo(item, itemSifen, "unidad_medida_descripcion", "dDesUniMed");
+                    mapearCampo(item, itemSifen, "cantidad", "dCantProSer");
+                    mapearCampo(item, itemSifen, "precio_unitario", "dPUniProSer");
+                    mapearCampo(item, itemSifen, "afectacion_iva", "iAfecIVA");
+                    mapearCampo(item, itemSifen, "tasa_iva", "dTasaIVA");
+                    mapearCampo(item, itemSifen, "liquidacion_iva", "dLiqIVAItem");
+                    mapearCampo(item, itemSifen, "base_gravada", "dBasGravIVA");
 
-                itemsSifenArray.add(itemSifen);
+                    itemsSifenArray.add(itemSifen);
+                }
             }
             sifenJson.set("items", itemsSifenArray);
         }
 
         return sifenJson;
+    }
+
+    private static void mapearCampo(JsonNode origen, ObjectNode destino, String campoErp, String campoSifen) {
+        if (origen.has(campoErp)) {
+            destino.set(campoSifen, origen.get(campoErp));
+            destino.remove(campoErp);
+        }
     }
 }

@@ -11,6 +11,8 @@ import org.sifenboot.core.integration.builder.QrNodeBuilder;
 import org.sifenboot.core.integration.util.xml.FileXML;
 import org.sifenboot.core.integration.util.xml.generator.DeXmlGenerator;
 import org.sifenboot.core.integration.util.xml.sign.SifenXmlSigner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -18,6 +20,8 @@ import org.w3c.dom.Node;
 
 @Service
 public class FacturaRegistrarService {
+
+    public static final Logger log = LoggerFactory.getLogger(ContextoJsonProcessor.class);
 
     private final DeXmlGenerator xmlGenerator;
 
@@ -54,7 +58,16 @@ public class FacturaRegistrarService {
         // =========================================================================
         // PASO 0: TRADUCCIÓN DE FORMATO ERP/FRONTEND A ESTRUCTURA ESTÁNDAR SIFEN
         // =========================================================================
+        // Asegúrate de tener el logger definido en la clase donde ejecutas esto:
+        // private static final Logger log = LoggerFactory.getLogger(TuClase.class);
+
+        log.info("=== [ORIGINAL] ===\n{}", facturaInput.toPrettyString());
+
+
+
+
         JsonNode jsonProcessor = JsonSifenMapping.process(facturaInput);
+        log.info("=== [INICIO] JSON Recibido despues de JsonSifenMapping ===\n{}", jsonProcessor.toPrettyString());
 
         // =========================================================================
         // PROCESADORES DE NEGOCIO (Operan ya sobre campos oficiales: iTipEmi, etc.)
@@ -62,18 +75,24 @@ public class FacturaRegistrarService {
 
         // Inyecta datos del emisor en la raíz
         jsonProcessor = EmisorJsonProcessor.process(emisor, jsonProcessor);
+        log.info("=== [POST] EmisorJsonProcessor ===\n{}", jsonProcessor.toPrettyString());
 
         // Resuelve monedas y conversiones si aplica
         jsonProcessor = ContextoJsonProcessor.process(jsonProcessor);
+        log.info("=== [POST] ContextoJsonProcessor ===\n{}", jsonProcessor.toPrettyString());
 
         // Recorre el array de ítems y resuelve códigos de unidad de medida / empaques
         jsonProcessor = DetallesJsonProcessor.process(jsonProcessor);
+        log.info("=== [POST] DetallesJsonProcessor ===\n{}", jsonProcessor.toPrettyString());
 
         // Cálculos de totales comerciales
         jsonProcessor = TotalesJsonProcessor.process(jsonProcessor);
+        log.info("=== [POST] TotalesJsonProcessor ===\n{}", jsonProcessor.toPrettyString());
 
         // Cálculos de IVA, bases gravadas y exclusiones por iTImp
         jsonProcessor = ImpuestoJsonProcessor.process(jsonProcessor);
+        log.info("=== [FIN] ImpuestoJsonProcessor (Resultado Final) ===\n{}", jsonProcessor.toPrettyString());
+
 
 
 
