@@ -1,15 +1,16 @@
-## Sifenboot API
+# Sifenboot
 
 Integración Open Source para SIFEN (Paraguay).
 
 Middleware de alto rendimiento basado en Spring Boot 3.4.0 (Virtual Threads) y Undertow.
 
-###   Requisitos
-Java 21 (Obligatorio para Virtual Threads)
+## Requisitos
 
-PostgreSQL 15+
+- Java 21 (Obligatorio para Virtual Threads)
+- PostgreSQL 15+
+- Maven Wrapper (incluido)
 
-Maven Wrapper (incluido)
+---
 
 ## Configuración previa
 
@@ -35,6 +36,8 @@ DB_PASS=su_password
 
 ### Opción 2 — Variables de entorno
 
+Linux / macOS
+
 ```bash
 export DB_HOST=localhost
 export DB_PORT=5432
@@ -43,23 +46,36 @@ export DB_USER=postgres
 export DB_PASS=su_password
 ```
 
-### Ejecutar configuración
+Windows (PowerShell)
 
-```bash
-mvn exec:java
+```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="5432"
+$env:DB_NAME="sifenboot"
+$env:DB_USER="postgres"
+$env:DB_PASS="su_password"
 ```
 
 Si no se encuentra `.env`, el sistema utilizará las variables del entorno y podrá solicitar la contraseña por consola.
 
-### Inicialización de Base de Datos
+---
 
-El proyecto incluye un módulo de configuración independiente bajo el paquete `org.sifenboot.setup` para automatizar la creación de la base de datos, el aprovisionamiento de las tablas del sistema, el registro del usuario administrador inicial y la carga del diccionario geográfico de SIFEN (Departamentos, Distritos y Localidades).
+## Inicialización de Base de Datos
 
-#### Instrucciones de Ejecución (Vía Maven)
+El proyecto incluye un módulo de configuración independiente bajo el paquete:
 
-Al encontrarse el inicializador estructurado dentro del árbol de fuentes del proyecto, la ejecución debe realizarse a través del Maven Wrapper para asegurar la correcta resolución del classpath (Jackson, Driver de PostgreSQL y dependencias de seguridad).
+```txt
+org.sifenboot.setup
+```
 
-Desde la raíz del proyecto, ejecute el siguiente comando según su sistema operativo:
+Este proceso automatiza:
+
+- Creación de la base de datos
+- Aprovisionamiento de tablas del sistema
+- Registro del usuario administrador inicial
+- Carga del diccionario geográfico de SIFEN (Departamentos, Distritos y Localidades)
+
+### Ejecutar configuración
 
 #### Linux / macOS
 
@@ -67,38 +83,112 @@ Desde la raíz del proyecto, ejecute el siguiente comando según su sistema oper
 ./mvnw compile exec:java -Dexec.mainClass="org.sifenboot.setup.SetupDatabase"
 ```
 
-#### En Windows (CMD):
+#### Windows (CMD / PowerShell)
 
-```DOS
-mvnw.cmd compile exec:java -Dexec.mainClass="org.sifenboot.setup.SetupDatabase"
+```cmd
+.\mvnw.cmd compile exec:java "-Dexec.mainClass=org.sifenboot.setup.SetupDatabase"
 ```
 
->  Nota:
-> Este proceso es interactivo y le solicitará ingresar la contraseña para el usuario administrador en la consola (presione Enter para usar `admin` por defecto).
+> Nota:
 >
-> Asegúrese de que el archivo `src/main/java/org/sifenboot/setup/json/ubicaciones.json` esté presente antes de iniciar.
+> Este proceso es interactivo y solicitará ingresar la contraseña del usuario administrador.
+>
+> Presione Enter para utilizar `admin` como contraseña por defecto.
+>
+> Asegúrese de que exista el archivo:
+>
+> `src/main/java/org/sifenboot/setup/json/ubicaciones.json`
+
+---
 
 
+## Compilación
 
+### Linux / macOS
 
-### Compilación y Ejecución
-Una vez inicializada la base de datos, puede levantar el servicio siguiendo estos pasos:
+```bash
+./mvnw clean install
+```
 
-Limpiar e instalar dependencias:
+### Windows
 
-<pre><code>./mvnw clean install</code></pre>
+```cmd
+.\mvnw.cmd clean install
+```
 
-### Ejecutar la aplicación:
+---
 
-<pre><code>./mvnw spring-boot:run</code></pre>
+## Ejecutar aplicación (Modo Desarrollo)
 
-### Acceso al Panel:
-Una vez que el servicio esté corriendo, puede acceder a la interfaz de administración en:
+### Linux / macOS
 
-http://localhost:8080/login 
+```bash
+./mvnw spring-boot:run
+```
 
-(Credenciales por defecto: admin / admin).
+### Windows
 
+```cmd
+.\mvnw.cmd spring-boot:run
+```
 
-### Licencia
-Apache 2.0
+---
+
+## Ejecutar aplicación (Modo Producción)
+
+Generar el artefacto:
+
+### Linux / macOS
+
+```bash
+./mvnw clean package
+```
+
+### Windows
+
+```cmd
+.\mvnw.cmd clean package
+```
+
+Esto generará:
+
+```txt
+target/sifenboot-api-1.0.0-SNAPSHOT.jar
+```
+
+Ejecutar el JAR:
+
+### Linux / macOS
+
+```bash
+java -jar target/sifenboot-api-1.0.0-SNAPSHOT.jar
+```
+
+### Windows
+
+```cmd
+java -jar target\sifenboot-api-1.0.0-SNAPSHOT.jar
+```
+
+---
+
+## Acceso al Panel
+
+Una vez iniciado el servicio:
+
+```txt
+http://localhost:8080/login
+```
+
+Credenciales por defecto:
+
+```txt
+Usuario: admin
+Contraseña: admin
+```
+
+---
+
+## Licencia
+
+MIT License

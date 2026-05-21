@@ -11,9 +11,10 @@ import java.io.IOException;
 public class SetupDatabase {
 
     public static void main(String[] args) {
-        // Detectar el sistema operativo para invocar el ejecutable correcto de Maven
+        // Detectar el sistema operativo para invocar Maven Wrapper
         String os = System.getProperty("os.name").toLowerCase();
-        String mavenCmd = os.contains("win") ? "mvn.cmd" : "mvn";
+        String mavenCmd = os.contains("win") ? "mvnw.cmd" : "./mvnw";
+
 
         System.out.println("====================================================");
         System.out.println("   SIFENBOOT - DATABASE SETUP UTILITY");
@@ -58,7 +59,7 @@ public class SetupDatabase {
         } catch (IOException | InterruptedException e) {
             System.err.println("[CRITICAL ERROR] No se pudo ejecutar el comando Maven.");
             System.err.println("Detalle: " + e.getMessage());
-            System.err.println("Verifica que 'mvn' esté configurado en las variables de entorno (PATH).");
+            System.err.println("Verifica que Maven Wrapper (mvnw) exista en la raíz del proyecto.");
         }
 
         System.out.println("====================================================");
