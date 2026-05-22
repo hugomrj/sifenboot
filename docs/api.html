@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sifenboot - Documentación</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+
+<div class="sidebar">
+    <h2>Sifenboot</h2>
+    <span class="version">v1.0.0-SNAPSHOT</span>
+    <ul>
+        <li><a href="index.html" >Introducción</a></li>
+        <li><a href="setup.html">Inicialización de BD</a></li>
+        <li><a href="api.html" class="active" >APIS</a></li>
+    </ul>
+</div>
+
+
+<div class="content">
+    <div class="header-area">
+        <h1>Sifenboot</h1>
+        <p>Middleware de alto rendimiento para SIFEN (Paraguay).</p>
+    </div>
+
+
+
+    <!-- SECCIÓN DE APIS AGREGADA AQUÍ -->
+    <h2 style="margin-top: 32px; margin-bottom: 16px;">Referencia de la API</h2>
+    <div class="api-container">
+        <div class="api-row">
+            <!-- Columna Izquierda: Detalle Técnico -->
+            <div class="api-detail">
+                <div class="api-endpoint-header">
+                    <span class="api-method post">POST</span>
+                    <code class="api-path">/api/v1/facturas</code>
+                </div>
+                <p class="api-description">Permite registrar y emitir una nueva factura electrónica enviando los datos estructurados del receptor y el detalle de ítems.</p>
+
+                <h4>Campos del Body</h4>
+                <table class="api-table">
+                    <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>establecimiento</code></td>
+                        <td>number</td>
+                        <td>Código de establecimiento asignado por la SET.</td>
+                    </tr>
+                    <tr>
+                        <td><code>punto_expedicion</code></td>
+                        <td>number</td>
+                        <td>Punto de expedición operativo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>numero_documento</code></td>
+                        <td>number</td>
+                        <td>Número secuencial del documento.</td>
+                    </tr>
+                    <tr>
+                        <td><code>codigo_seguridad</code></td>
+                        <td>string</td>
+                        <td>Código de seguridad / control interno.</td>
+                    </tr>
+                    <tr>
+                        <td><code>items</code></td>
+                        <td>array</td>
+                        <td>Lista de productos o servicios incluidos.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Columna Derecha: JSON Payload -->
+            <div class="api-payload">
+                <div class="payload-header">Request Body (JSON)</div>
+                <pre><code>{
+  "establecimiento": 1,
+  "punto_expedicion": 2,
+  "numero_documento": 1312,
+  "fecha_emision": "2026-05-04T08:20:20",
+  "codigo_seguridad": "594932329",
+  "naturaleza_receptor": 1,
+  "tipo_contribuyente_receptor": 2,
+  "tipo_operacion": 3,
+  "ruc_receptor": "80023444",
+  "dv_receptor": "8",
+  "nombre_receptor": "INMAPAR SA",
+  "indicador_presencia": 1,
+  "condicion_operacion": 1,
+  "tipo_pago": 1,
+  "items": [
+    {
+      "codigo": "21605",
+      "descripcion": "CORREA A - 100 - REXON",
+      "unidad_medida_descripcion": "UNI",
+      "cantidad": 2.0,
+      "precio_unitario": 45000,
+      "afectacion_iva": 1,
+      "tasa_iva": 10
+    }
+  ]
+}</code></pre>
+            </div>
+        </div>
+    </div>
+    <!-- FIN DE LA SECCIÓN DE APIS -->
+
+    <h2 style="margin-top:32px;">Licencia</h2>
+    <p style="margin-top:5px;"><span class="badge">MIT License</span></p>
+</div>
+</body>
+</html>

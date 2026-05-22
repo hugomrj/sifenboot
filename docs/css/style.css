@@ -1,16 +1,15 @@
 ﻿:root {
-    --bg-main: #f4f6f9;
-    --bg-card: #ffffff;
-    --border-color: #e2e8f0;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --accent: #2563eb;
-    --accent-light: #e0f2fe;
-    --accent-hover: #e2e8f0;
-    --code-bg: #f1f5f9;
-    --code-text: #0f172a;
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --border-color: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-light: #1e293b;
+    --accent-hover: #334155;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
 }
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,20 +20,16 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
-    display: table;
-    width: 100%;
-    height: 100vh;
+    display: flex; /* Cambiado a flex para un control real del flujo */
+    min-height: 100vh;
 }
 
-/* Sidebar unificado con el fondo principal */
+/* Sidebar integrado sin bordes ni división marcada */
 .sidebar {
-    display: table-cell;
-    width: 260px;
+    width: 240px;
     background-color: var(--bg-main);
-    color: var(--text-main);
-    padding: 24px;
-    vertical-align: top;
-    border-right: 1px solid var(--border-color);
+    padding: 40px 24px; /* Alineado verticalmente con el padding del contenido */
+    flex-shrink: 0;
 }
 
 .sidebar h2 {
@@ -49,7 +44,7 @@ body {
 .sidebar .version {
     font-size: 11px;
     color: var(--text-muted);
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     display: block;
 }
 
@@ -71,7 +66,6 @@ body {
     font-weight: 500;
 }
 
-/* Estados de navegación adaptados al fondo claro */
 .sidebar ul li a:hover {
     background-color: var(--accent-hover);
     color: var(--text-main);
@@ -82,10 +76,11 @@ body {
     color: var(--accent);
 }
 
+/* Área de contenido fluye de manera continua */
 .content {
-    display: table-cell;
-    padding: 40px;
-    vertical-align: top;
+    flex-grow: 1;
+    padding: 40px 40px 40px 16px; /* Menor padding izquierdo para acercarlo orgánicamente */
+    max-width: 900px;
 }
 
 .header-area {
@@ -106,28 +101,23 @@ body {
     margin-top: 4px;
 }
 
+/* Bento Grid */
 .bento-grid {
     display: block;
     margin-bottom: 32px;
 }
 
 .bento-row {
-    display: table;
-    width: 100%;
+    display: flex; /* Flexible en lugar de table */
+    gap: 16px; /* Separación limpia entre tarjetas estilo bento */
     margin-bottom: 16px;
-    table-layout: fixed;
 }
 
 .bento-item {
-    display: table-cell;
+    flex: 1;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     padding: 24px;
-    vertical-align: top;
-}
-
-.bento-item + .bento-item {
-    border-left: none;
 }
 
 .bento-item h3 {
@@ -184,4 +174,118 @@ ul.tech-list {
 
 ul.tech-list li {
     margin-bottom: 6px;
+}
+
+
+/* Estructura de APIs en dos columnas */
+.api-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+}
+
+.api-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.api-detail {
+    flex: 1;
+    min-width: 0;
+}
+
+.api-payload {
+    flex: 1;
+    min-width: 0;
+    position: sticky;
+    top: 20px;
+}
+
+/* Encabezado del Endpoint */
+.api-endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.api-method {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #fff;
+}
+
+.api-method.post {
+    background-color: #10b981; /* Verde esmeralda para POST */
+}
+
+.api-path {
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.api-description {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.api-detail h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+/* Tabla Flat para parámetros */
+.api-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.api-table th {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.api-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.api-table td code {
+    color: #38bdf8; /* Color cyan destacado para variables en modo dark */
+    background: none;
+    padding: 0;
+}
+
+/* Contenedor del JSON */
+.payload-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.api-payload pre {
+    margin: 0;
+    background-color: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    max-height: 450px;
 }
