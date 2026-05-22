@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sifenboot - Setup</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Sifenboot</h2>
+        <span class="version">v1.0.0-SNAPSHOT</span>
+        <ul>
+            <li><a href="index.html">Introducción</a></li>
+            <li><a href="setup.html" class="active">Inicialización de BD</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header-area">
+            <h1>Inicialización de Base de Datos</h1>
+            <p>Soporte técnico para el despliegue del esquema de datos persistente en entornos Windows.</p>
+        </div>
+        <h2>1. Variables de Entorno en PowerShell</h2>
+        <pre><code>$env:DB_HOST="localhost"
+$env:DB_PORT="5432"
+$env:DB_NAME="sifenboot"
+$env:DB_USER="postgres"
+$env:DB_PASS="su_password"</code></pre>
+        <h2>2. Ejecución del Módulo Setup</h2>
+        <p style="font-size:13px; margin: 8px 0;">Ejecute el aprovisionamiento de las tablas del sistema y el diccionario geográfico (Departamentos, Distritos, Localidades):</p>
+        <pre><code>.\mvnw.cmd compile exec:java "-Dexec.mainClass=org.sifenboot.setup.SetupDatabase"</code></pre>
+        <h2>3. Compilación de Producción</h2>
+        <pre><code>.\mvnw.cmd clean package
+java -jar target\sifenboot-api-1.0.0-SNAPSHOT.jar</code></pre>
+    </div>
+</body>
+</html>
