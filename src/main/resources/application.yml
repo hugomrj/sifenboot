@@ -1,5 +1,8 @@
 sifen:
   timeout: 30000
+  worker:
+    delay: 20s
+
 
 server:
   port: ${PORT:8080}

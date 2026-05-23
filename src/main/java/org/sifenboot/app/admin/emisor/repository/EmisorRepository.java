@@ -34,4 +34,16 @@ public interface EmisorRepository extends JpaRepository<Emisor, Integer> {
             "LEFT JOIN FETCH e.configuracion " +
             "WHERE e.id = :id")
     Optional<Emisor> findByIdWithDetails(@Param("id") Integer id);
+
+
+    // ==========================================
+    // METODOS DERIVADOS PARA EL PUNTERO DEL WORKER
+    // ==========================================
+
+    // Busca el siguiente emisor (LIMIT 1 automático por 'First')
+    Optional<Emisor> findFirstByIdGreaterThanOrderByIdAsc(Integer ultimoId);
+
+    // Busca el primer emisor de todos para reiniciar el ciclo
+    Optional<Emisor> findFirstByOrderByIdAsc();
+
 }
