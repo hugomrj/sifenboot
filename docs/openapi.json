@@ -1,1 +1,629 @@
-{"openapi":"3.0.1","info":{"title":"Sifenboot API","description":"Integracion Open Source SIFEN Paraguay","license":{"name":"Apache 2.0"},"version":"1.0.0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"paths":{"/app/auth/logout":{"post":{"tags":["auth-controller"],"operationId":"logout","responses":{"200":{"description":"OK"}}}},"/app/auth/login":{"post":{"tags":["auth-controller"],"operationId":"login","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoginRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserDto"}}}}}}},"/api/{cod_emisor}/evento/cancelar":{"post":{"tags":["Evento Cancelar"],"operationId":"eventoCancelar","parameters":[{"name":"cod_emisor","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CancelarRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/api/empresa/{emisor}/factura/registrar":{"post":{"tags":["Factura Registro"],"operationId":"registrarFactura","parameters":[{"name":"emisor","in":"path","required":true,"schema":{"type":"string"}},{"name":"X-API-KEY","in":"header","required":false,"schema":{"type":"string","default":""}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/JsonNode"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/empresa/{emisor}/factura/async/recibe":{"post":{"tags":["Factura Async"],"operationId":"asyncRecibe","parameters":[{"name":"emisor","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/JsonNode"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/empresa/{emisor}/consulta/ruc":{"post":{"tags":["consulta-ruc-controller"],"operationId":"consultarRuc","parameters":[{"name":"emisor","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ConsultaRucRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/empresa/{emisor}/consulta/lote":{"post":{"tags":["Consulta Lote"],"operationId":"consultarLote","parameters":[{"name":"emisor","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ConsultaLoteRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/empresa/{emisor}/consulta/cdc":{"post":{"tags":["Consulta CDC"],"operationId":"consultarCdc","parameters":[{"name":"emisor","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ConsultaCdcRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ConsultaCdcResponse"}}}}}}},"/app/emisores":{"get":{"tags":["emisor-controller"],"operationId":"getAll","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Emisor"}}}}}}}},"/api/sifen/status/{env}":{"get":{"tags":["sifen-health-controller"],"operationId":"checkStatus","parameters":[{"name":"env","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/geo/departamentos":{"get":{"tags":["geo-api-controller"],"operationId":"getDepartamentos","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Departamento"}}}}}}}}},"components":{"schemas":{"LoginRequest":{"required":["password","username"],"type":"object","properties":{"username":{"type":"string"},"password":{"type":"string"}}},"UserDto":{"type":"object","properties":{"username":{"type":"string"},"accessToken":{"type":"string"},"tokenType":{"type":"string"}}},"CancelarRequest":{"type":"object","properties":{"cdc":{"type":"string"},"motivo":{"type":"string"}}},"JsonNode":{"type":"object"},"ConsultaRucRequest":{"required":["ruc"],"type":"object","properties":{"ruc":{"type":"string"}}},"ConsultaLoteRequest":{"required":["lote"],"type":"object","properties":{"lote":{"type":"string"}}},"ConsultaCdcRequest":{"required":["cdc"],"type":"object","properties":{"cdc":{"type":"string"}}},"ConsultaCdcResponse":{"type":"object","properties":{"fechaProceso":{"type":"string"},"codigoResultado":{"type":"string"},"mensaje":{"type":"string"},"estado":{"type":"string"},"respuestaXml":{"type":"string"}}},"Departamento":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"descripcion":{"type":"string"}}},"Distrito":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"departamento":{"$ref":"#/components/schemas/Departamento"},"descripcion":{"type":"string"}}},"Emisor":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"codEmisor":{"type":"string"},"ruc":{"type":"string"},"rucDv":{"type":"integer","format":"int32"},"razonSocial":{"type":"string"},"nombreFantasia":{"type":"string"},"tipoContribuyente":{"type":"integer","format":"int32"},"numeroTimbrado":{"type":"string"},"fechaInicioTimbrado":{"type":"string","format":"date"},"direccion":{"type":"string"},"numeroCasa":{"type":"integer","format":"int32"},"departamento":{"$ref":"#/components/schemas/Departamento"},"distrito":{"$ref":"#/components/schemas/Distrito"},"localidad":{"$ref":"#/components/schemas/Localidad"},"telefono":{"type":"string"},"email":{"type":"string"},"actividadEconomicaCodigo":{"type":"integer","format":"int32"},"actividadEconomicaDescripcion":{"type":"string"},"configuracion":{"$ref":"#/components/schemas/EmisorConfiguracion"},"creadoEn":{"type":"string","format":"date-time"}}},"EmisorConfiguracion":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"emisor":{"$ref":"#/components/schemas/Emisor"},"ambiente":{"type":"string"},"idCsc":{"type":"string"},"csc":{"type":"string"},"apiToken":{"type":"string"}}},"Localidad":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"distrito":{"$ref":"#/components/schemas/Distrito"},"codigoLocalidad":{"type":"integer","format":"int32"},"descripcion":{"type":"string"}}}}}}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sifenboot API",
+    "description": "Integracion Open Source SIFEN Paraguay",
+    "license": {
+      "name": "Apache 2.0"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/app/auth/logout": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/app/auth/login": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{cod_emisor}/evento/cancelar": {
+      "post": {
+        "tags": [
+          "Evento Cancelar"
+        ],
+        "operationId": "eventoCancelar",
+        "parameters": [
+          {
+            "name": "cod_emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelarRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/empresa/{emisor}/factura/registrar": {
+      "post": {
+        "tags": [
+          "Factura Registro"
+        ],
+        "operationId": "registrarFactura",
+        "parameters": [
+          {
+            "name": "emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-KEY",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonNode"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/empresa/{emisor}/factura/async/recibe": {
+      "post": {
+        "tags": [
+          "Factura Async"
+        ],
+        "operationId": "asyncRecibe",
+        "parameters": [
+          {
+            "name": "emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonNode"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/empresa/{emisor}/consulta/ruc": {
+      "post": {
+        "tags": [
+          "consulta-ruc-controller"
+        ],
+        "operationId": "consultarRuc",
+        "parameters": [
+          {
+            "name": "emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultaRucRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/empresa/{emisor}/consulta/lote": {
+      "post": {
+        "tags": [
+          "Consulta Lote"
+        ],
+        "operationId": "consultarLote",
+        "parameters": [
+          {
+            "name": "emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultaLoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/empresa/{emisor}/consulta/cdc": {
+      "post": {
+        "tags": [
+          "Consulta CDC"
+        ],
+        "operationId": "consultarCdc",
+        "parameters": [
+          {
+            "name": "emisor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsultaCdcRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsultaCdcResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/emisores": {
+      "get": {
+        "tags": [
+          "emisor-controller"
+        ],
+        "operationId": "getAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Emisor"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sifen/status/{env}": {
+      "get": {
+        "tags": [
+          "sifen-health-controller"
+        ],
+        "operationId": "checkStatus",
+        "parameters": [
+          {
+            "name": "env",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geo/departamentos": {
+      "get": {
+        "tags": [
+          "geo-api-controller"
+        ],
+        "operationId": "getDepartamentos",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Departamento"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          }
+        }
+      },
+      "CancelarRequest": {
+        "type": "object",
+        "properties": {
+          "cdc": {
+            "type": "string"
+          },
+          "motivo": {
+            "type": "string"
+          }
+        }
+      },
+      "JsonNode": {
+        "type": "object"
+      },
+      "ConsultaRucRequest": {
+        "required": [
+          "ruc"
+        ],
+        "type": "object",
+        "properties": {
+          "ruc": {
+            "type": "string"
+          }
+        }
+      },
+      "ConsultaLoteRequest": {
+        "required": [
+          "lote"
+        ],
+        "type": "object",
+        "properties": {
+          "lote": {
+            "type": "string"
+          }
+        }
+      },
+      "ConsultaCdcRequest": {
+        "required": [
+          "cdc"
+        ],
+        "type": "object",
+        "properties": {
+          "cdc": {
+            "type": "string"
+          }
+        }
+      },
+      "ConsultaCdcResponse": {
+        "type": "object",
+        "properties": {
+          "fechaProceso": {
+            "type": "string"
+          },
+          "codigoResultado": {
+            "type": "string"
+          },
+          "mensaje": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "respuestaXml": {
+            "type": "string"
+          }
+        }
+      },
+      "Departamento": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        }
+      },
+      "Distrito": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departamento": {
+            "$ref": "#/components/schemas/Departamento"
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        }
+      },
+      "Emisor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codEmisor": {
+            "type": "string"
+          },
+          "ruc": {
+            "type": "string"
+          },
+          "rucDv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "razonSocial": {
+            "type": "string"
+          },
+          "nombreFantasia": {
+            "type": "string"
+          },
+          "tipoContribuyente": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numeroTimbrado": {
+            "type": "string"
+          },
+          "fechaInicioTimbrado": {
+            "type": "string",
+            "format": "date"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "numeroCasa": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departamento": {
+            "$ref": "#/components/schemas/Departamento"
+          },
+          "distrito": {
+            "$ref": "#/components/schemas/Distrito"
+          },
+          "localidad": {
+            "$ref": "#/components/schemas/Localidad"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "actividadEconomicaCodigo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actividadEconomicaDescripcion": {
+            "type": "string"
+          },
+          "configuracion": {
+            "$ref": "#/components/schemas/EmisorConfiguracion"
+          },
+          "creadoEn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EmisorConfiguracion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "emisor": {
+            "$ref": "#/components/schemas/Emisor"
+          },
+          "ambiente": {
+            "type": "string"
+          },
+          "idCsc": {
+            "type": "string"
+          },
+          "csc": {
+            "type": "string"
+          },
+          "apiToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Localidad": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distrito": {
+            "$ref": "#/components/schemas/Distrito"
+          },
+          "codigoLocalidad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
