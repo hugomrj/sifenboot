@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sifenboot - Documentación</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .badge-optional {
+            color: #6c757d;
+            font-size: 0.85em;
+            font-style: italic;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+        /* Estilos adicionales para asegurar consistencia con múltiples métodos */
+        .api-method.get { background-color: #3b82f6; }
+        .api-method.put { background-color: #eab308; }
+        .api-method.delete { background-color: #ef4444; }
+        .api-container { margin-bottom: 48px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Sifenboot</h2>
+    <span class="version">v1.0.0-SNAPSHOT</span>
+    <ul>
+        <li><a href="index.html">Introducción</a></li>
+        <li><a href="setup.html">Inicialización de BD</a></li>
+        <li><a href="api.html" class="active">APIS</a></li>
+    </ul>
+</div>
+
+<div class="content">
+    <div class="header-area">
+        <h1>Sifenboot</h1>
+        <p>Middleware de alto rendimiento para SIFEN (Paraguay).</p>
+    </div>
+
+    <h2 style="margin-top: 32px; margin-bottom: 16px;">Referencia de la API</h2>
+
+    <div id="apis-root">
+        <p>Cargando especificaciones de la API...</p>
+    </div>
+
+    <h2 style="margin-top:32px;">Licencia</h2>
+    <p style="margin-top:5px;"><span class="badge">MIT License</span></p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Cargamos el openapi.json que exportaste de tu Spring Boot
+        fetch('./openapi.json')
+            .then(response => response.json())
+            .then(data => {
+                const root = document.getElementById('apis-root');
+                root.innerHTML = ''; // Limpiamos el mensaje de carga
+
+                // 2. Iteramos sobre cada ruta (path) y cada método HTTP disponible
+                Object.keys(data.paths).forEach(pathUrl => {
+                    const methods = data.paths[pathUrl];
+
+                    Object.keys(methods).forEach(methodName => {
+                        const endpoint = methods[methodName];
+
+                        // Tratamos de obtener los parámetros del Request Body
+                        let rowsHtml = '';
+                        let jsonExample = '{}';
+
+                        if (endpoint.requestBody && endpoint.requestBody.content && endpoint.requestBody.content['application/json']) {
+                            const schemaRef = endpoint.requestBody.content['application/json'].schema;
+
+                            // Buscamos las propiedades en los schemas definidos en components
+                            if (schemaRef && schemaRef.$ref) {
+                                const componentName = schemaRef.$ref.split('/').pop();
+                                const component = data.components.schemas[componentName];
+
+                                if (component && component.properties) {
+                                    // Construimos las filas de la tabla con tus estilos
+                                    Object.keys(component.properties).forEach(propName => {
+                                        const prop = component.properties[propName];
+                                        const isOptional = (propName === 'codigo_seguridad') ? ' <span class="badge-optional">(Opcional)</span>' : '';
+
+                                        // Personalización de descripciones si vienen genéricas desde el backend
+                                        let description = prop.description || 'Sin descripción disponible.';
+                                        if (propName === 'codigo_seguridad') {
+                                            description = 'Código de seguridad o control interno. Si no se envía, el sistema lo generará automáticamente de forma interna.';
+                                        }
+
+                                        rowsHtml += `
+                                            <tr>
+                                                <td><code>${propName}</code>${isOptional}</td>
+                                                <td>${prop.type || 'string'}</td>
+                                                <td>${description}</td>
+                                            </tr>
+                                        `;
+                                    });
+
+                                    // Generamos un JSON de ejemplo básico a partir de las propiedades
+                                    let exampleObj = {};
+                                    Object.keys(component.properties).forEach(p => {
+                                        exampleObj[p] = component.properties[p].example || (component.properties[p].type === 'number' ? 0 : "");
+                                    });
+                                    // Si deseas mantener tu payload exacto para la factura, puedes interceptarlo:
+                                    if (pathUrl === '/api/v1/facturas') {
+                                        jsonExample = JSON.stringify(getFacturaBackupExample(), null, 2);
+                                    } else {
+                                        jsonExample = JSON.stringify(exampleObj, null, 2);
+                                    }
+                                }
+                            }
+                        }
+
+                        // 3. Clonamos EXACTAMENTE tu estructura HTML original de filas y columnas
+                        const apiRowHtml = `
+                            <div class="api-container">
+                                <div class="api-row">
+                                    <div class="api-detail">
+                                        <div class="api-endpoint-header">
+                                            <span class="api-method ${methodName.toLowerCase()}">${methodName.toUpperCase()}</span>
+                                            <code class="api-path">${pathUrl}</code>
+                                        </div>
+                                        <p class="api-description">${endpoint.summary || endpoint.description || 'Permite procesar solicitudes en este endpoint.'}</p>
+
+                                        <h4>Campos del Body</h4>
+                                        <table class="api-table">
+                                            <thead>
+                                            <tr>
+                                                <th>Campo</th>
+                                                <th>Tipo</th>
+                                                <th>Descripción</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${rowsHtml || '<tr><td colspan="3">Este endpoint no requiere campos en el body o procesa parámetros por URL.</td></tr>'}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="api-payload">
+                                        <div class="payload-header">Request Body (JSON)</div>
+                                        <pre><code>${jsonExample}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        root.insertAdjacentHTML('beforeend', apiRowHtml);
+                    });
+                });
+            })
+            .catch(err => {
+                console.error("Error cargando el openapi.json: ", err);
+                document.getElementById('apis-root').innerHTML = '<p>Error al cargar la referencia de APIs estáticas.</p>';
+            });
+    });
+
+    // Función auxiliar para mantener tu ejemplo exacto estructurado de facturas
+    function getFacturaBackupExample() {
+        return {
+          "establecimiento": 1,
+          "punto_expedicion": 2,
+          "numero_documento": 1312,
+          "fecha_emision": "2026-05-04T08:20:20",
+          "codigo_seguridad": "594932329",
+          "naturaleza_receptor": 1,
+          "tipo_contribuyente_receptor": 2,
+          "tipo_operacion": 3,
+          "ruc_receptor": "80023444",
+          "dv_receptor": "8",
+          "nombre_receptor": "INMAPAR SA",
+          "indicador_presencia": 1,
+          "condicion_operacion": 1,
+          "tipo_pago": 1,
+          "items": [
+            {
+              "codigo": "21605",
+              "descripcion": "CORREA A - 100 - REXON",
+              "unidad_medida_descripcion": "UNI",
+              "cantidad": 2.0,
+              "precio_unitario": 45000,
+              "afectacion_iva": 1,
+              "tasa_iva": 10
+            }
+          ]
+        };
+    }
+</script>
+</body>
+</html>

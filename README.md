@@ -4,7 +4,7 @@ Integración Open Source para SIFEN (Paraguay).
 
 Middleware de alto rendimiento basado en Spring Boot 3.4.0 (Virtual Threads) y Undertow.
 
-Para ver la documentación completa en línea, visita: [hugomrj.github.io/sifenboot/api.html](https://hugomrj.github.io/sifenboot/api.html)
+Para ver la documentación completa en línea, visita: [hugomrj.github.io/sifenboot/api.html](https://hugomrj.github.io/sifenboot)
 
 ## Requisitos
 
