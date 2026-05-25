@@ -31,12 +31,12 @@ public class SifenTransmissionService {
 
             // TODO: 4. Generar la estructura del DE, firmar XML (PKCS#12) y empaquetar el lote
 
-            System.out.println("[" + currentThread + "] -> Conectando con los Web Services del SIFEN para el esquema [" + esquema + "]...");
+          //  System.out.println("[" + currentThread + "] -> Conectando con los Web Services del SIFEN para el esquema [" + esquema + "]...");
             // Simulamos la latencia de la red de la SET y procesamiento local
             Thread.sleep(3000);
 
             // TODO: 5. Procesar respuesta del lote (Pasar documentos a Aprobados o Rechazados)
-            System.out.println("[" + currentThread + "] -> Turno completado con éxito para el esquema: " + esquema);
+          //  System.out.println("[" + currentThread + "] -> Turno completado con éxito para el esquema: " + esquema);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

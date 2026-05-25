@@ -1,7 +1,7 @@
 sifen:
   timeout: 30000
   worker:
-    delay: 20s
+    delay: 10s
 
 
 server:

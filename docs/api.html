@@ -4,10 +4,18 @@
     <meta charset="UTF-8">
     <title>Sifenboot - Documentación</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilo auxiliar opcional para destacar campos opcionales en la tabla */
+        .badge-optional {
+            color: #6c757d;
+            font-size: 0.85em;
+            font-style: italic;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+    </style>
 </head>
 <body>
-
-
 
 <div class="sidebar">
     <h2>Sifenboot</h2>
@@ -19,20 +27,15 @@
     </ul>
 </div>
 
-
 <div class="content">
     <div class="header-area">
         <h1>Sifenboot</h1>
         <p>Middleware de alto rendimiento para SIFEN (Paraguay).</p>
     </div>
 
-
-
-    <!-- SECCIÓN DE APIS AGREGADA AQUÍ -->
     <h2 style="margin-top: 32px; margin-bottom: 16px;">Referencia de la API</h2>
     <div class="api-container">
         <div class="api-row">
-            <!-- Columna Izquierda: Detalle Técnico -->
             <div class="api-detail">
                 <div class="api-endpoint-header">
                     <span class="api-method post">POST</span>
@@ -66,9 +69,9 @@
                         <td>Número secuencial del documento.</td>
                     </tr>
                     <tr>
-                        <td><code>codigo_seguridad</code></td>
+                        <td><code>codigo_seguridad</code> <span class="badge-optional">(Opcional)</span></td>
                         <td>string</td>
-                        <td>Código de seguridad / control interno.</td>
+                        <td>Código de seguridad o control interno. Si no se envía, el sistema lo generará automáticamente de forma interna.</td>
                     </tr>
                     <tr>
                         <td><code>items</code></td>
@@ -79,7 +82,6 @@
                 </table>
             </div>
 
-            <!-- Columna Derecha: JSON Payload -->
             <div class="api-payload">
                 <div class="payload-header">Request Body (JSON)</div>
                 <pre><code>{
@@ -112,8 +114,6 @@
             </div>
         </div>
     </div>
-    <!-- FIN DE LA SECCIÓN DE APIS -->
-
     <h2 style="margin-top:32px;">Licencia</h2>
     <p style="margin-top:5px;"><span class="badge">MIT License</span></p>
 </div>
