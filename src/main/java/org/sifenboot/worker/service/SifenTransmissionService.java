@@ -1,48 +1,72 @@
 package org.sifenboot.worker.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.transaction.Transactional;
 import org.sifenboot.app.admin.emisor.model.Emisor;
+import org.sifenboot.app.admin.emisor.service.EmisorService;
+import org.sifenboot.core.lote.service.LoteEnvioService;
+import org.sifenboot.security.certificado.model.Certificado;
+import org.sifenboot.security.certificado.service.CertificadoService;
+import org.sifenboot.setup.db.DbUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 
 
 @Service
 public class SifenTransmissionService {
 
-    /**
-     * Procesa y transmite los lotes de documentos pendientes del emisor asignado.
-     * SIN @Async: Corre en el mismo hilo del Scheduler garantizando un único proceso a la vez.
-     *
-     * @param emisor Entidad que representa la empresa y el esquema a procesar.
-     */
-    public void transmit(Emisor emisor) {
-        String currentThread = Thread.currentThread().getName();
-        String esquema = emisor.getCodEmisor(); // Ej: "sanisidro"
+    private final DbUtils db;
+    private final EmisorService emisorService;
+    private final CertificadoService certificadoService;
+    private final LoteEnvioService loteEnvioService;
 
-        System.out.println("[" + currentThread + "] >>> Iniciando procesamiento para el esquema: " + esquema);
+    public SifenTransmissionService(
+            DbUtils db,
+            EmisorService emisorService,
+            CertificadoService certificadoService,
+            LoteEnvioService loteEnvioService
+    ) {
+        this.db = db;
+        this.emisorService = emisorService;
+        this.certificadoService = certificadoService;
+        this.loteEnvioService = loteEnvioService;
+    }
+
+    @Transactional
+    public void transmit(Emisor emisor) {
+
+        String esquema = emisor.getCodEmisor();
 
         try {
-            // TODO: 1. Cambiar el search_path de la conexión actual a 'esquema'
-            //          Ej: SET search_path TO sanisidro, public;
 
-            // TODO: 2. Buscar si quedaron lotes colgados en estado 2 (En Proceso) para consultar su resultado
+            // 1. Schema global
+            db.setSchema("public");
 
-            // TODO: 3. Reservar hasta 50 documentos (estado_id = 1, numero_lote IS NULL)
-            //          asignándoles un nuevo número de lote y cambiando su estado local a 2 (En Proceso)
+            // 2. Obtener certificado activo
+            Certificado certificado =
+                    certificadoService.getActiveCertificateByEmisorCode(esquema);
 
-            // TODO: 4. Generar la estructura del DE, firmar XML (PKCS#12) y empaquetar el lote
+            // 3. Cambiar al schema del emisor
+            db.setSchema(esquema);
 
-          //  System.out.println("[" + currentThread + "] -> Conectando con los Web Services del SIFEN para el esquema [" + esquema + "]...");
-            // Simulamos la latencia de la red de la SET y procesamiento local
-            Thread.sleep(3000);
+            // 4. Procesar pendientes
+            loteEnvioService.procesarPendientes(
+                    emisor,
+                    certificado
+            );
 
-            // TODO: 5. Procesar respuesta del lote (Pasar documentos a Aprobados o Rechazados)
-          //  System.out.println("[" + currentThread + "] -> Turno completado con éxito para el esquema: " + esquema);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("[" + currentThread + "] -> Error: El hilo del Worker fue interrumpido.");
         } catch (Exception e) {
-            System.err.println("[" + currentThread + "] -> Error en el procesamiento del esquema: " + esquema + ". Motivo: " + e.getMessage());
+
+            System.err.println(
+                    "[Worker] Error esquema "
+                            + esquema
+            );
+            e.printStackTrace();
+
+
         }
     }
 }

@@ -69,8 +69,24 @@ public class LoteClient {
         }
     }
 
+
+
+
+
+
+
     public HttpResponse<String> recibeLote(String xmlFactura, Certificado certificado) {
         try {
+
+            SSLContext sslContext = sslConfig.createSSLContext(
+                    certificado.getP12Contenido(),
+                    certificado.getP12Password()
+            );
+
+            HttpClient httpClient = HttpClient.newBuilder()
+                    .sslContext(sslContext)
+                    .build();
+
             xmlFactura = "<rLoteDE>" + xmlFactura + "</rLoteDE>";
 
             byte[] zipData = IOUtils.compressXmlToZip(xmlFactura);
@@ -87,13 +103,17 @@ public class LoteClient {
                     .build();
 
             return httpClient.send(
-                request, HttpResponse.BodyHandlers.ofString()
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
             );
 
         } catch (Exception e) {
             throw new RuntimeException("Error enviando lote", e);
         }
     }
+
+
+
 
 
     private String buildConsultaUrl(String ambiente) {

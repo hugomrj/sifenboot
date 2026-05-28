@@ -21,6 +21,7 @@ public class DocumentoService {
         this.documentoRepository = documentoRepository;
     }
 
+
     @Transactional(readOnly = true)
     public void setSchemaContext(String codEmisor) {
         String schema = codEmisor.replaceAll("[^a-zA-Z0-9_]", "");
@@ -32,5 +33,6 @@ public class DocumentoService {
     public List<Documento> findAll() {
         return documentoRepository.findAllWithRespuestas();
     }
+
 
 }

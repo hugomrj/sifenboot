@@ -11,6 +11,8 @@ import java.util.Optional;
 @Component
 public class SifenTaskScheduler {
 
+    private static final boolean ENABLED = true;
+
     private final EmisorRepository emisorRepository;
     private final SifenTransmissionService transmissionService;
 
@@ -26,8 +28,20 @@ public class SifenTaskScheduler {
      * Corre Estrictamente UN Emisor por turno.
      * Al terminar este único emisor, el método muere y Spring espera 10 segundos quietos.
      */
-    @Scheduled(fixedDelayString = "#{T(org.springframework.boot.convert.DurationStyle).detect('${sifen.worker.delay}').parse('${sifen.worker.delay}').toMillis()}")
+    @Scheduled(
+            initialDelay = 0,
+            fixedDelayString =
+                    "#{T(org.springframework.boot.convert.DurationStyle)"
+                            + ".detect('${sifen.worker.delay}')"
+                            + ".parse('${sifen.worker.delay}')"
+                            + ".toMillis()}"
+    )
     public void executePendingTransmissions() {
+
+        if (!ENABLED) {
+            return;
+        }
+
         System.out.println("[Scheduler] --- Iniciando Turno Único ---");
 
         // 1. Condición 'Mayor Qué': Trae solo el siguiente de la lista (LIMIT 1)

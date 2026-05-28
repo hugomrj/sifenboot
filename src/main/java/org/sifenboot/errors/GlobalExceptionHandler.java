@@ -47,7 +47,8 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex
     ) {
 
-        logger.warn("JSON inválido recibido", ex);
+        // Cambio aquí: solo logueamos el mensaje, no toda la excepción
+        logger.warn("JSON inválido recibido: {}", ex.getMessage());
 
         String message = "El JSON enviado está mal formado";
 
