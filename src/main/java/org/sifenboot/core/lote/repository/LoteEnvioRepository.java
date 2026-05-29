@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.json.XML;
+import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.core.integration.soap.client.LoteClient;
 import org.sifenboot.security.certificado.model.Certificado;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,37 @@ public class LoteEnvioRepository {
             List<String> xmls,
             Certificado certificado
     ) {
+
+
+        Emisor emisor = certificado.getEmisor();
+        System.out.println("""
+        
+================ EMISOR CERTIFICADO ================
+ID: %s
+Código: %s
+RUC: %s-%s
+Razón Social: %s
+Ambiente: %s
+Timbrado: %s
+Email: %s
+Activo: %s
+====================================================
+
+""".formatted(
+                emisor.getId(),
+                emisor.getCodEmisor(),
+                emisor.getRuc(),
+                emisor.getRucDv(),
+                emisor.getRazonSocial(),
+                emisor.getConfiguracion().getAmbiente(),
+                emisor.getNumeroTimbrado(),
+                emisor.getEmail(),
+                certificado.getActivo()
+        ));
+
+
+
+
 
         String xmlLote = String.join("", xmls);
 

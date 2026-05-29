@@ -96,16 +96,27 @@ public class LoteClient {
             String endpointUrl = buildRecepcionUrl(ambiente);
             String xmlRequest = loteRecibeRequest.createEnvioXml(base64Zip);
 
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(endpointUrl))
                     .header("Content-Type", "application/soap+xml;charset=UTF-8")
                     .POST(HttpRequest.BodyPublishers.ofString(xmlRequest))
                     .build();
 
-            return httpClient.send(
+            HttpResponse<String> response = httpClient.send(
                     request,
                     HttpResponse.BodyHandlers.ofString()
             );
+
+            System.out.println("""
+        
+================ SOAP RESPONSE ================
+""" + response.body() + """
+
+===============================================
+""");
+
+            return response;
 
         } catch (Exception e) {
             throw new RuntimeException("Error enviando lote", e);

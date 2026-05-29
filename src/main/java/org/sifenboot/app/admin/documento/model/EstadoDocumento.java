@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 @Table(name = "estados_documento", schema = "public")
 public class EstadoDocumento {
 
+    public static final short RECIBIDO = 1;
+    public static final short APROBADO = 2;
+    public static final short RECHAZADO = 3;
+
+
     @Id
     private Short id;
 
