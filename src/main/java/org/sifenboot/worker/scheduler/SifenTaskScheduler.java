@@ -11,7 +11,7 @@ import java.util.Optional;
 @Component
 public class SifenTaskScheduler {
 
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     private final EmisorRepository emisorRepository;
     private final SifenTransmissionService transmissionService;

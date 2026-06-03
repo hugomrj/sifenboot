@@ -79,10 +79,9 @@ body {
 /* Área de contenido fluye de manera continua */
 .content {
     flex-grow: 1;
-    padding: 40px 40px 40px 16px; /* Menor padding izquierdo para acercarlo orgánicamente */
-    max-width: 900px;
+    padding: 40px 40px 40px 16px;
+    max-width: 1100px;
 }
-
 .header-area {
     margin-bottom: 32px;
     border-bottom: 1px solid var(--border-color);
@@ -192,16 +191,37 @@ ul.tech-list li {
 }
 
 .api-detail {
-    flex: 1;
+    flex: 2;
     min-width: 0;
 }
 
 .api-payload {
-    flex: 1;
+    flex: 1.3;
     min-width: 0;
     position: sticky;
     top: 20px;
 }
+
+
+/* Responsive */
+@media (max-width: 900px) {
+
+    .api-row {
+        flex-direction: column;
+    }
+
+    .api-detail,
+    .api-payload {
+        width: 100%;
+    }
+
+    .api-payload {
+        position: static;
+    }
+}
+
+
+
 
 /* Encabezado del Endpoint */
 .api-endpoint-header {
@@ -272,6 +292,16 @@ ul.tech-list li {
     padding: 0;
 }
 
+.api-table th:nth-child(1),
+.api-table td:nth-child(1) {
+    width: 180px;
+}
+
+.api-table th:nth-child(2),
+.api-table td:nth-child(2) {
+    width: 80px;
+}
+
 /* Contenedor del JSON */
 .payload-header {
     font-size: 11px;
@@ -287,5 +317,8 @@ ul.tech-list li {
     background-color: var(--code-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    max-height: 450px;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: hidden;
 }

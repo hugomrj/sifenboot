@@ -34,16 +34,61 @@
     </div>
 
     <h2 style="margin-top: 32px; margin-bottom: 16px;">Referencia de la API</h2>
+
+
     <div class="api-container">
         <div class="api-row">
+
             <div class="api-detail">
+
                 <div class="api-endpoint-header">
                     <span class="api-method post">POST</span>
-                    <code class="api-path">/api/v1/facturas</code>
+                    <code class="api-path">/api/empresa/{emisor}/factura/registrar</code>
                 </div>
-                <p class="api-description">Permite registrar y emitir una nueva factura electrónica enviando los datos estructurados del receptor y el detalle de ítems.</p>
+
+                <p class="api-description">
+                    Permite registrar y emitir una nueva factura electrónica enviando los datos estructurados del receptor y el detalle de ítems.
+                </p>
+
+                <h4>Parámetros de Ruta</h4>
+                <table class="api-table">
+                    <thead>
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>emisor</code></td>
+                        <td>string</td>
+                        <td>Identificador del emisor configurado en el sistema.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <h4>Headers</h4>
+                <table class="api-table">
+                    <thead>
+                    <tr>
+                        <th>Header</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>X-API-KEY</code></td>
+                        <td>string</td>
+                        <td>Token de autenticación requerido para consumir la API.</td>
+                    </tr>
+                    </tbody>
+                </table>
 
                 <h4>Campos del Body</h4>
+
+
                 <table class="api-table">
                     <thead>
                     <tr>
@@ -69,9 +114,15 @@
                         <td>Número secuencial del documento.</td>
                     </tr>
                     <tr>
-                        <td><code>codigo_seguridad</code> <span class="badge-optional">(Opcional)</span></td>
+                        <td>
+                            <code>codigo_seguridad</code>
+                            <span class="badge-optional">(Opcional)</span>
+                        </td>
                         <td>string</td>
-                        <td>Código de seguridad o control interno. Si no se envía, el sistema lo generará automáticamente de forma interna.</td>
+                        <td>
+                            Código de seguridad utilizado para la generación del documento electrónico.
+                            Si no se envía, el sistema generará automáticamente un valor válido.
+                        </td>
                     </tr>
                     <tr>
                         <td><code>items</code></td>
@@ -80,16 +131,18 @@
                     </tr>
                     </tbody>
                 </table>
+
             </div>
 
             <div class="api-payload">
+
                 <div class="payload-header">Request Body (JSON)</div>
+
                 <pre><code>{
   "establecimiento": 1,
   "punto_expedicion": 2,
   "numero_documento": 1312,
   "fecha_emision": "2026-05-04T08:20:20",
-  "codigo_seguridad": "594932329",
   "naturaleza_receptor": 1,
   "tipo_contribuyente_receptor": 2,
   "tipo_operacion": 3,
@@ -111,9 +164,14 @@
     }
   ]
 }</code></pre>
+
             </div>
+
         </div>
     </div>
+
+
+
     <h2 style="margin-top:32px;">Licencia</h2>
     <p style="margin-top:5px;"><span class="badge">MIT License</span></p>
 </div>
