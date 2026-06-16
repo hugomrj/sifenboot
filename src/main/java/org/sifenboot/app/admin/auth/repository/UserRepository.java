@@ -1,6 +1,6 @@
-package org.sifenboot.security.admin.auth.repository;
+package org.sifenboot.app.admin.auth.repository;
 
-import org.sifenboot.security.admin.auth.model.User;
+import org.sifenboot.app.admin.auth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

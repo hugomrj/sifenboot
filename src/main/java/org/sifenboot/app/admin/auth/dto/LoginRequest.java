@@ -1,4 +1,4 @@
-package org.sifenboot.security.admin.auth.dto;
+package org.sifenboot.app.admin.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

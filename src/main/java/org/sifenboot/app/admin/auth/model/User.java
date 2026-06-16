@@ -1,4 +1,4 @@
-package org.sifenboot.security.admin.auth.model;
+package org.sifenboot.app.admin.auth.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

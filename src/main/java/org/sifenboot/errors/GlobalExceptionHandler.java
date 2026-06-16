@@ -187,6 +187,7 @@ public class GlobalExceptionHandler {
     // FALLBACK
     // =========================
 
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneralException(
             Exception ex

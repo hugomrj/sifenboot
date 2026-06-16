@@ -566,72 +566,84 @@ choices.is-disabled .choices__inner{
 }
 
 
-/* --- ALERTS (FLAT STYLE) --- */
-.alert {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 9999;
+    /* --- ALERTS (FLAT STYLE) --- */
+    .alert {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 9999;
 
-    min-width: 300px;
-    max-width: 420px;
-    padding: 16px 20px;
+        min-width: 300px;
+        max-width: 420px;
+        padding: 16px 20px;
 
-    /* Diseño Flat: Sin sombras, borde sólido de 1px */
-    border: 1px solid;
-    border-radius: var(--radius-sm);
-    box-shadow: none;
+        /* Diseño Flat: Sin sombras, borde sólido de 1px */
+        border: 1px solid;
+        border-radius: var(--radius-sm);
+        box-shadow: none;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    font-weight: 600; /* Peso para legibilidad sobre fondo de color */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        font-weight: 600; /* Peso para legibilidad sobre fondo de color */
 
-    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    transition: opacity 0.2s ease;
-}
+        animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-/* Colores VIVOS con bordes suavizados (no tan fuertes) */
-.alert-success {
-    background-color: #ECFDF5; /* Verde muy claro y limpio */
-    border-color: #A7F3D0;      /* Borde suavizado (no es el verde oscuro) */
-    color: #065F46;
-}
+        transition: opacity 0.2s ease;
+    }
 
-.alert-error {
-    background-color: #FEF2F2; /* Rojo muy claro */
-    border-color: #FEE2E2;      /* Borde suavizado (un rosa suave) */
-    color: #991B1B;
-}
 
-.alert-info {
-    background-color: #EFF6FF; /* Azul muy claro */
-    border-color: #DBEAFE;      /* Borde suavizado (celeste muy tenue) */
-    color: #1E40AF;
-}
 
-/* Animación de entrada */
-@keyframes slideInRight {
-    from { transform: translateX(30px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
+    /* Colores VIVOS con bordes suavizados (no tan fuertes) */
+    .alert-success {
+        background-color: #ECFDF5; /* Verde muy claro y limpio */
+        border-color: #A7F3D0;      /* Borde suavizado (no es el verde oscuro) */
+        color: #065F46;
+    }
 
-.alert-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: currentColor; /* Usa el mismo color del texto de la alerta */
-    opacity: 0.5;
-    padding: 4px;
-    margin-left: 12px;
-    display: flex;
-    transition: opacity 0.2s;
-}
+    .alert-error {
+        background-color: #FEF2F2; /* Rojo muy claro */
+        border-color: #FEE2E2;      /* Borde suavizado (un rosa suave) */
+        color: #991B1B;
+    }
 
-.alert-close:hover {
-    opacity: 1;
-}
+    .alert-info {
+        background-color: #EFF6FF; /* Azul muy claro */
+        border-color: #DBEAFE;      /* Borde suavizado (celeste muy tenue) */
+        color: #1E40AF;
+    }
+
+
+    /* Animación de entrada */
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(300px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+
+    .alert-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: currentColor; /* Usa el mismo color del texto de la alerta */
+        opacity: 0.5;
+        padding: 4px;
+        margin-left: 12px;
+        display: flex;
+        transition: opacity 0.2s;
+    }
+
+    .alert-close:hover {
+        opacity: 1;
+    }
 
 
 

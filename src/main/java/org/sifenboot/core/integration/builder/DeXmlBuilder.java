@@ -1,5 +1,6 @@
 package org.sifenboot.core.integration.builder;
 
+import org.sifenboot.core.integration.util.io.StringUtils;
 import org.sifenboot.core.sifen.de.DeComplemento;
 import org.sifenboot.core.sifen.de.Mapping;
 import org.sifenboot.core.sifen.de.structure.DeXmlElement;
@@ -75,6 +76,8 @@ public class DeXmlBuilder {
         return xmlOutput.toString();
     }
 
+
+
     public String buildElementValue(DeXmlElement elemento) {
 
         String ret = "<" + elemento.getNombre();
@@ -90,6 +93,8 @@ public class DeXmlBuilder {
             }
         } else {
             String valor = elemento.getValor();
+
+
             if (valor == null) {
                 if (!elemento.getAtributos().isEmpty()) {
                     ret = ret.substring(0, ret.length() - 1) + "/>";
@@ -97,7 +102,7 @@ public class DeXmlBuilder {
                     return "";
                 }
             } else {
-                ret += valor;
+                ret += StringUtils.escapeXML(valor);
             }
         }
 

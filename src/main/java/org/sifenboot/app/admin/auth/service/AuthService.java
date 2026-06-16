@@ -1,14 +1,14 @@
-package org.sifenboot.security.admin.auth.service;
+package org.sifenboot.app.admin.auth.service;
 
-import org.sifenboot.security.admin.auth.dto.LoginRequest;
-import org.sifenboot.security.admin.auth.dto.UserDto;
-import org.sifenboot.security.admin.auth.model.User;
-import org.sifenboot.security.admin.auth.repository.UserRepository;
+import org.sifenboot.errors.UnauthorizedException;
+import org.sifenboot.app.admin.auth.dto.LoginRequest;
+import org.sifenboot.app.admin.auth.dto.UserDto;
+import org.sifenboot.app.admin.auth.model.User;
+import org.sifenboot.app.admin.auth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
+
 // --- NUEVOS IMPORTS PARA LA SESIÓN ---
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,12 +29,18 @@ public class AuthService {
     public UserDto login(LoginRequest request) {
         // 1. Buscar usuario
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"));
+                .orElseThrow(() ->
+                        new UnauthorizedException("Credenciales inválidas")
+                );
+
+
 
         // 2. Validar contraseña
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
+            throw new UnauthorizedException("Credenciales inválidas");
         }
+
+
 
         // 3. CAPTURAR E IMPRIMIR JSESSIONID
         // Esto obtiene la sesión que Spring Security ya creó o crea una nueva si no existe

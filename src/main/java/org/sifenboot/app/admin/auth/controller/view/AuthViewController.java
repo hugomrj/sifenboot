@@ -1,4 +1,4 @@
-    package org.sifenboot.security.admin.auth.controller.view;
+    package org.sifenboot.app.admin.auth.controller.view;
 
     import org.springframework.stereotype.Controller;
     import org.springframework.web.bind.annotation.GetMapping;

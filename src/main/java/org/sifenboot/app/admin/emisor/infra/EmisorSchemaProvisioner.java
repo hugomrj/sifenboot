@@ -20,7 +20,25 @@ public class EmisorSchemaProvisioner {
         String sql = String.format("CREATE SCHEMA IF NOT EXISTS \"%s\"", schemaName);
         jdbcTemplate.execute(sql);
 
-        // 2. TABLA MAESTRA: DOCUMENTO
+        // 2. TABLA DE USUARIOS DEL PORTAL INSIGHTS
+        jdbcTemplate.execute(String.format(
+                "CREATE TABLE IF NOT EXISTS %s.usuarios (" +
+                        "id SERIAL PRIMARY KEY, " +
+                        "username VARCHAR(50) UNIQUE NOT NULL, " +
+                        "password TEXT NOT NULL, " +
+                        "activo BOOLEAN NOT NULL DEFAULT TRUE" +
+                        ")",
+                schemaName));
+
+        jdbcTemplate.execute(String.format(
+                "CREATE INDEX IF NOT EXISTS idx_usuarios_%s " +
+                        "ON %s.usuarios(username)",
+                schemaName,
+                schemaName));
+
+
+
+        // 3. TABLA MAESTRA: DOCUMENTO
         jdbcTemplate.execute(String.format(
                 "CREATE TABLE IF NOT EXISTS %s.documentos (" +
                         "id BIGSERIAL PRIMARY KEY, " +
@@ -43,7 +61,7 @@ public class EmisorSchemaProvisioner {
                         "CONSTRAINT fk_doc_estado FOREIGN KEY (estado_id) REFERENCES public.estados_documento(id)" +
                         ")", schemaName));
 
-        // 3. TABLA DE RESPUESTAS (Auditoría de comunicación con la SET)
+        // 4. TABLA DE RESPUESTAS (Auditoría de comunicación con la SET)
         jdbcTemplate.execute(String.format(
                 "CREATE TABLE IF NOT EXISTS %s.documento_respuestas (" +
                         "id BIGSERIAL PRIMARY KEY, " +
@@ -56,7 +74,7 @@ public class EmisorSchemaProvisioner {
                         "fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                         ")", schemaName, schemaName));
 
-        // 4. Índices para el rendimiento del Worker (Polling)
+        // 5. Índices para el rendimiento del Worker (Polling)
         jdbcTemplate.execute(String.format(
                 "CREATE INDEX IF NOT EXISTS idx_doc_estado_%s ON %s.documentos (estado_id)",
                 schemaName, schemaName));

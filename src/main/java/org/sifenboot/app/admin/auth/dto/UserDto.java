@@ -1,4 +1,4 @@
-package org.sifenboot.security.admin.auth.dto;
+package org.sifenboot.app.admin.auth.dto;
 
 public class UserDto {
     private String username;

@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS emisores (
     CONSTRAINT fk_emisor_localidad FOREIGN KEY (localidad_id) REFERENCES localidades(id)
 );
 
+
+
 -- Configuración SIFEN
 CREATE TABLE IF NOT EXISTS emisores_configuraciones (
     id SERIAL PRIMARY KEY,

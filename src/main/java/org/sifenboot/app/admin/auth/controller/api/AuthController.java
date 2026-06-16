@@ -1,12 +1,12 @@
-package org.sifenboot.security.admin.auth.controller.api;
+package org.sifenboot.app.admin.auth.controller.api;
 
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.sifenboot.security.admin.auth.dto.LoginRequest;
-import org.sifenboot.security.admin.auth.dto.UserDto;
-import org.sifenboot.security.admin.auth.service.AuthService;
+import org.sifenboot.app.admin.auth.dto.LoginRequest;
+import org.sifenboot.app.admin.auth.dto.UserDto;
+import org.sifenboot.app.admin.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
