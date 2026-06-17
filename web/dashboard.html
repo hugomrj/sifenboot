@@ -8,9 +8,9 @@
     <!-- Fuente -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind primero -->
+    <!-- Tailwind  -->
     <script th:src="@{/js/tailwind.js}" src="/js/tailwind.js"></script>
-
+    <script src="https://unpkg.com/lucide@latest"></script>
 
 
     <!-- Librerías -->
@@ -41,7 +41,8 @@
 <header class="top-navbar">
     <div class="flex items-center gap-3">
         <button class="menu-toggle" id="menuToggle">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -94,6 +95,15 @@
                                 hx-target="#main-content"
                                 class="nav-sub-item">Certificado Digital
                             </a>
+
+                            <a href="javascript:void(0)"
+                               hx-get="/app/schema/usuarios/view"
+                               hx-target="#main-content"
+                               hx-swap="innerHTML"
+                               class="nav-sub-item">
+                                Gestión de Usuarios
+                            </a>
+
 
                         </div>
 
@@ -152,6 +162,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+    });
+
+    document.body.addEventListener('htmx:afterSwap', () => {
+        lucide.createIcons();
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('htmx:configRequest', (event) => {
             const token = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
@@ -161,6 +182,7 @@
         });
     });
 </script>
+
 
 
 <script>

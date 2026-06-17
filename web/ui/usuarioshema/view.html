@@ -1,0 +1,60 @@
+<div class="card fade-in">
+
+    <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
+        <h4 class="text-2xl font-bold tracking-tight"
+            th:text="${titulo}">
+            Gestión de Usuarios
+        </h4>
+
+    </div>
+
+    <div class="form-group mb-8">
+        <label class="form-label font-bold">
+            Seleccionar Empresa
+        </label>
+
+
+        <select
+                class="form-select"
+                name="emisorId"
+                hx-get="/app/schema/usuarios/list"
+                hx-target="#list-container"
+                hx-trigger="change">
+
+            <option value="">
+                -- Seleccione una Empresa --
+            </option>
+
+            <option th:each="e : ${emisores}"
+                    th:value="${e.id}"
+                    th:text="${e.razonSocial}"
+                    th:selected="${emisorId != null and e.id == emisorId}">
+            </option>
+
+        </select>
+
+
+    </div>
+
+
+
+    <div id="list-container">
+
+        <th:block th:if="${emisorId != null}">
+            <div th:replace="~{ui/usuarioshema/list}"></div>
+        </th:block>
+
+        <th:block th:unless="${emisorId != null}">
+            <div class="text-center py-12"
+                 style="border: 2px dashed var(--ui-border); border-radius: 12px;">
+                <p class="text-gray-400">
+                    Seleccione una empresa para gestionar sus usuarios.
+                </p>
+            </div>
+        </th:block>
+
+    </div>
+
+
+
+</div>

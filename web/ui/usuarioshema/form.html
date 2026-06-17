@@ -1,0 +1,114 @@
+<div class="card fade-in">
+
+
+    <div class="section-header">
+
+        <h4 class="text-2xl font-bold tracking-tight"
+            th:text="${titulo}">
+            Usuario
+        </h4>
+
+        <p class="text-sm text-gray-500 mt-1">
+            Administración de usuarios del esquema.
+        </p>
+
+    </div>
+
+    <form th:object="${usuario}"
+          hx-post="/app/schema/usuarios/save"
+          hx-target="#main-content"
+          autocomplete="off">
+
+        <input type="hidden"
+               name="emisorId"
+               th:value="${emisorId}">
+
+        <input type="hidden"
+               th:field="*{id}">
+
+        <div class="grid-2">
+
+            <div class="form-group">
+                <label class="form-label">Usuario</label>
+
+                <input type="text"
+                       th:field="*{username}"
+                       class="form-input"
+                       maxlength="50"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+
+                <select th:field="*{activo}"
+                        class="form-select">
+
+                    <option th:value="true">
+                        Activo
+                    </option>
+
+                    <option th:value="false">
+                        Inactivo
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="grid-2">
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Contraseña
+                </label>
+
+                <input type="password"
+                       name="password"
+                       class="form-input"
+                       th:required="${isNew}">
+
+            </div>
+
+        </div>
+
+        <div class="form-actions actions-right">
+
+            <button type="button"
+                    class="btn-outline"
+                    hx-get="/app/schema/usuarios/view"
+                    hx-target="#main-content">
+                Cancelar
+            </button>
+
+            <button type="submit"
+                    class="btn">
+
+                <span th:if="${isNew}">
+                    Crear Usuario
+                </span>
+
+                <span th:unless="${isNew}">
+                    Guardar Cambios
+                </span>
+
+            </button>
+
+        </div>
+
+    </form>
+
+    <script th:if="${successMessage}"
+            th:inline="javascript">
+        showAlert([[${successMessage}]], 'success');
+    </script>
+    <script th:if="${errorMessage}"
+            th:inline="javascript">
+        showAlert([[${errorMessage}]], 'error');
+    </script>
+
+
+</div>

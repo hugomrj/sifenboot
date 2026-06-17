@@ -22,6 +22,10 @@ public class DbUtils {
         // Limpieza básica para evitar inyección de SQL
         String schema = codEmisor.replaceAll("[^a-zA-Z0-9_]", "");
 
+        if (schema.isBlank()) {
+            throw new IllegalArgumentException("Schema no válido");
+        }
+
         // Ejecución del comando nativo de PostgreSQL
         entityManager.createNativeQuery("SET search_path TO " + schema).executeUpdate();
     }

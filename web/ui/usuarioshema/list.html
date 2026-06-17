@@ -1,0 +1,132 @@
+<div class="fade-in">
+
+    <div class="flex justify-end mb-6">
+        <button class="btn btn-primary"
+                th:attr="hx-get='/app/schema/usuarios/form?emisorId=' + ${emisorId}"
+                hx-target="#main-content">
+            + Agregar Usuario
+        </button>
+    </div>
+
+    <div class="table-container">
+
+        <table class="table-flat">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th style="width:140px;">Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(usuarios)}">
+                <td colspan="4" class="text-center text-muted">
+                    No existen usuarios registrados.
+                </td>
+            </tr>
+
+            <tr th:each="usuario : ${usuarios}">
+
+                <td>
+                    <span class="text-muted"
+                          th:text="${usuario.id}">
+                    </span>
+                </td>
+
+                <td>
+                    <div class="text-stack">
+                        <span class="text-primary"
+                              th:text="${usuario.username}">
+                            admin
+                        </span>
+
+                        <span class="text-secondary text-muted">
+                            Usuario del esquema
+                        </span>
+                    </div>
+                </td>
+
+                <td>
+
+                    <span th:if="${usuario.activo}"
+                          class="badge badge-success">
+                        Activo
+                    </span>
+
+                    <span th:unless="${usuario.activo}"
+                          class="badge badge-danger">
+                        Inactivo
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <div class="table-actions">
+
+                        <button class="btn-flat btn-flat-action"
+                                title="Editar">
+                            <i data-lucide="pencil"></i>
+                        </button>
+
+                        <button class="btn-flat btn-flat-info"
+                                title="Activar / Desactivar">
+                            <i data-lucide="shield-check"></i>
+                        </button>
+
+                        <button class="btn-flat btn-flat-danger"
+                                title="Eliminar">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+
+                    </div>
+
+
+
+
+                </td>
+
+
+
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- PAGINACIÓN -->
+
+    <div class="flex justify-between items-center mt-6">
+
+        <span class="text-muted">
+            Mostrando registros
+        </span>
+
+        <div class="actions">
+
+            <button class="btn-action"
+                    disabled>
+                ◀
+            </button>
+
+            <span class="text-muted">
+                Página 1
+            </span>
+
+            <button class="btn-action"
+                    disabled>
+                ▶
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

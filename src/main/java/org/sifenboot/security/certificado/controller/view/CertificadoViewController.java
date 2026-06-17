@@ -46,6 +46,7 @@ public class CertificadoViewController {
         return "ui/certificado/form";
     }
 
+
     @GetMapping("/load")
     public String loadByEmisor(@RequestParam("emisorId") Integer emisorId, Model model) {
         if (emisorId == null) {
