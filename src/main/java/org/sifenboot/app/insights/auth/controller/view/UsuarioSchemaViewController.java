@@ -1,9 +1,11 @@
 package org.sifenboot.app.insights.auth.controller.view;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.sifenboot.app.admin.emisor.model.Emisor;
 import org.sifenboot.app.admin.emisor.service.EmisorService;
 import org.sifenboot.app.insights.auth.model.Usuario;
 import org.sifenboot.app.insights.auth.service.UsuarioSchemaService;
+import org.sifenboot.app.shared.htmx.HtmxUtils;
 import org.sifenboot.errors.DuplicateEntityException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -65,12 +67,25 @@ public class UsuarioSchemaViewController {
     }
 
 
+
+
     @GetMapping("/form")
     public String form(
             @RequestParam Integer emisorId,
             Model model) {
 
-        model.addAttribute("usuario", new Usuario());
+        return prepareForm(
+                emisorId,
+                new Usuario(),
+                model
+        );
+    }
+    private String prepareForm(
+            Integer emisorId,
+            Usuario usuario,
+            Model model) {
+
+        model.addAttribute("usuario", usuario);
         model.addAttribute("emisorId", emisorId);
         model.addAttribute("titulo", "Nuevo Usuario");
         model.addAttribute("isNew", true);
@@ -80,11 +95,14 @@ public class UsuarioSchemaViewController {
 
 
 
+
+
     @PostMapping("/save")
     public String save(
             @RequestParam Integer emisorId,
             @ModelAttribute Usuario usuario,
-            Model model) {
+            Model model,
+            HttpServletResponse response) {
 
         try {
 
@@ -95,17 +113,24 @@ public class UsuarioSchemaViewController {
                     usuario
             );
 
+            HtmxUtils.success(
+                    response,  "Usuario creado correctamente"
+            );
+
             return view(emisorId, model);
 
         } catch (DuplicateEntityException ex) {
 
-            model.addAttribute("titulo", "Nuevo Usuario");
-            model.addAttribute("usuario", usuario);
-            model.addAttribute("emisorId", emisorId);
-            model.addAttribute("isNew", true);
-            model.addAttribute("errorMessage", ex.getMessage());
+            HtmxUtils.error(
+                    response,
+                    ex.getMessage()
+            );
 
-            return "ui/usuarioshema/form";
+            return prepareForm(
+                    emisorId,
+                    usuario,
+                    model
+            );
         }
     }
 

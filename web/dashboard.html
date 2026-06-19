@@ -10,7 +10,8 @@
 
     <!-- Tailwind  -->
     <script th:src="@{/js/tailwind.js}" src="/js/tailwind.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
 
     <!-- Librerías -->
@@ -156,19 +157,11 @@
     </main>
 
 
+
 </div>
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-    });
-
-    document.body.addEventListener('htmx:afterSwap', () => {
-        lucide.createIcons();
-    });
-</script>
 
 
 <script>
@@ -249,6 +242,16 @@
     }
 </script>
 
+
+
+<script>
+    document.body.addEventListener("showAlert", function (event) {
+        showAlert(
+            event.detail.message,
+            event.detail.type
+        );
+    });
+</script>
 
 
 

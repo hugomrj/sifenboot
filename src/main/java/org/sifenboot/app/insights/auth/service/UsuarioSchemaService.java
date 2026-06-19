@@ -6,7 +6,9 @@ import org.sifenboot.app.insights.auth.model.Usuario;
 import org.sifenboot.app.insights.auth.repository.UsuarioSchemaRepository;
 import org.sifenboot.errors.DuplicateEntityException;
 import org.sifenboot.setup.db.DbUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -17,13 +19,16 @@ public class UsuarioSchemaService {
 
     private final DbUtils db;
     private final UsuarioSchemaRepository usuarioSchemaRepository;
+    private PasswordEncoder passwordEncoder;
 
     public UsuarioSchemaService(
             DbUtils db,
-            UsuarioSchemaRepository usuarioSchemaRepository) {
+            UsuarioSchemaRepository usuarioSchemaRepository,
+            PasswordEncoder passwordEncoder) {
 
         this.db = db;
         this.usuarioSchemaRepository = usuarioSchemaRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -44,7 +49,6 @@ public class UsuarioSchemaService {
 
 
 
-
     @Transactional
     public void crearUsuario(String codEmisor, Usuario usuario) {
 
@@ -52,17 +56,23 @@ public class UsuarioSchemaService {
 
         try {
 
-            usuarioSchemaRepository.saveAndFlush(usuario);
+            usuario.setPassword(
+                    passwordEncoder.encode(usuario.getPassword())
+            );
+
+            usuarioSchemaRepository.save(usuario);
 
         } catch (DataIntegrityViolationException ex) {
 
             throw new DuplicateEntityException(
                     "Ya existe un usuario con ese nombre."
             );
+
         }
 
         db.setSchema("public");
     }
+
 
 
 }
