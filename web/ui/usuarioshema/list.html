@@ -1,123 +1,102 @@
 <div class="fade-in">
 
-    <div class="flex justify-end mb-6">
-        <button class="btn btn-primary"
+    <!-- Botón Agregar -->
+    <div class="list-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: 16px;">
+        <div></div> <!-- Espaciador para empujar el botón a la derecha -->
+        <button class="clay-btn clay-btn--primary"
                 th:attr="hx-get='/app/schema/usuarios/form?emisorId=' + ${emisorId}"
                 hx-target="#main-content">
-            + Agregar Usuario
+            <span class="fa fa-plus"></span>
+            Agregar Usuario
         </button>
     </div>
 
-    <div class="table-container">
+    <!-- Tabla -->
+    <div class="table-wrapper-pro">
+        <div class="clay-table-scroll">
+            <table class="clay-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                    <th class="is-actions" style="width: 140px;">Acciones</th>
+                </tr>
+                </thead>
 
-        <table class="table-flat">
+                <tbody>
+                <!-- Empty state -->
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="4">
+                        <div class="clay-table-empty">
+                            <span class="fa fa-user-o"></span>
+                            No existen usuarios registrados.
+                        </div>
+                    </td>
+                </tr>
 
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Estado</th>
-                <th style="width:140px;">Acciones</th>
-            </tr>
-            </thead>
+                <!-- Filas -->
+                <tr th:each="usuario : ${usuarios}">
+                    <td>
+                        <span class="text-mono" th:text="${usuario.id}">1</span>
+                    </td>
 
-            <tbody>
+                    <td>
+                        <div class="text-stack">
+                            <span class="text-primary" th:text="${usuario.username}">admin</span>
+                            <span class="text-body-muted">Usuario del esquema</span>
+                        </div>
+                    </td>
 
-            <tr th:if="${#lists.isEmpty(usuarios)}">
-                <td colspan="4" class="text-center text-muted">
-                    No existen usuarios registrados.
-                </td>
-            </tr>
-
-            <tr th:each="usuario : ${usuarios}">
-
-                <td>
-                    <span class="text-muted"
-                          th:text="${usuario.id}">
-                    </span>
-                </td>
-
-                <td>
-                    <div class="text-stack">
-                        <span class="text-primary"
-                              th:text="${usuario.username}">
-                            admin
+                    <td>
+                        <span th:if="${usuario.activo}" class="clay-badge clay-badge--success">
+                            Activo
                         </span>
-
-                        <span class="text-secondary text-muted">
-                            Usuario del esquema
+                        <span th:unless="${usuario.activo}" class="clay-badge clay-badge--danger">
+                            Inactivo
                         </span>
-                    </div>
-                </td>
+                    </td>
 
-                <td>
+                    <td class="is-actions">
+                        <div class="table-actions">
+                            <!-- Editar -->
+                            <button class="clay-btn clay-btn--icon action-edit" title="Editar">
+                                <span class="fa fa-pencil"></span>
+                            </button>
 
-                    <span th:if="${usuario.activo}"
-                          class="badge badge-success">
-                        Activo
-                    </span>
-
-                    <span th:unless="${usuario.activo}"
-                          class="badge badge-danger">
-                        Inactivo
-                    </span>
-
-                </td>
-
-                <td>
-
-                    <div class="table-actions">
-
-                        <button class="btn-flat btn-flat-action" title="Editar">
-                            <i class="ti ti-edit"></i>
-                        </button>
-
-
-                        <button class="btn-flat btn-flat-danger" title="Eliminar">
-                            <i class="ti ti-square-rounded-x"></i>
-                        </button>
-
-                    </div>
-
-                </td>
-
-
-
-
-            </tr>
-
-            </tbody>
-
-        </table>
-
+                            <!-- Eliminar -->
+                            <button class="clay-btn clay-btn--icon action-delete" title="Eliminar">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- PAGINACIÓN -->
-
-    <div class="flex justify-between items-center mt-6">
-
-        <span class="text-muted">
+    <!-- Paginación -->
+    <div class="clay-pagination">
+        <span class="clay-pagination-info">
             Mostrando registros
         </span>
 
-        <div class="actions">
-
-            <button class="btn-action"
-                    disabled>
-                ◀
-            </button>
-
-            <span class="text-muted">
-                Página 1
-            </span>
-
-            <button class="btn-action"
-                    disabled>
-                ▶
-            </button>
-
-        </div>
-
+        <ul class="clay-pagination-list">
+            <li>
+                <span class="is-disabled">
+                    <span class="fa fa-chevron-left"></span>
+                </span>
+            </li>
+            <li>
+                <span class="is-current">1</span>
+            </li>
+            <li>
+                <span class="is-disabled">
+                    <span class="fa fa-chevron-right"></span>
+                </span>
+            </li>
+        </ul>
     </div>
 
 </div>

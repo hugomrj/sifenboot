@@ -1,60 +1,46 @@
-<div class="card fade-in">
+<div class="clay-card fade-in">
 
-    <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
-        <h4 class="text-2xl font-bold tracking-tight"
-            th:text="${titulo}">
-            Gestión de Usuarios
-        </h4>
-
+    <!-- Header -->
+    <div class="form-header">
+        <h2 th:text="${titulo}">Gestión de Usuarios</h2>
     </div>
 
-    <div class="form-group mb-8">
-        <label class="form-label font-bold">
-            Seleccionar Empresa
-        </label>
-
-
-        <select
-                class="form-select"
+    <!-- Selector de Empresa -->
+    <div class="clay-field" style="margin-bottom: 32px;">
+        <label class="clay-label">Seleccionar Empresa</label>
+        <select class="clay-select"
                 name="emisorId"
+                style="max-width: 400px;"
                 hx-get="/app/schema/usuarios/list"
                 hx-target="#list-container"
                 hx-trigger="change">
 
-            <option value="">
-                -- Seleccione una Empresa --
-            </option>
+            <option value="">-- Seleccione una Empresa --</option>
 
             <option th:each="e : ${emisores}"
                     th:value="${e.id}"
                     th:text="${e.razonSocial}"
                     th:selected="${emisorId != null and e.id == emisorId}">
             </option>
-
         </select>
-
-
     </div>
 
-
-
+    <!-- Contenedor de la Lista -->
     <div id="list-container">
 
+        <!-- Si hay emisor seleccionado, carga la lista -->
         <th:block th:if="${emisorId != null}">
             <div th:replace="~{ui/usuarioshema/list}"></div>
         </th:block>
 
+        <!-- Si no hay emisor, muestra el estado vacío -->
         <th:block th:unless="${emisorId != null}">
-            <div class="text-center py-12"
-                 style="border: 2px dashed var(--ui-border); border-radius: 12px;">
-                <p class="text-gray-400">
-                    Seleccione una empresa para gestionar sus usuarios.
-                </p>
+            <div class="upload-placeholder">
+                <span class="fa fa-users"></span>
+                <p>Seleccione una empresa para gestionar sus usuarios.</p>
             </div>
         </th:block>
 
     </div>
-
-
 
 </div>

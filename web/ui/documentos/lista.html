@@ -1,267 +1,182 @@
-<!-- =========================
-     FRAGMENTO PRINCIPAL
-     ========================= -->
-<div th:fragment="lista-documentos" class="p-6" xmlns:th="http://www.w3.org/1999/xhtml">
-
-
-    <!-- Toggle oculto para cambiar entre vista cards y tabla -->
-    <!-- Se usa con Tailwind peer para aplicar estilos condicionales -->
-    <input type="checkbox" id="view-toggle" class="hidden peer">
+<div th:fragment="lista-documentos" xmlns:th="http://www.w3.org/1999/xhtml" class="fade-in">
 
     <!-- =========================
          HEADER / TÍTULO
          ========================= -->
-    <div class="mb-6 pb-6 border-b border-gray-100">
-
-        <!-- fila 1: título + volver -->
-        <div class="flex justify-between items-center mb-3">
-            <h1 class="text-2xl font-bold text-gray-900">
-                Documentos
-            </h1>
-
-            <a href="/emisor/resumen"
-               hx-get="/emisor/resumen"
-               hx-target="#main-content"
-               class="link whitespace-nowrap">
-                ← Volver
-            </a>
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+        <div>
+            <h2>Documentos</h2>
+            <p>Comprobantes emitidos por la empresa</p>
         </div>
 
-        <!-- fila 2: select + botón -->
-        <div class="w-full max-w-3xl flex gap-2">
-            <select id="emisorSelect"
-                    class="flex-1 text-sm border border-gray-200 rounded px-3 py-2 bg-white">
+        <a href="/emisor/resumen"
+           hx-get="/emisor/resumen"
+           hx-target="#main-content"
+           class="link">
+            <span class="fa fa-arrow-left"></span> Volver
+        </a>
+    </div>
 
-                <option value="0"
-                        th:selected="${data.codEmisor == null || data.codEmisor == '0'}">
+    <!-- FILTROS -->
+    <div class="list-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: 24px; flex-direction: row; justify-content: flex-start; align-items: flex-end; gap: 12px; flex-wrap: wrap;">
+        <div class="clay-field" style="margin-bottom: 0; width: 100%; max-width: 400px;">
+            <label class="clay-label">Emisor</label>
+            <select id="emisorSelect" class="clay-select">
+                <option value="0" th:selected="${data.codEmisor == null || data.codEmisor == '0'}">
                     Seleccionar emisor
                 </option>
-
                 <option th:each="e : ${emisores}"
                         th:value="${e.codEmisor}"
                         th:selected="${e.codEmisor == data.codEmisor}"
                         th:text="${e.razonSocial}">
                 </option>
-
             </select>
+        </div>
 
+        <button class="clay-btn clay-btn--primary"
+                hx-target="#main-content"
+                hx-trigger="click"
+                hx-on:click="htmx.ajax('GET', '/emisor/' + document.getElementById('emisorSelect').value + '/documentos', {target:'#main-content'})">
+            <span class="fa fa-search"></span> Ver
+        </button>
+    </div>
 
-            <button
-                    class="btn btn-outline"
-                    hx-target="#main-content"
-                    hx-trigger="click"
-                    hx-on:click="htmx.ajax('GET', '/emisor/' + document.getElementById('emisorSelect').value + '/documentos', {target:'#main-content'})">
-                Ver
+    <!-- SWITCH DE VISTA (CARDS / TABLA) -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+        <div class="view-toggle-group">
+            <button type="button" id="btn-view-cards" class="view-toggle-btn is-active" onclick="switchDocView('cards')" title="Vista de Tarjetas">
+                <span class="fa fa-th-large"></span>
             </button>
-
-
-        </div>
-
-    </div>
-
-    <!-- =========================
-         SWITCH DE VISTA (CARDS / TABLA)
-         ========================= -->
-    <div class="flex justify-end mb-6">
-        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
-
-            <!-- Botón vista CARDS -->
-            <!-- Activo por defecto -->
-            <label for="view-toggle"
-                   class="cursor-pointer p-2 rounded-md transition-all
-                          text-gray-500 hover:text-gray-800
-                          peer-checked:text-gray-500 peer-checked:bg-transparent peer-checked:shadow-none
-                          bg-white shadow-sm text-blue-600">
-                <!-- icon grid -->
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-width="2"
-                          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                    </path>
-                </svg>
-            </label>
-
-            <!-- Botón vista TABLA -->
-            <label for="view-toggle"
-                   class="cursor-pointer p-2 rounded-md transition-all
-                          text-gray-500 hover:text-gray-800
-                          peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-blue-600">
-                <!-- icon list -->
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                </svg>
-            </label>
-
+            <button type="button" id="btn-view-table" class="view-toggle-btn" onclick="switchDocView('table')" title="Vista de Tabla">
+                <span class="fa fa-list"></span>
+            </button>
         </div>
     </div>
-
 
     <!-- =========================
          VISTA CARDS
          ========================= -->
-    <div class="peer-checked:hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div id="view-cards" class="documents-grid">
 
-        <!-- CARD -->
-        <div th:each="doc : ${data.facturas}"
-             class="group bg-white rounded-2xl border border-gray-200
-                hover:border-blue-200 hover:shadow-xl
-                transition-all duration-200 overflow-hidden">
+        <div th:each="doc : ${data.facturas}" class="clay-card document-card">
 
-            <!-- HEADER -->
-            <div class="px-4 py-3 border-b bg-gray-50">
-
-                <!-- FILA 1: TIPO (Izquierda) y ESTADO (Derecha) -->
-                <div class="flex justify-between items-center mb-2"> <!-- Añadido mb-2 para separar de la fila de abajo -->
-
-                    <!-- TIPO -->
-                    <div class="text-[11px] text-gray-400 font-medium invisible">
-                        Tipo: <span class="text-gray-600" th:text="${doc.tipoDocumento}">1</span>
+            <!-- Card Header -->
+            <div class="doc-card-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div class="text-tiny text-muted" style="visibility: hidden;">
+                        Tipo: <span th:text="${doc.tipoDocumento}">1</span>
                     </div>
-
-                    <!-- ESTADO -->
-                    <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded"
+                    <span class="clay-badge"
                           th:text="${doc.estado.codigo}"
-                          th:classappend="${doc.estado.codigo == 'APROBADO'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-blue-100 text-blue-700'}">
+                          th:classappend="${doc.estado.codigo == 'APROBADO' ? 'clay-badge--success' : 'clay-badge--info'}"
+                          th:title="${doc.estado.descripcion}">
                     </span>
-
                 </div>
-
-                <!-- FILA 2: NÚMERO DE DOCUMENTO -->
-                <div class="text-base font-bold font-mono text-gray-900 leading-tight"
-                     th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|">
-                    <!-- Cambiado leading-none por leading-tight para que no sea tan asfixiante -->
+                <div class="text-mono-strong" style="font-size: 1.1rem;" th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|">
                 </div>
-
-
             </div>
 
-            <!-- BODY -->
-            <div class="p-4">
-
-                <!-- CLIENTE -->
-                <div class="mb-4">
-
-                    <div class="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
-                        Receptor
-                    </div>
-
-                    <h3 class="font-semibold text-gray-900 truncate"
-                        th:text="${doc.nombreReceptor}">
-                    </h3>
-
+            <!-- Card Body -->
+            <div class="doc-card-body">
+                <div class="doc-field">
+                    <div class="doc-label">Receptor</div>
+                    <div class="text-primary" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${doc.nombreReceptor}"></div>
                 </div>
 
-                <!-- MONTO -->
-                <div class="mb-4">
-
-                    <div class="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
-                        Monto
+                <div class="doc-field">
+                    <div class="doc-label">Monto</div>
+                    <div class="text-primary" style="font-size: 1.25rem;">
+                        Gs. <span th:text="${#numbers.formatDecimal(doc.montoTotal, 0, 'POINT', 0, 'COMMA')}"></span>
                     </div>
-
-                        <div class="text-xl font-bold text-gray-900">
-                            Gs.
-                            <span th:text="${#numbers.formatDecimal(doc.montoTotal, 0, 'POINT', 0, 'COMMA')}"></span>
-                        </div>
-
                 </div>
+            </div>
 
-
-
-                <!-- FOOTER -->
-                <div class="pt-3 border-t flex justify-between items-end">
-
-                    <!-- FECHA -->
-                    <div>
-                        <div class="text-[10px] text-gray-400">
-                            Emisión
-                        </div>
-
-                        <div class="text-xs text-gray-700"
-                             th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy HH:mm')}">
-                        </div>
-                    </div>
-
-
+            <!-- Card Footer -->
+            <div class="doc-card-footer">
+                <div>
+                    <div class="doc-label">Emisión</div>
+                    <div class="text-secondary" th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy HH:mm')}"></div>
                 </div>
-
             </div>
 
         </div>
 
+        <!-- Empty State Cards -->
+        <div th:if="${#lists.isEmpty(data.facturas)}" style="grid-column: 1 / -1;">
+            <div class="clay-table-empty">
+                <span class="fa fa-file-text-o"></span>
+                No hay documentos para mostrar.
+            </div>
+        </div>
     </div>
 
     <!-- =========================
          VISTA TABLA
          ========================= -->
-    <div class="hidden peer-checked:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <!-- HEADER -->
-                <thead class="bg-gray-50 border-b border-gray-200 text-gray-700 uppercase text-xs">
+    <div id="view-table" class="table-wrapper-pro" style="display: none;">
+        <div class="clay-table-scroll">
+            <table class="clay-table">
+                <thead>
                 <tr>
-                    <th class="px-6 py-4">Identificación del Documento</th>
-                    <th class="px-6 py-4">Receptor</th>
-                    <th class="px-6 py-4">Fecha</th>
-                    <th class="px-6 py-4">Estado</th>
-                    <th class="px-6 py-4 text-right">Monto</th>
+                    <th>Identificación</th>
+                    <th>Receptor</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th class="is-numeric">Monto</th>
                 </tr>
                 </thead>
 
-                <!-- BODY -->
-                <tbody class="divide-y divide-gray-100">
-                <tr th:each="doc : ${data.facturas}" class="hover:bg-gray-50 transition-colors">
-
-                    <!-- DOCUMENTO + CDC UNIFICADOS -->
-                    <td class="px-6 py-4">
-                        <!-- Nro de Factura -->
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono font-bold text-gray-900 text-base"
-                                  th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|">
-                            </span>
-                            <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded font-medium"
-                                  th:text="${doc.tipoDocumento}">
-                            </span>
-                        </div>
-
-                        <!-- CDC (Estilo secundario pero accesible) -->
-                        <div class="mt-1.5">
-                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">CDC</div>
-                            <div class="font-mono text-[11px] text-blue-600/80 break-all leading-tight max-w-[350px]"
-                                 th:text="${doc.cdc}">
-                            </div>
+                <tbody>
+                <!-- Empty State Table -->
+                <tr th:if="${#lists.isEmpty(data.facturas)}">
+                    <td colspan="5">
+                        <div class="clay-table-empty">
+                            <span class="fa fa-file-text-o"></span>
+                            No hay documentos para mostrar.
                         </div>
                     </td>
+                </tr>
 
-                    <!-- RECEPTOR -->
-                    <td class="px-6 py-4">
-                        <div class="font-medium text-gray-900" th:text="${doc.nombreReceptor}"></div>
-                        <div class="text-xs text-gray-500 mt-1" th:text="${doc.rucReceptor}"></div>
+                <!-- Filas -->
+                <tr th:each="doc : ${data.facturas}">
+                    <!-- Documento + CDC -->
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span class="text-mono-strong" th:text="|${doc.establecimiento}-${doc.puntoExpedicion}-${doc.numeroDocumento}|"></span>
+                            <span class="clay-badge clay-badge--outline" style="font-size: 0.65rem; padding: 2px 6px;" th:text="${doc.tipoDocumento}"></span>
+                        </div>
+                        <div>
+                            <div class="doc-label" style="margin-bottom: 2px;">CDC</div>
+                            <div class="text-mono text-muted" style="font-size: 0.75rem; word-break: break-all; max-width: 320px; line-height: 1.2;" th:text="${doc.cdc}"></div>
+                        </div>
                     </td>
 
-                    <!-- FECHA -->
-                    <td class="px-6 py-4">
-                        <div class="text-gray-700" th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy')}"></div>
-                        <div class="text-xs text-gray-400 mt-0.5" th:text="${#temporals.format(doc.fechaEmision, 'HH:mm')}"></div>
+                    <!-- Receptor -->
+                    <td>
+                        <div class="text-primary" th:text="${doc.nombreReceptor}"></div>
+                        <div class="text-secondary" style="margin-top: 2px;" th:text="${doc.rucReceptor}"></div>
                     </td>
 
-                    <!-- ESTADO -->
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border"
+                    <!-- Fecha -->
+                    <td>
+                        <div class="text-body-strong" th:text="${#temporals.format(doc.fechaEmision, 'dd/MM/yyyy')}"></div>
+                        <div class="text-tiny" style="margin-top: 2px;" th:text="${#temporals.format(doc.fechaEmision, 'HH:mm')}"></div>
+                    </td>
+
+                    <!-- Estado -->
+                    <td>
+                        <span class="clay-badge"
                               th:text="${doc.estado.codigo}"
                               th:title="${doc.estado.descripcion}"
-                              th:classappend="${doc.estado.codigo == 'APROBADO'
-                                  ? 'bg-green-50 text-green-700 border-green-200'
-                                  : 'bg-blue-50 text-blue-700 border-blue-200'}">
+                              th:classappend="${doc.estado.codigo == 'APROBADO' ? 'clay-badge--success' : 'clay-badge--info'}">
                         </span>
                     </td>
 
-                    <!-- MONTO -->
-                    <td class="px-6 py-4 text-right">
-                        <div class="font-bold text-gray-900 text-base">
+                    <!-- Monto -->
+                    <td class="is-numeric">
+                        <div class="text-primary" style="font-size: 1rem;">
                             Gs. <span th:text="${#numbers.formatDecimal(doc.montoTotal, 0, 'POINT', 0, 'COMMA')}"></span>
                         </div>
-
                     </td>
                 </tr>
                 </tbody>
@@ -270,3 +185,25 @@
     </div>
 
 </div>
+
+<!-- Script para alternar vistas -->
+<script>
+    function switchDocView(view) {
+        const viewCards = document.getElementById('view-cards');
+        const viewTable = document.getElementById('view-table');
+        const btnCards = document.getElementById('btn-view-cards');
+        const btnTable = document.getElementById('btn-view-table');
+
+        if (view === 'cards') {
+            viewCards.style.display = 'grid';
+            viewTable.style.display = 'none';
+            btnCards.classList.add('is-active');
+            btnTable.classList.remove('is-active');
+        } else {
+            viewCards.style.display = 'none';
+            viewTable.style.display = 'block';
+            btnTable.classList.add('is-active');
+            btnCards.classList.remove('is-active');
+        }
+    }
+</script>
