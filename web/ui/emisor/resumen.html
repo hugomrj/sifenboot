@@ -1,42 +1,42 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+<div class="fade-in">
 
-    <div class="card bg-white p-6 rounded-2xl border border-gray-200 transition-all duration-300 ease-in-out hover:shadow-lg hover:border-cyan-400 hover:-translate-y-1" th:each="stat : ${stats}">
+    <!-- Título de la página -->
+    <div class="page-header">
+        <h2>Resumen de Facturación</h2>
+        <p>Totales acumulados por empresa emisora</p>
+    </div>
 
-        <div class="text-stack" style="line-height:1.4;">
-            <span class="text-xs text-cyan-600 font-medium tracking-wider uppercase"
-                  th:text="${#strings.toUpperCase(stat.codEmisor)}">
-                codigo
-            </span>
+    <!-- Grilla de Tarjetas -->
+    <div class="grid-3">
+        <div class="clay-card clay-card--stat" th:each="s : ${stats}">
 
-            <h2 class="text-lg font-bold text-gray-900 leading-tight tracking-tight mt-1"
-                th:text="${stat.razonSocial}">
-            </h2>
-
-            <span class="text-sm text-gray-500 mt-1 block"
-                  th:if="${stat.nombreFantasia != null}"
-                  th:text="${stat.nombreFantasia}">
-            </span>
-        </div>
-
-        <div class="text-stack mt-6" style="line-height:1.5;">
-            <span class="text-muted text-[0.7rem] uppercase font-bold tracking-wider text-gray-400">
-                Total Facturado
-            </span>
-
-            <div class="flex items-baseline my-2">
-                <span class="text-2xl font-bold text-gray-900"
-                      th:text="${#numbers.formatDecimal(stat.totalFacturado, 0, 'POINT', 0, 'POINT')}"></span>
-                <span class="text-xs text-gray-500 ml-1 font-medium">GS</span>
+            <div class="stat-header">
+                <div class="stat-title" th:text="${s.razonSocial}">Razón Social</div>
+                <div class="stat-subtitle" th:text="${s.nombreFantasia}">Nombre Fantasía</div>
             </div>
 
-            <a th:href="@{/emisor/{cod}/documentos(cod=${stat.codEmisor})}"
-               th:attr="hx-get=@{/emisor/{cod}/documentos(cod=${stat.codEmisor})}"
-               hx-target="#main-content"
-               hx-push-url="false"
-               class="link whitespace-nowrap">
-                Detalle →
-            </a>
+            <div class="stat-body">
+                <span class="stat-label">Total Facturado</span>
+                <div class="stat-value">
+                    <span th:text="${#numbers.formatDecimal(s.totalFacturado, 1, 'POINT', 0, 'COMMA')}">0</span>
+                    <small>GS</small>
+                </div>
+            </div>
+
+            <div class="stat-footer">
+                <!-- Asumiendo que querés ir a los documentos de este emisor -->
+                <a th:href="@{/emisor/{cod}/documentos(cod=${s.codEmisor})}" class="stat-link">
+                    Detalle <span class="fa fa-arrow-right"></span>
+                </a>
+            </div>
 
         </div>
     </div>
+
+    <!-- Empty state (por si no hay emisores) -->
+    <div th:if="${#lists.isEmpty(stats)}" class="clay-card" style="text-align: center; padding: 40px; color: var(--clay-ink-2);">
+        <span class="fa fa-chart-pie" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></span>
+        <p>No hay datos de facturación disponibles.</p>
+    </div>
+
 </div>

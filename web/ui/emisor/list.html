@@ -1,135 +1,140 @@
-<div class="card fade-in">
-    <div class="card-header">
+<div class="clay-card fade-in">
 
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 w-full">
-
-            <div>
-                <h3 class="card-title text-2xl font-bold text-[var(--brand-primary)]">
-                    Lista de Emisores
-                </h3>
-
-                <p class="card-subtitle text-[#666]">
-                    Contribuyentes habilitados para la plataforma Sifenboot
-                </p>
-            </div>
-
-            <button
-                    class="btn"
-                    hx-get="/app/emisores/view/create"
-                    hx-swap="innerHTML"
-                    hx-target="#main-content">
-                Agregar Emisor
-            </button>
-
-
+    <!-- Header de la Tarjeta -->
+    <div class="list-header">
+        <div>
+            <h3 class="clay-card-title">Lista de Emisores</h3>
+            <p class="clay-card-subtitle">
+                Contribuyentes habilitados para la plataforma Sifenboot
+            </p>
         </div>
 
+        <button class="clay-btn clay-btn--primary"
+                hx-get="/app/emisores/view/create"
+                hx-swap="innerHTML"
+                hx-target="#main-content">
+            <span class="fa fa-plus"></span>
+            Agregar Emisor
+        </button>
     </div>
 
-    <div class="table-container">
-        <table class="table-flat">
-            <thead>
-            <tr style="border-bottom: 2px solid var(--brand-secondary);">
-                <th>Contribuyente</th>
-                <th>Actividad Económica</th>
-                <th>Ubicación</th>
-                <th>Timbrado</th>
-                <th class="text-right">Acciones</th>
-            </tr>
-            </thead>
+    <!-- Contenedor interno de la tabla -->
+    <div class="table-wrapper-pro">
+        <div class="clay-table-scroll">
+            <table class="clay-table">
+                <thead>
+                <tr>
+                    <th>Contribuyente</th>
+                    <th>Actividad Económica</th>
+                    <th>Ubicación</th>
+                    <th>Timbrado</th>
+                    <th class="is-actions">Acciones</th>
+                </tr>
+                </thead>
 
-            <tbody id="tabla-datos">
-            <tr th:each="e : ${emisores}" style="border-bottom: 1px solid var(--brand-secondary);">
-                <td>
-                    <div class="text-stack">
-                        <div class="text-primary font-bold" style="color: var(--brand-primary); font-size: 1rem;" th:text="${e.razonSocial}"></div>
-                        <div class="text-secondary" style="display: flex; gap: 8px; align-items: center; margin-top: 2px; font-size: 0.85rem;">
-                            <span class="font-bold" th:text="${e.ruc + '-' + e.rucDv}"></span>
-                            <span style="color: #CCC;">|</span>
-                            <span  style="font-size: 1rem;  color: var(--brand-accent);" th:text="${e.codEmisor}"></span>
+                <tbody id="tabla-datos">
+                <tr th:each="e : ${emisores}">
+                    <td>
+                        <div class="text-stack">
+                            <div class="text-primary" th:text="${e.razonSocial}"></div>
+                            <div class="text-secondary">
+                                <span class="text-strong" th:text="${e.ruc + '-' + e.rucDv}"></span>
+                                <span class="text-sep">|</span>
+                                <span class="text-accent" th:text="${e.codEmisor}"></span>
+                            </div>
+                            <div class="text-muted text-italic text-sm"
+                                 th:if="${e.nombreFantasia != null && !e.nombreFantasia.empty}"
+                                 th:text="${e.nombreFantasia}">
+                            </div>
                         </div>
-                        <div class="text-muted text-italic" style="font-size: 0.9rem; color: #777;"
-                             th:if="${e.nombreFantasia != null && !e.nombreFantasia.empty}"
-                             th:text="${e.nombreFantasia}">
+                    </td>
+
+                    <td class="cell-max-250">
+                        <div class="text-stack">
+                            <div class="text-mono" th:text="${e.actividadEconomicaCodigo}"></div>
+                            <div class="text-tiny-uppercase" th:text="${e.actividadEconomicaDescripcion}"></div>
                         </div>
-                    </div>
-                </td>
+                    </td>
 
-                <td style="max-width: 250px;">
-                    <div class="text-stack">
-                        <div style="font-family: monospace; font-weight: bold; color: var(--brand-primary); font-size: 0.85rem;"
-                             th:text="${e.actividadEconomicaCodigo}"></div>
-                        <div style="font-size: 0.75rem; color: #666; line-height: 1.2; text-transform: uppercase;"
-                             th:text="${e.actividadEconomicaDescripcion}"></div>
-                    </div>
-                </td>
+                    <td>
+                        <div class="text-stack">
+                            <div class="text-body-strong"
+                                 th:text="${e.departamento != null ? e.departamento.descripcion : 'SIN DEP.'}">
+                            </div>
 
+                            <div th:with="dNom=${e.distrito?.descripcion}, lNom=${e.localidad?.descripcion}"
+                                 th:if="${dNom != null or lNom != null}"
+                                 class="text-body-muted">
+                                <span th:text="${(dNom != null and lNom != null and dNom != lNom) ? (dNom + ' - ' + lNom) : (dNom != null ? dNom : lNom)}"></span>
+                            </div>
 
-                <td>
-                    <div class="text-stack">
-                        <!-- 1. Departamento -->
-                        <div class="font-medium" style="color: var(--brand-primary); font-size: 0.9rem;"
-                             th:text="${e.departamento != null ? e.departamento.descripcion : 'SIN DEP.'}"></div>
-
-                        <!-- 2. Distrito / Localidad (NUEVA LÍNEA INTERMEDIA) -->
-                        <div th:with="dNom=${e.distrito?.descripcion}, lNom=${e.localidad?.descripcion}"
-                             th:if="${dNom != null or lNom != null}"
-                             style="font-size: 0.8rem; color: #555;">
-
-                            <!-- Muestra "Distrito - Localidad" si son diferentes, o solo uno si son iguales/nulos -->
-                            <span th:text="${(dNom != null and lNom != null and dNom != lNom) ? (dNom + ' - ' + lNom) : (dNom != null ? dNom : lNom)}"></span>
+                            <div class="text-tiny">
+                                <span th:text="${e.direccion}"></span>
+                                <span th:if="${e.numeroCasa != null and e.numeroCasa > 0}"
+                                      th:text="${' N° ' + e.numeroCasa}"></span>
+                            </div>
                         </div>
+                    </td>
 
-                        <!-- 3. Dirección -->
-                        <div style="font-size: 0.8rem; color: #888;">
-                            <span th:text="${e.direccion}"></span>
-                            <span th:if="${e.numeroCasa != null and e.numeroCasa > 0}" th:text="${' N° ' + e.numeroCasa}"></span>
+                    <td>
+                        <div class="text-stack">
+                            <div class="text-mono-strong" th:text="${e.numeroTimbrado}"></div>
+                            <div class="text-tiny">
+                                <span th:text="${#temporals.format(e.fechaInicioTimbrado, 'dd/MM/yyyy')}"></span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-
-
-                <td>
-                    <div class="text-stack">
-                        <div style="font-family: monospace; font-weight: bold; color: var(--brand-primary);" th:text="${e.numeroTimbrado}"></div>
-                        <div style="font-size: 0.75rem; color: #888;">
-                            <span th:text="${#temporals.format(e.fechaInicioTimbrado, 'dd/MM/yyyy')}"></span>
-                        </div>
-                    </div>
-                </td>
+                    </td>
 
 
 
-                <td class="text-right">
-                    <div class="flex justify-end gap-2">
-                        <div class="flex justify-end gap-3">
 
-                            <button class="table-detail"
+
+                    <td class="is-actions">
+                        <div class="table-actions">
+                            <!-- Botón Ver (Azul) -->
+                            <button class="clay-btn clay-btn--icon clay-btn--sm action-view"
                                     th:attr="hx-get=@{/app/emisores/view/details/{id}(id=${e.id})}"
-                                    hx-target="#main-content">
-                                Ver
+                                    hx-target="#main-content"
+                                    title="Ver detalles">
+                                <span class="fa fa-eye"></span>
                             </button>
 
-                            <button class="table-edit"
+                            <!-- Botón Editar (Naranja/Ámbar) -->
+                            <button class="clay-btn clay-btn--icon clay-btn--sm action-edit"
                                     th:attr="hx-get=@{/app/emisores/view/edit/{id}(id=${e.id})}"
-                                    hx-target="#main-content">
-                                Editar
+                                    hx-target="#main-content"
+                                    title="Editar emisor">
+                                <span class="fa fa-pencil"></span>
                             </button>
 
-                            <button class="table-danger"
+                            <!-- Botón Borrar (Rojo) -->
+                            <button class="clay-btn clay-btn--icon clay-btn--sm action-delete"
                                     th:attr="hx-delete=@{/app/emisores/view/delete/{id}(id=${e.id})}"
                                     hx-confirm="¿Eliminar emisor?"
-                                    hx-target="#main-content">
-                                Borrar
+                                    hx-target="#main-content"
+                                    title="Borrar emisor">
+                                <span class="fa fa-trash"></span>
                             </button>
-
                         </div>
+                    </td>
 
 
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+
+
+                </tr>
+
+                <!-- Empty state -->
+                <tr th:if="${#lists.isEmpty(emisores)}">
+                    <td colspan="5">
+                        <div class="clay-table-empty">
+                            <span class="fa fa-users"></span>
+                            No hay emisores registrados todavía
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </div>

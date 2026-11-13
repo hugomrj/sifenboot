@@ -1,0 +1,918 @@
+/* web/css/style.css */
+
+:root {
+    --brand-primary: #1A1A1A;
+    --brand-secondary: #F5F5F7;
+    --brand-accent: #00BCD4;
+
+    --bg-page: #FFFFFF;
+    --bg-dashboard: #FAFBFC;
+
+    --bg-dashboard: #F5F5F7;
+
+
+    --ui-border: #F1F2F4;
+    --ui-hover: #F8FAFC;
+
+    --text-main: #1A1A1A;
+    --text-muted: #888888;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-full: 9999px;
+    --sidebar-width: 260px;
+    --navbar-height: 64px;
+}
+
+
+:root {
+    --form-control-padding: 10px 14px;
+}
+
+
+
+/* --- RESET & BASE --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg-page);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- LOGIN UTILITIES --- */
+.center-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --- DASHBOARD STRUCTURE --- */
+.top-navbar {
+    height: var(--navbar-height);
+    background: var(--bg-page);
+    border-bottom: 1px solid var(--ui-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-page);
+    border-right: 1px solid var(--ui-border);
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 0.5rem 1rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.main-content {
+    margin-top: var(--navbar-height);
+    margin-left: var(--sidebar-width);
+    padding: 1rem;
+    background: var(--bg-dashboard);
+    min-height: calc(100vh - var(--navbar-height));
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- TOGGLE STATES (DESKTOP) --- */
+.sidebar.is-hidden { transform: translateX(-100%); }
+.main-content.expanded { margin-left: 0; }
+
+/* --- MOBILE MENU & OVERLAY --- */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 85;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.is-active { display: block; }
+
+/* --- SIDEBAR MENU (SIN ICONOS, 2 NIVELES) --- */
+.nav-group { margin-bottom: 4px; }
+
+.nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.nav-item:hover { background: var(--brand-secondary); }
+
+/* Submenús desplegables */
+.nav-sub-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding-left: 16px;
+}
+
+.nav-group.is-open .nav-sub-list {
+    max-height: 500px; /* Ajustar según contenido */
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.nav-sub-item {
+    display: block;
+    padding: 8px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-left: 1px solid var(--ui-border);
+    transition: all 0.15s ease;
+}
+
+.nav-sub-item:hover, .nav-sub-item.active {
+
+    color: var(--brand-primary);
+    /*
+    color: var(--brand-accent);
+    */
+    border-left-color: var(--brand-primary);
+    border-left-color: var(--brand-accent);
+
+}
+
+/* Flecha indicadora de submenú */
+.nav-arrow {
+    width: 12px; height: 12px;
+    transition: transform 0.3s ease;
+}
+.nav-group.is-open .nav-arrow { transform: rotate(180deg); }
+
+
+
+
+.section-header {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+
+
+/* --- COMPONENTES FLAT (CARD OPTIMIZADA) --- */
+
+.card {
+    background: var(--bg-page);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 2rem ;
+    overflow: hidden;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
+}
+
+
+/* --- NUEVA CLASE PARA TABLAS (Sin padding interno) --- */
+.card-table {
+    padding: 0 !important; /* Quitamos el padding para que la tabla llegue al borde */
+    overflow: hidden;      /* Para que el hover respete las esquinas redondeadas */
+}
+
+/* El Header dentro de la card-table sí necesita su propio aire */
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+.card:hover {
+   /* border-color: var(--brand-accent);*/
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+
+
+.navbar-logo { font-weight: 700; font-size: 1rem; }
+
+.menu-toggle {
+    background: none; border: none; cursor: pointer;
+    padding: 8px; margin-right: 16px;
+    border-radius: var(--radius-sm); display: flex;
+}
+.menu-toggle:hover { background: var(--brand-secondary); }
+
+
+
+
+/* --- FORMS --- */
+.form-group {
+    margin-bottom: 20px; /* Separación entre los bloques de input */
+}
+
+.form-label {
+    display: block;
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--text-muted);
+
+    letter-spacing: 0.05em;
+    margin-bottom: 8px; /* Espacio entre el texto y el input */
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--form-control-padding);
+    background: var(--brand-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.form-input:focus {
+    background: var(--bg-page);
+    border-color: var(--ui-border);
+}
+
+/* Eliminar flechas de inputs number */
+.form-input[type="number"]::-webkit-outer-spin-button,
+.form-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* --- CONTENEDORES DE BOTONES --- */
+
+/* Para separar el bloque de botones del resto del formulario */
+.form-actions {
+    margin-top: 32px; /* mt-8 equivalente */
+    display: flex;
+    gap: 12px; /* Espacio entre botones */
+    align-items: center;
+}
+
+/* Variante: Centrado (Útil para el Login) */
+.actions-center { justify-content: center; }
+
+/* Variante: Derecha (Útil para formularios del Dashboard) */
+.actions-right { justify-content: flex-end; }
+
+/* Variante: Columna (Para móviles o botones muy largos) */
+.actions-stack { flex-direction: column; width: 100%; }
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   SELECT
+========================= */
+
+.form-select {
+    width: 100%;
+    padding: var(--form-control-padding);
+    background: var(--brand-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.form-select:focus {
+    background: var(--bg-page);
+    border-color: var(--ui-border);
+}
+
+
+/* CHOICES */
+.choices .choices__inner {
+    width: 100%;
+    min-height: auto;
+
+    padding: 14px 16px;
+    padding: var(--form-control-padding);
+
+    background: var(--brand-secondary)!important;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+
+    font-family: inherit;
+    font-size: 0.95rem;
+
+    outline: none;
+
+    transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+}
+
+/* FOCUS */
+.choices.is-focused .choices__inner,
+.choices.is-open .choices__inner {
+    background: var(--bg-page);
+    border-color: var(--ui-border);
+}
+
+//* READONLY / DISABLED */
+
+choices.is-disabled .choices__inner{
+    background : var(--brand-secondary)!important;
+}
+
+.choices.is-disabled .choices__list--single .choices__item {
+    background: var(--brand-secondary)!important;
+    color:  var(--text-main) !important;
+}
+
+.choices.is-disabled .choices__inner {
+    pointer-events: none;
+}
+.choices.is-disabled,
+.choices.is-disabled *,
+.choices.is-disabled::after {
+    cursor: default !important;
+}
+
+
+
+
+
+/* --- BUTTONS --- */
+
+/* Base & Primary (Negro) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-primary);
+    color: #FFFFFF;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-weight: 600;
+    padding: 12px 24px;
+    font-size: 0.875rem;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Variante Outline (Blanco/Gris) */
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    color: var(--text-main);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-weight: 600;
+    padding: 12px 24px;
+    font-size: 0.875rem;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tamaños */
+.btn-lg { width: 100%; padding: 18px 32px; font-size: 1rem; letter-spacing: 0.01em; }
+
+.btn-sm, .btn-outline.btn-sm {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Interacciones Primary */
+.btn:hover { background: #333333; transform: translateY(-1px); }
+.btn:active { transform: scale(0.97); background: #000000; }
+
+/* Interacciones Outline */
+.btn-outline:hover {
+    background: var(--brand-secondary);
+    border-color: var(--text-muted);
+    transform: translateY(-1px);
+}
+.btn-outline:active { transform: scale(0.97); background: var(--ui-border); }
+
+/* Global Disabled */
+.btn:disabled, .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+
+/
+/* --- CONTENEDOR DE ACCIONES DE TABLA --- */
+.table-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-flat svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* --- BOTONES DE ACCIÓN --- */
+.btn-flat {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-flat i {
+    font-size: 1rem;
+}
+
+.btn-flat:active {
+    transform: scale(0.95);
+}
+
+.btn-flat-info {
+    color: #0284c7;
+}
+
+.btn-flat-info:hover {
+    background-color: #f0f9ff;
+    color: #0369a1;
+}
+
+.btn-flat-action {
+    color: var(--text-main);
+}
+
+.btn-flat-action:hover {
+    background-color: var(--brand-secondary);
+    color: #000;
+}
+
+.btn-flat-danger {
+    color: #dc2626;
+}
+
+.btn-flat-danger:hover {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+
+
+
+
+
+/*
+
+.table-detail,
+.table-edit,
+.table-danger {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+/* Ver / Detalles */
+/*
+.table-detail {
+    color: #64748b;
+}
+
+.table-detail:hover {
+    color: #334155;
+}
+
+/* Editar */
+/*
+.table-edit {
+    color: #4b5563;
+}
+
+.table-edit:hover {
+    color: #111827;
+}
+
+
+/* Borrar */
+/*
+.table-danger {
+    color: #9ca3af;
+}
+
+.table-danger:hover {
+    color: #dc2626;
+}
+
+*/
+
+
+
+
+
+/* --- LINK ACTION --- */
+.link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.link:hover {
+    color: var(--brand-accent);
+}
+
+/* Variante más fuerte */
+.link-primary {
+    color: var(--brand-accent);
+    font-weight: 600;
+}
+
+.link-primary:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 800px) {
+    .sidebar { transform: translateX(-100%); z-index: 100; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 24px; }
+    .top-navbar { z-index: 110; }
+}
+
+
+    /* --- ALERTS (FLAT STYLE) --- */
+    .alert {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 9999;
+
+        min-width: 300px;
+        max-width: 420px;
+        padding: 16px 20px;
+
+        /* Diseño Flat: Sin sombras, borde sólido de 1px */
+        border: 1px solid;
+        border-radius: var(--radius-sm);
+        box-shadow: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        font-weight: 600; /* Peso para legibilidad sobre fondo de color */
+
+        animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        transition: opacity 0.2s ease;
+    }
+
+
+
+    /* Colores VIVOS con bordes suavizados (no tan fuertes) */
+    .alert-success {
+        background-color: #ECFDF5; /* Verde muy claro y limpio */
+        border-color: #A7F3D0;      /* Borde suavizado (no es el verde oscuro) */
+        color: #065F46;
+    }
+
+    .alert-error {
+        background-color: #FEF2F2; /* Rojo muy claro */
+        border-color: #FEE2E2;      /* Borde suavizado (un rosa suave) */
+        color: #991B1B;
+    }
+
+    .alert-info {
+        background-color: #EFF6FF; /* Azul muy claro */
+        border-color: #DBEAFE;      /* Borde suavizado (celeste muy tenue) */
+        color: #1E40AF;
+    }
+
+
+    /* Animación de entrada */
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(300px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+
+    .alert-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: currentColor; /* Usa el mismo color del texto de la alerta */
+        opacity: 0.5;
+        padding: 4px;
+        margin-left: 12px;
+        display: flex;
+        transition: opacity 0.2s;
+    }
+
+    .alert-close:hover {
+        opacity: 1;
+    }
+
+
+
+
+
+/* --- AJUSTES DE SIDEBAR FLEX (Para empujar el botón salir) --- */
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.nav-content {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+}
+
+.nav-bottom {
+    margin-top: auto;
+    border-top: 1px solid var(--ui-border);
+}
+
+
+
+/* --- TABLAS Y BADGES (ESTILO FLAT) --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-flat {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.table-flat th {
+    padding: 1rem 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+
+.table-flat td {
+    padding: 1rem 1rem; /* Subimos de 16px a 18px para que la "doble fila" respire */
+    border-bottom: 1px solid var(--ui-border);
+    vertical-align: middle; /* Asegura que todo esté alineado si una celda tiene más texto */
+}
+
+
+.table-flat tr {
+    transition: background-color 0.2s ease;
+    background-color: var(--bg-page); /* Aseguramos que la fila sea blanca pura */
+}
+
+.table-flat tbody tr:hover {
+    background: var(--ui-hover);
+}
+
+/*
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid var(--ui-border);
+    border-radius: 8px;
+
+    background: var(--bg-page);
+    color: var(--text-main);
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    background: var(--ui-hover);
+}
+
+.btn-action svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+
+.btn-action-edit:hover {
+    color: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-action-delete:hover {
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
+.btn-action-toggle:hover {
+    color: #059669;
+    border-color: #059669;
+}
+*/
+
+
+
+
+
+/* Contenedor para la doble fila en tablas */
+.cell-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* <--- ESTE ES EL ESPACIO. Ajustalo a tu gusto (2px, 4px, 6px) */
+    line-height: 1.2; /* Ajusta el interlineado interno para que sea compacto */
+}
+/* El contenedor de "pilas" de texto */
+.text-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Tu estándar de aire */
+    line-height: 1.2;
+}
+
+/* Nivel 1: Información principal (Negrita, tamaño base) */
+.text-primary {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 1rem;
+}
+
+/* Nivel 2: Información de soporte (Más pequeña) */
+.text-secondary {
+    font-size: 0.825rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Utilidades de color y estilo */
+.text-accent {
+    color: var(--brand-accent);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+
+
+
+
+
+
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge.is-ok { background: #166534; color: #fff; }
+.badge.is-err { background: #991B1B; color: #fff; }
+
+/* --- UTILIDADES EXTRA --- */
+.font-mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+
+
+
+
+
+/* GRID  */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* Responsive: En móviles (menos de 600px) que todo vuelva a 1 columna */
+@media (max-width: 600px) {
+    .grid-2, .grid-3,
+     .grid-4 { grid-template-columns: 1fr; }
+}

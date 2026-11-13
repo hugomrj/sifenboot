@@ -1,7 +1,8 @@
-<div id="emisor-form-container" class="card fade-in">
-    <div class="mb-8" style="padding: 1rem 0; border-bottom: 1px solid var(--ui-border);">
-        <h4 class="text-2xl font-bold tracking-tight text-gray-900" th:text="${titulo}">Nuevo Emisor</h4>
-        <p class="text-sm text-gray-500 mt-1">Datos fiscales y comerciales de la empresa</p>
+<div id="emisor-form-container" class="clay-card fade-in">
+
+    <div class="form-header">
+        <h2 th:text="${titulo}">Nuevo Emisor</h2>
+        <p>Datos fiscales y comerciales de la empresa</p>
     </div>
 
     <form hx-post="/app/emisores/view/save"
@@ -12,274 +13,258 @@
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{configuracion.id}">
 
+        <!-- RUC + DV / Código -->
         <div class="grid-2">
-            <div class="form-group">
-                <label class="form-label">RUC y DV</label>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="text" th:field="*{ruc}" class="form-input"
-                           style="flex: 4;" placeholder="80000000"
+            <div class="clay-field">
+                <label class="clay-label">RUC y DV</label>
+                <div class="form-ruc-row">
+                    <input type="text" th:field="*{ruc}"
+                           class="clay-input ruc-input"
+                           placeholder="80000000"
                            th:readonly="${readOnly}" required>
-                    <span style="font-weight: bold; color: var(--ui-border);">-</span>
-                    <input type="number" th:field="*{rucDv}" class="form-input"
-                           style="flex: 1; text-align: center; min-width: 60px;"
+                    <span class="dv-separator">-</span>
+                    <input type="number" th:field="*{rucDv}"
+                           class="clay-input dv-input"
                            placeholder="0" min="0" max="9"
                            th:readonly="${readOnly}" required>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Código (identificador api)</label>
-                <input type="text" th:field="*{codEmisor}" class="form-input" placeholder="sinespacios"
+            <div class="clay-field">
+                <label class="clay-label">Código (identificador API)</label>
+                <input type="text" th:field="*{codEmisor}"
+                       class="clay-input"
+                       placeholder="sinespacios"
                        th:readonly="${readOnly}" required>
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Razón Social</label>
-            <input type="text" th:field="*{razonSocial}" class="form-input" placeholder="Nombre legal de la empresa"
+        <!-- Razón Social -->
+        <div class="clay-field">
+            <label class="clay-label">Razón Social</label>
+            <input type="text" th:field="*{razonSocial}"
+                   class="clay-input"
+                   placeholder="Nombre legal de la empresa"
                    th:readonly="${readOnly}" required>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Nombre Fantasía</label>
-            <input type="text" th:field="*{nombreFantasia}" class="form-input" placeholder="Nombre comercial"
+        <!-- Nombre Fantasía -->
+        <div class="clay-field">
+            <label class="clay-label">Nombre Fantasía</label>
+            <input type="text" th:field="*{nombreFantasia}"
+                   class="clay-input"
+                   placeholder="Nombre comercial"
                    th:readonly="${readOnly}">
         </div>
 
+        <!-- Tipo Contribuyente / Timbrado / Fecha -->
         <div class="grid-3">
-            <div class="form-group">
-                <label class="form-label">Tipo Contribuyente</label>
-                <select th:field="*{tipoContribuyente}" class="form-input" th:disabled="${readOnly}">
+            <div class="clay-field">
+                <label class="clay-label">Tipo Contribuyente</label>
+                <select th:field="*{tipoContribuyente}"
+                        class="clay-select"
+                        th:disabled="${readOnly}">
                     <option value="1">Persona Física</option>
                     <option value="2">Persona Jurídica</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label">Timbrado N°</label>
-                <input type="text" th:field="*{numeroTimbrado}" class="form-input" placeholder="12345678"
+            <div class="clay-field">
+                <label class="clay-label">Timbrado N°</label>
+                <input type="text" th:field="*{numeroTimbrado}"
+                       class="clay-input"
+                       placeholder="12345678"
                        th:readonly="${readOnly}" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Fecha inicio</label>
-                <input type="date" th:field="*{fechaInicioTimbrado}" class="form-input"
+            <div class="clay-field">
+                <label class="clay-label">Fecha inicio</label>
+                <input type="date" th:field="*{fechaInicioTimbrado}"
+                       class="clay-input"
                        th:readonly="${readOnly}" required>
             </div>
         </div>
 
-
-
-
-
-        <!-- Dirección Calle y N° Casa en la misma línea -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-            <div class="form-group md:col-span-3">
-                <label class="form-label">Dirección Calle</label>
-                <input type="text"
-                       th:field="*{direccion}"
-                       class="form-input"
+        <!-- Dirección + N° Casa -->
+        <div class="grid-direccion">
+            <div class="clay-field">
+                <label class="clay-label">Dirección Calle</label>
+                <input type="text" th:field="*{direccion}"
+                       class="clay-input"
                        placeholder="Calle principal"
-                       th:readonly="${readOnly}"
-                       required>
+                       th:readonly="${readOnly}" required>
             </div>
-
-            <div class="form-group md:col-span-1">
-                <label class="form-label">N° Casa</label>
-                <input type="number"
-                       th:field="*{numeroCasa}"
-                       class="form-input"
+            <div class="clay-field">
+                <label class="clay-label">N° Casa</label>
+                <input type="number" th:field="*{numeroCasa}"
+                       class="clay-input"
                        placeholder="123"
-                       th:readonly="${readOnly}"
-                       required>
+                       th:readonly="${readOnly}" required>
             </div>
-
         </div>
 
-
-
-        <!-- Ubicación Geográfica en Cascada -->
-        <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
-
-                <!-- DEPARTAMENTO -->
-                <div class="form-group">
-                    <label class="form-label">Departamento</label>
-                    <select
-                            th:field="*{departamento.id}"
-                            id="departamento"
-
-                            th:disabled="${readOnly}"
-                            required
-
-                            hx-get="/app/common/geo/distritos"
-                            hx-trigger="change"
-                            hx-target="#distrito"
-                            hx-swap="innerHTML">
-
-                        <option value="">-- Seleccione --</option>
-
-                        <option th:each="d : ${departamentos}"
-                                th:value="${d.id}"
-                                th:text="${d.descripcion}">
-                        </option>
-
-                    </select>
-                </div>
-
-
-            <!-- DISTRITO -->
-            <div class="form-group">
-                <label class="form-label">Distrito</label>
-
-                <div id="distrito-container">
-                <select th:field="*{distrito.id}"
-                        id="distrito"
-                        class="form-select"
-
+        <!-- Ubicación Geográfica -->
+        <div class="grid-3">
+            <div class="clay-field">
+                <label class="clay-label">Departamento</label>
+                <select th:field="*{departamento.id}"
+                        id="departamento"
+                        class="clay-select"
                         th:disabled="${readOnly}"
                         required
+                        hx-get="/app/common/geo/distritos"
+                        hx-trigger="change"
+                        hx-target="#distrito"
+                        hx-swap="innerHTML">
+                    <option value="">-- Seleccione --</option>
+                    <option th:each="d : ${departamentos}"
+                            th:value="${d.id}"
+                            th:text="${d.descripcion}"></option>
+                </select>
+            </div>
 
+            <div class="clay-field">
+                <label class="clay-label">Distrito</label>
+                <select th:field="*{distrito.id}"
+                        id="distrito"
+                        class="clay-select"
+                        th:disabled="${readOnly}"
+                        required
                         hx-get="/app/common/geo/localidades"
                         hx-trigger="change"
                         hx-target="#localidad"
                         hx-swap="innerHTML">
-
                     <option value="">-- Seleccione --</option>
-
                     <option th:each="d : ${distritos}"
                             th:value="${d.id}"
-                            th:text="${d.descripcion}">
-                    </option>
-
+                            th:text="${d.descripcion}"></option>
                 </select>
-                </div>
             </div>
 
-
-
-
-            <!-- LOCALIDAD -->
-            <div class="form-group">
-                <label class="form-label">Ciudad/Localidad</label>
-
+            <div class="clay-field">
+                <label class="clay-label">Ciudad/Localidad</label>
                 <select th:field="*{localidad.id}"
                         id="localidad"
-
+                        class="clay-select"
                         th:disabled="${readOnly}"
                         required>
-
                     <option value="">-- Seleccione --</option>
-
                     <option th:each="l : ${localidades}"
                             th:value="${l.id}"
-                            th:text="${l.descripcion}">
-                    </option>
-
+                            th:text="${l.descripcion}"></option>
                 </select>
             </div>
-
-
         </div>
 
-
-
-        <!-- Teléfono y Email -->
-        <div class="grid-2" style="margin-top: 16px;">
-            <div class="form-group">
-                <label class="form-label">Teléfono</label>
-                <input type="tel" th:field="*{telefono}" class="form-input" placeholder="021 123456"
+        <!-- Teléfono + Email -->
+        <div class="grid-2">
+            <div class="clay-field">
+                <label class="clay-label">Teléfono</label>
+                <input type="tel" th:field="*{telefono}"
+                       class="clay-input"
+                       placeholder="021 123456"
                        th:readonly="${readOnly}">
             </div>
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" th:field="*{email}" class="form-input" placeholder="contacto@empresa.com"
+            <div class="clay-field">
+                <label class="clay-label">Email</label>
+                <input type="email" th:field="*{email}"
+                       class="clay-input"
+                       placeholder="contacto@empresa.com"
                        th:readonly="${readOnly}">
             </div>
         </div>
 
-
-
-
-        <div class="grid-2" style="grid-template-columns: 140px 1fr; gap: 16px; margin-top: 16px;">
-            <div class="form-group">
-                <label class="form-label">Cód. Actividad</label>
+        <!-- Actividad Económica -->
+        <div class="grid-actividad">
+            <div class="clay-field">
+                <label class="clay-label">Cód. Actividad</label>
                 <input type="number" th:field="*{actividadEconomicaCodigo}"
-                       class="form-input" placeholder="62010"
+                       class="clay-input"
+                       placeholder="62010"
                        th:readonly="${readOnly}" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Descripción Actividad</label>
+            <div class="clay-field">
+                <label class="clay-label">Descripción Actividad</label>
                 <input type="text" th:field="*{actividadEconomicaDescripcion}"
-                       class="form-input" placeholder="Rubro de la empresa"
+                       class="clay-input"
+                       placeholder="Rubro de la empresa"
                        th:readonly="${readOnly}" required>
             </div>
         </div>
 
-        <div class="mt-8 pt-6" style="border-top: 2px dashed var(--ui-border); padding-top: 24px; background-color: var(--ui-bg-light); padding: 20px; border-radius: 8px;">
-            <div class="flex items-center gap-2 mb-4">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-blue-600">Configuración Técnica SIFEN</h4>
-            </div>
+        <!-- Configuración SIFEN -->
+        <div class="form-section-sifen">
+            <h4 class="section-title">
+                <span class="fa fa-cog"></span>
+                Configuración Técnica SIFEN
+            </h4>
 
             <div class="grid-3">
-                <div class="form-group">
-                    <label class="form-label">Ambiente</label>
-                    <select th:field="*{configuracion.ambiente}" class="form-input" style="border-color: #dbeafe;" th:disabled="${readOnly}">
+                <div class="clay-field">
+                    <label class="clay-label">Ambiente</label>
+                    <select th:field="*{configuracion.ambiente}"
+                            class="clay-select"
+                            th:disabled="${readOnly}">
                         <option value="test">Test (Pruebas)</option>
                         <option value="prod">Producción</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">ID CSC (SET)</label>
-                    <input type="text" th:field="*{configuracion.idCsc}" class="form-input" placeholder="0001"
-                           th:readonly="${readOnly}" >
+                <div class="clay-field">
+                    <label class="clay-label">ID CSC (SET)</label>
+                    <input type="text" th:field="*{configuracion.idCsc}"
+                           class="clay-input"
+                           placeholder="0001"
+                           th:readonly="${readOnly}">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">CSC</label>
-                    <input type="text" th:field="*{configuracion.csc}" class="form-input"
-                           th:readonly="${readOnly}" >
+                <div class="clay-field">
+                    <label class="clay-label">CSC</label>
+                    <input type="text" th:field="*{configuracion.csc}"
+                           class="clay-input"
+                           th:readonly="${readOnly}">
                 </div>
             </div>
 
-            <div class="grid-2 mt-4">
-                <div class="form-group">
-                    <label class="form-label">API Token (Seguridad)</label>
-                    <input type="text" th:field="*{configuracion.apiToken}" class="form-input"
-                           placeholder="token api" th:readonly="${readOnly}">
+            <div class="grid-2">
+                <div class="clay-field">
+                    <label class="clay-label">API Token (Seguridad)</label>
+                    <input type="text" th:field="*{configuracion.apiToken}"
+                           class="clay-input"
+                           placeholder="token api"
+                           th:readonly="${readOnly}">
                 </div>
             </div>
         </div>
 
-        <div class="form-actions actions-right" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ui-border);">
-            <button type="button" hx-get="/app/emisores/view/list" hx-target="#main-content" class="btn-outline">
+        <!-- Acciones -->
+        <div class="form-actions-row">
+            <button type="button"
+                    hx-get="/app/emisores/view/list"
+                    hx-target="#main-content"
+                    class="clay-btn clay-btn--ghost">
+                <span class="fa fa-arrow-left"></span>
                 <span th:text="${readOnly} ? 'Volver' : 'Cancelar'">Cancelar</span>
             </button>
-            <button type="submit" class="btn" th:if="${readOnly == null || !readOnly}">
+            <button type="submit"
+                    class="clay-btn clay-btn--primary"
+                    th:if="${readOnly == null || !readOnly}">
+                <span class="fa fa-save"></span>
                 Guardar Configuración
             </button>
         </div>
     </form>
 </div>
 
-
-
-
 <script>
-
     window.departamentoChoices = window.departamentoChoices || null;
     window.distritoChoices = window.distritoChoices || null;
     window.localidadChoices = window.localidadChoices || null;
 
     function initChoices() {
-
         const departamento = document.querySelector('#departamento');
         const distrito = document.querySelector('#distrito');
         const localidad = document.querySelector('#localidad');
 
-        // DEPARTAMENTO
         if (departamento) {
-
-            if (window.departamentoChoices) {
-                window.departamentoChoices.destroy();
-            }
-
+            try {
+                if (window.departamentoChoices) window.departamentoChoices.destroy();
+            } catch (e) { /* instancia huérfana tras htmx swap */ }
             window.departamentoChoices = new Choices(departamento, {
                 searchEnabled: true,
                 itemSelectText: '',
@@ -287,13 +272,10 @@
             });
         }
 
-        // DISTRITO
         if (distrito) {
-
-            if (window.distritoChoices) {
-                window.distritoChoices.destroy();
-            }
-
+            try {
+                if (window.distritoChoices) window.distritoChoices.destroy();
+            } catch (e) { /* idem */ }
             window.distritoChoices = new Choices(distrito, {
                 searchEnabled: true,
                 itemSelectText: '',
@@ -301,13 +283,10 @@
             });
         }
 
-        // LOCALIDAD
         if (localidad) {
-
-            if (window.localidadChoices) {
-                window.localidadChoices.destroy();
-            }
-
+            try {
+                if (window.localidadChoices) window.localidadChoices.destroy();
+            } catch (e) { /* idem */ }
             window.localidadChoices = new Choices(localidad, {
                 searchEnabled: true,
                 itemSelectText: '',
@@ -318,10 +297,9 @@
 
     initChoices();
 
-    document.body.addEventListener('htmx:afterSwap', function () {
-
-        initChoices();
-
-    });
-
+    // Bind único (evita listeners duplicados si el form se carga varias veces)
+    if (!window._choicesHtmxBound) {
+        window._choicesHtmxBound = true;
+        document.body.addEventListener('htmx:afterSwap', initChoices);
+    }
 </script>

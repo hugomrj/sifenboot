@@ -1,47 +1,61 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      class="tx-light"
+      data-tenant-style="teal">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sifenboot · Dashboard</title>
 
-    <!-- Fuente -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fuente display de Clay -->
+    <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind  -->
-    <script th:src="@{/js/tailwind.js}" src="/js/tailwind.js"></script>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <!-- Font Awesome 4.7 (usado por theme switcher y botones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <!-- Choices.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
-    <!-- Librerías -->
-    <script th:src="@{/js/htmx.min.js}" src="/js/htmx.min.js"></script>
-    <!-- choise -->
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <!-- Clay CSS (librería) -->
+    <link rel="stylesheet" th:href="@{/css/clay.css}" href="/css/clay.css">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-
-
-    <!-- Tu CSS después (para sobrescribir si hace falta) -->
+    <!-- App CSS (layout) -->
     <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
 
+    <!-- HTMX -->
+    <script th:src="@{/js/htmx.min.js}" src="/js/htmx.min.js"></script>
+
+    <!-- Choices.js -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <!-- Scripts propios -->
-    <script th:src="@{/js/ui-utils.js}" src="/js/ui-utils.js"></script>
-    <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+    <script th:src="@{/js/clay-theme.js}" defer></script>
+    <script th:src="@{/js/ui-utils.js}"></script>
+    <script th:src="@{/js/auth.js}"></script>
 
-
+    <!-- Anti-FOUC -->
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('tx-theme') || 'light';
+                var s = localStorage.getItem('tx-style');
+                var cls = 'tx-' + t;
+                if (s && s !== 'teal') cls += ' tx-' + s;
+                document.documentElement.className = cls;
+            } catch (e) {
+                document.documentElement.className = 'tx-light';
+            }
+        })();
+    </script>
 </head>
-
-
 <body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <header class="top-navbar">
-    <div class="flex items-center gap-3">
-        <button class="menu-toggle" id="menuToggle">
+    <div class="navbar-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -49,18 +63,70 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </button>
+        <span class="clay-brand-mark">SB</span>
         <div class="navbar-logo">Sifenboot</div>
     </div>
 
-    <div class="flex items-center gap-4">
-        <a href="#" id="logoutAction" class="logout-btn" title="Cerrar Sesión">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                <line x1="12" y1="2" x2="12" y2="12"></line>
-            </svg>
+    <div class="navbar-right">
+        <!-- Toggle modo claro/oscuro -->
+        <button type="button"
+                class="clay-btn clay-btn--icon"
+                id="quickTheme"
+                aria-label="Cambiar modo claro/oscuro">
+            <span class="fa fa-moon-o" id="qtIcon"></span>
+        </button>
+
+        <!-- Selector de paleta -->
+        <div class="clay-theme-switcher">
+            <button type="button"
+                    class="clay-btn clay-btn--icon"
+                    id="quickStyle"
+                    aria-label="Cambiar paleta de colores">
+                <span class="fa fa-paint-brush"></span>
+            </button>
+
+            <div class="clay-theme-menu" id="styleMenu" role="menu">
+                <button class="clay-theme-menu-item" data-style="teal" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#0e7c76"></span>
+                    Teal Clay
+                </button>
+                <button class="clay-theme-menu-item" data-style="blue" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#2563eb"></span>
+                    Blue Soft
+                </button>
+                <button class="clay-theme-menu-item" data-style="violet" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#7c3aed"></span>
+                    Violet Mist
+                </button>
+                <button class="clay-theme-menu-item" data-style="rose" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#b8324a"></span>
+                    Rose Clay
+                </button>
+                <button class="clay-theme-menu-item" data-style="amber" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#92600a"></span>
+                    Amber Sand
+                </button>
+                <button class="clay-theme-menu-item" data-style="grey" role="menuitem">
+                    <span class="clay-theme-dot" style="background:#525252"></span>
+                    Soft Grey
+                </button>
+
+                <div class="clay-theme-menu-divider"></div>
+
+                <button class="clay-theme-menu-item" data-action="reset" role="menuitem">
+                    <span class="fa fa-undo" style="width:14px"></span>
+                    Usar color del tenant
+                </button>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <a href="#" id="logoutAction"
+           class="clay-btn clay-btn--icon"
+           title="Cerrar Sesión">
+            <span class="fa fa-power-off"></span>
         </a>
     </div>
-
 </header>
 
 <div class="dashboard-layout">
@@ -77,46 +143,44 @@
                 <div class="nav-group">
                     <div class="nav-item toggle-submenu">
                         <span>Empresas Emisoras</span>
-                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
                     </div>
                     <div class="nav-sub-list">
+                        <a href="javascript:void(0)"
+                           hx-get="/app/emisores/view/list"
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           class="nav-sub-item">
+                            Listado de Empresas
+                        </a>
 
-                        <div class="nav-sub-list">
+                        <a href="javascript:void(0)"
+                           hx-get="/app/certificados/view/form"
+                           hx-target="#main-content"
+                           class="nav-sub-item">
+                            Certificado Digital
+                        </a>
 
-                            <a href="javascript:void(0)"
-                               hx-get="/app/emisores/view/list"
-                               hx-target="#main-content"
-                               hx-swap="innerHTML"
-                               class="nav-sub-item">Listado de Empresas
-                            </a>
-
-
-                            <a href="javascript:void(0)"
-                                hx-get="/app/certificados/view/form"
-                                hx-target="#main-content"
-                                class="nav-sub-item">Certificado Digital
-                            </a>
-
-                            <a href="javascript:void(0)"
-                               hx-get="/app/schema/usuarios/view"
-                               hx-target="#main-content"
-                               hx-swap="innerHTML"
-                               class="nav-sub-item">
-                                Gestión de Usuarios
-                            </a>
-
-
-                        </div>
-
-
+                        <a href="javascript:void(0)"
+                           hx-get="/app/schema/usuarios/view"
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           class="nav-sub-item">
+                            Gestión de Usuarios
+                        </a>
                     </div>
                 </div>
-
 
                 <div class="nav-group">
                     <div class="nav-item toggle-submenu">
                         <span>Comprobantes</span>
-                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                        <svg class="nav-arrow" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
                     </div>
                     <div class="nav-sub-list">
                         <a href="/emisor/0/documentos"
@@ -131,23 +195,14 @@
                 <div class="nav-group">
                     <a href="/swagger-ui/index.html" target="_blank" class="nav-item">
                         <span>Documentación API</span>
-                        <!-- Icono de código o libro -->
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="16 18 22 12 16 6"></polyline>
-                            <polyline points="8 6 2 12 8 18"></polyline>
-                            </polyline>
-                        </svg>
+                        <span class="fa fa-code"></span>
                     </a>
                 </div>
-
-
             </div>
 
-            <div class="nav-bottom">
-            </div>
+            <div class="nav-bottom"></div>
         </nav>
     </aside>
-
 
     <main class="main-content"
           id="main-content"
@@ -156,14 +211,9 @@
           hx-swap="innerHTML">
     </main>
 
-
-
 </div>
 
-
-
-
-
+<!-- CSRF para HTMX -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('htmx:configRequest', (event) => {
@@ -176,15 +226,13 @@
     });
 </script>
 
-
-
+<!-- Sidebar + logout + submenús -->
 <script>
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('main-content');
     const overlay = document.getElementById('sidebarOverlay');
 
-    // 1. Lógica para abrir/cerrar con el botón hamburguesa
     menuToggle.addEventListener('click', () => {
         if (window.innerWidth > 800) {
             sidebar.classList.toggle('is-hidden');
@@ -195,30 +243,21 @@
         }
     });
 
-    // 2. Lógica para cerrar tocando el manto negro
     overlay.addEventListener('click', () => {
         sidebar.classList.remove('mobile-open');
         overlay.classList.remove('is-active');
     });
 
-    // 3. SOLUCIÓN: Delegación de eventos para Submenús y Cierre Automático
     document.addEventListener('click', (event) => {
-
-        // --- A) Lógica de Submenús (Toggle) ---
-        // Si clicamos en el botón de desplegar, abrimos/cerramos y no hacemos nada más
         const toggleBtn = event.target.closest('.toggle-submenu');
         if (toggleBtn) {
             const parent = toggleBtn.parentElement;
             parent.classList.toggle('is-open');
-            return; // Importante: salimos para no cerrar el sidebar al tocar el toggle
+            return;
         }
 
-        // --- B) Lógica de Navegación (Cerrar Sidebar en Móvil) ---
-        // Buscamos si el clic fue dentro de un enlace del sidebar
         const navLink = event.target.closest('#sidebar a');
-
         if (navLink) {
-            // Verificamos si el overlay está activo (esto significa que estamos en vista móvil)
             if (overlay && overlay.classList.contains('is-active')) {
                 sidebar.classList.remove('mobile-open');
                 overlay.classList.remove('is-active');
@@ -226,34 +265,39 @@
         }
     });
 
-    // --- Lógica de Logout ---
+    // Logout
     const logoutBtn = document.getElementById('logoutAction');
-
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (typeof Auth !== 'undefined') {
                 Auth.logout();
             } else {
-                console.error("Error: El archivo auth.js no se cargó correctamente.");
+                console.error("Error: auth.js no se cargó correctamente.");
                 window.location.href = '/login';
             }
         });
     }
 </script>
 
-
-
+<!-- Puente para alertas HTMX -->
 <script>
     document.body.addEventListener("showAlert", function (event) {
-        showAlert(
-            event.detail.message,
-            event.detail.type
-        );
+        if (typeof showAlert === 'function') {
+            showAlert(event.detail.message, event.detail.type);
+        }
     });
 </script>
 
-
+<!-- Init del theme -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.clayTheme) {
+            var tenantStyle = document.documentElement.dataset.tenantStyle || 'teal';
+            window.clayTheme.init(tenantStyle);
+        }
+    });
+</script>
 
 </body>
 </html>
